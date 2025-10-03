@@ -1,0 +1,131 @@
+@charset "UTF-8";
+#start-area {
+  background: #fff;
+}
+#start-area .icon {
+  width: 100%;
+  height: auto;
+  max-width: initial;
+  max-height: initial;
+}
+#start-area #message-area {
+  overflow: auto;
+}
+#start-area #proctoring-contract,
+#start-area #proctoring-webcam {
+  padding: 7px;
+  background: rgba(0, 0, 0, 0.17);
+  border-radius: 6px;
+}
+
+#start-area,
+#proctoring-message-copypaste_message,
+#proctoring-message-fullscreen_message {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 9999999;
+  padding-bottom: 100px;
+}
+
+.contract-tosign {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 15px 0 40px;
+}
+.contract-tosign .contract-wrapper .check {
+  --size: 40px;
+  position: relative;
+  background: linear-gradient(90deg, #00b2ff, #0f6cbf);
+  line-height: 0;
+  perspective: 400px;
+  font-size: var(--size);
+}
+.contract-tosign .contract-wrapper .check input[type=checkbox],
+.contract-tosign .contract-wrapper .check label,
+.contract-tosign .contract-wrapper .check label::before,
+.contract-tosign .contract-wrapper .check label::after, .contract-tosign .contract-wrapper .check {
+  appearance: none;
+  display: inline-block;
+  border-radius: var(--size);
+  border: 0;
+  transition: 0.35s ease-in-out;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+.contract-tosign .contract-wrapper .check label {
+  width: calc(2.2 * var(--size));
+  height: var(--size);
+  background: #d7d7d7;
+  overflow: hidden;
+  margin: 0;
+}
+.contract-tosign .contract-wrapper .check input[type=checkbox] {
+  position: absolute;
+  z-index: 1;
+  width: calc(.8 * var(--size));
+  height: calc(.8 * var(--size));
+  top: calc(.1 * var(--size));
+  left: calc(.1 * var(--size));
+  background: linear-gradient(45deg, #dedede, #ffffff);
+  box-shadow: 0 6px 7px rgba(0, 0, 0, 0.3);
+  outline: none;
+  margin: 0;
+}
+.contract-tosign .contract-wrapper .check input[type=checkbox]:checked {
+  left: calc(1.3 * var(--size));
+}
+.contract-tosign .contract-wrapper .check input[type=checkbox]:checked + label {
+  background: transparent;
+}
+.contract-tosign .contract-wrapper .check label::before,
+.contract-tosign .contract-wrapper .check label::after {
+  content: "· ·";
+  position: absolute;
+  overflow: hidden;
+  left: calc(.15 * var(--size));
+  top: calc(.5 * var(--size));
+  height: var(--size);
+  letter-spacing: calc(-0.04 * var(--size));
+  color: #9b9b9b;
+  font-family: "Times New Roman", serif;
+  z-index: 2;
+  font-size: calc(.6 * var(--size));
+  border-radius: 0;
+  transform-origin: 0 0 calc(-0.5 * var(--size));
+  backface-visibility: hidden;
+}
+.contract-tosign .contract-wrapper .check label::after {
+  content: "●";
+  top: calc(.65 * var(--size));
+  left: calc(.2 * var(--size));
+  height: calc(.1 * var(--size));
+  width: calc(.35 * var(--size));
+  font-size: calc(.2 * var(--size));
+  transform-origin: 0 0 calc(-0.4 * var(--size));
+}
+.contract-tosign .contract-wrapper .check input[type=checkbox]:checked + label::before,
+.contract-tosign .contract-wrapper .check input[type=checkbox]:checked + label::after {
+  left: calc(1.55 * var(--size));
+  top: calc(.4 * var(--size));
+  line-height: calc(.1 * var(--size));
+  transform: rotateY(360deg);
+}
+.contract-tosign .contract-wrapper .check input[type=checkbox]:checked + label::after {
+  height: calc(.16 * var(--size));
+  top: calc(.55 * var(--size));
+  left: calc(1.6 * var(--size));
+  font-size: calc(.6 * var(--size));
+  line-height: 0;
+}
+
+.qtext .clearfix::after {
+  display: none;
+}
+
+body.path-mod-quiz fieldset#id_seb {
+  display: none;
+}

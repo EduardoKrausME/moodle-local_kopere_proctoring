@@ -1,0 +1,96 @@
+<link rel="stylesheet" href="/local/kopere_proctoring/styles.css">
+<div id="start-area">
+
+    <div id="proctoring-contract-area" class="container">
+        <div class="row">
+            <div class="col-md-4 d-none d-md-block pt-5">
+                {{#pix}}contract, local_kopere_proctoring{{/pix}}
+            </div>
+            <div id="message-area" class="col-12 col-md-8 bg-danger text-white p-4">
+                {{#contract}}
+                    <fieldset id="proctoring-contract">
+                        {{{contract_message}}}
+                    </fieldset>
+
+                    <div class="contract-tosign">
+                        <div class="contract-wrapper">
+                            <div class="check">
+                                <input id="contract_tosign" name="contract_tosign" type="checkbox">
+                                <label for="contract_tosign"></label>
+                            </div>
+                        </div>
+                        <div><h3 class="m-0 p-0">Estou ciente</h3></div>
+                    </div>
+                {{/contract}}
+
+                {{#fullscreen}}
+                    <div id="proctoring-fullscreen" class="alert alert-warning" role="alert">
+                        {{#str}}settings_fullscreen_message_init, local_kopere_proctoring{{/str}}
+                    </div>
+                {{/fullscreen}}
+
+                {{#copypaste}}
+                    <div id="proctoring-copypaste" class="alert alert-warning" role="alert">
+                        {{#str}}settings_copypaste_message_init, local_kopere_proctoring{{/str}}
+                    </div>
+                {{/copypaste}}
+
+                {{#webcam}}
+                    <fieldset id="proctoring-webcam">
+
+                        {{{webcam_info}}}
+
+                        <div class="text-center">
+                            <video id="proctor-video" autoplay muted playsinline
+                                   style="width: 100%; max-width: 640px; border: 2px solid #333;"></video>
+                            <div id="proctor-error" style="color: red; margin-top: 10px;"></div>
+                        </div>
+                    </fieldset>
+                {{/webcam}}
+
+                <div class="text-center">
+                    {{#contract}}
+                        <p id="contract-start-warning" class="start-warning alert alert-warning">
+                            {{#str}}settings_contract_start_warning, local_kopere_proctoring{{/str}}
+                        </p>
+                    {{/contract}}
+                    {{#webcam}}
+                        <p id="webcam-start-warning" class="start-warning alert alert-warning">
+                            {{#str}}settings_webcam_start_warning, local_kopere_proctoring{{/str}}
+                        </p>
+                    {{/webcam}}
+
+                    <p id="status-danger" class="alert alert-danger" style="display: none;"></p>
+
+                    <button id="start-exam" disabled
+                            class="pt-2 pb-2 pl-5 pr-5 btn btn-success">
+                        {{#str}}start_exam, local_kopere_proctoring{{/str}}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="alert alert-danger" id="proctoring-message-fullscreen_message" style="display: none;">
+    <div class="container">
+        {{{fullscreen_message}}}
+        <div class="text-center">
+            <button id="return-exam-1"
+                    class="pt-2 pb-2 pl-5 pr-5 btn btn-success">
+                {{#str}}return_exam, local_kopere_proctoring{{/str}}
+            </button>
+        </div>
+    </div>
+</div>
+<div class="alert alert-danger" id="proctoring-message-copypaste_message" style="display: none;">
+    <div class="container">
+        {{{copypaste_message}}}
+        <div class="text-center">
+            <button id="return-exam-2"
+                    class="pt-2 pb-2 pl-5 pr-5 btn btn-success">
+                {{#str}}return_exam, local_kopere_proctoring{{/str}}
+            </button>
+        </div>
+    </div>
+</div>
