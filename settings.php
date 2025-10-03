@@ -45,7 +45,7 @@ if ($ADMIN->fulltree) {
 
     if (method_exists($settings, "add")) {
 
-        // Contrato de honestidade.
+        // Honesty contract.
         $setting = new admin_setting_heading("local_kopere_proctoring/contract_title",
             get_string("settings_contract_heading", "local_kopere_proctoring"), "",
         );
@@ -67,7 +67,7 @@ if ($ADMIN->fulltree) {
         );
         $settings->add($setting);
 
-        // Fullscreen.
+        // Fullscreen requirements.
         $setting = new admin_setting_heading("local_kopere_proctoring/fullscreen_title",
             get_string("settings_fullscreen_heading", "local_kopere_proctoring"), "",
         );
@@ -98,7 +98,7 @@ if ($ADMIN->fulltree) {
         );
         $settings->add($setting);
 
-        // Copiar e colar.
+        // Copy & paste restrictions.
         $setting = new admin_setting_heading("local_kopere_proctoring/copypaste_title",
             get_string("settings_copypaste_heading", "local_kopere_proctoring"), "",
         );

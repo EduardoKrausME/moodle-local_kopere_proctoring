@@ -91,7 +91,7 @@ function local_kopere_proctoring_coursemodule_standard_elements($formwrapper, $m
         $mform->setType("local_kopere_proctoring_enable", PARAM_INT);
 
         // Honesty contract.
-        {
+        if (get_config("local_kopere_proctoring", "contract")) {
             $mform->addElement("html", "<fieldset><legend>" .
                 get_string("contract_legend", "local_kopere_proctoring") . "</legend>");
 
@@ -126,7 +126,7 @@ function local_kopere_proctoring_coursemodule_standard_elements($formwrapper, $m
         }
 
         // Fullscreen requirements.
-        {
+        if (get_config("local_kopere_proctoring", "fullscreen")) {
             $mform->addElement("html", "<fieldset><legend>" .
                 get_string("fullscreen_legend", "local_kopere_proctoring") . "</legend>");
 
@@ -174,7 +174,7 @@ function local_kopere_proctoring_coursemodule_standard_elements($formwrapper, $m
         }
 
         // Copy & paste restrictions.
-        {
+        if (get_config("local_kopere_proctoring", "copypaste")) {
             $mform->addElement("html", "<fieldset><legend>" .
                 get_string("copypaste_legend", "local_kopere_proctoring") . "</legend>");
 
@@ -222,50 +222,46 @@ function local_kopere_proctoring_coursemodule_standard_elements($formwrapper, $m
         }
 
         // Webcam requirements.
-        $mform->addElement("html", "<fieldset><legend>" . get_string("webcam_legend", "local_kopere_proctoring") . "</legend>");
+        if (get_config("local_kopere_proctoring", "webcam")) {
+            $mform->addElement("html", "<fieldset><legend>" . get_string("webcam_legend", "local_kopere_proctoring") . "</legend>");
 
-        $mform->addElement(
-            "static",
-            "local_kopere_proctoring_webcam_desk",
-            get_string("webcam_label", "local_kopere_proctoring"),
-            get_string("webcam_desc", "local_kopere_proctoring")
-        );
-        $mform->addElement("checkbox", "local_kopere_proctoring_webcam");
-        $mform->setDefault("local_kopere_proctoring_webcam", $config->webcam ?? 1);
-        $mform->setType("local_kopere_proctoring_webcam", PARAM_INT);
-        $mform->hideIf("local_kopere_proctoring_webcam", "local_kopere_proctoring_enable", "eq", "0");
+            $mform->addElement(
+                "static", "local_kopere_proctoring_webcam_desk", get_string("webcam_label", "local_kopere_proctoring"),
+                get_string("webcam_desc", "local_kopere_proctoring")
+            );
+            $mform->addElement("checkbox", "local_kopere_proctoring_webcam");
+            $mform->setDefault("local_kopere_proctoring_webcam", $config->webcam ?? 1);
+            $mform->setType("local_kopere_proctoring_webcam", PARAM_INT);
+            $mform->hideIf("local_kopere_proctoring_webcam", "local_kopere_proctoring_enable", "eq", "0");
 
-        $mform->addElement(
-            "static",
-            "local_kopere_proctoring_webcam_message_desk",
-            get_string("webcam_message_label", "local_kopere_proctoring"),
-            get_string("webcam_message_desc", "local_kopere_proctoring")
-        );
-        $mform->addElement("editor", "local_kopere_proctoring_webcam_message", "");
-        $mform->setDefault(
-            "local_kopere_proctoring_webcam_message",
-            ["text" => $config->webcam_message ?? "", "format" => FORMAT_HTML]
-        );
-        $mform->setType("local_kopere_proctoring_webcam_message", PARAM_CLEANHTML);
-        $mform->hideIf("local_kopere_proctoring_webcam_message", "local_kopere_proctoring_webcam", "eq", "0");
+            $mform->addElement(
+                "static", "local_kopere_proctoring_webcam_message_desk",
+                get_string("webcam_message_label", "local_kopere_proctoring"),
+                get_string("webcam_message_desc", "local_kopere_proctoring")
+            );
+            $mform->addElement("editor", "local_kopere_proctoring_webcam_message", "");
+            $mform->setDefault(
+                "local_kopere_proctoring_webcam_message", ["text" => $config->webcam_message ?? "", "format" => FORMAT_HTML]
+            );
+            $mform->setType("local_kopere_proctoring_webcam_message", PARAM_CLEANHTML);
+            $mform->hideIf("local_kopere_proctoring_webcam_message", "local_kopere_proctoring_webcam", "eq", "0");
 
-        $mform->addElement("html", "</fieldset>");
+            $mform->addElement("html", "</fieldset>");
 
-        // Email notification.
-        $mform->addElement("html", "<fieldset><legend>" . get_string("mail_legend", "local_kopere_proctoring") . "</legend>");
+            // Email notification.
+            $mform->addElement("html", "<fieldset><legend>" . get_string("mail_legend", "local_kopere_proctoring") . "</legend>");
 
-        $mform->addElement(
-            "static",
-            "local_kopere_proctoring_mail_desk",
-            get_string("mail_label", "local_kopere_proctoring"),
-            get_string("mail_desc", "local_kopere_proctoring")
-        );
-        $mform->addElement("checkbox", "local_kopere_proctoring_mail", "");
-        $mform->setDefault("local_kopere_proctoring_mail", $config->mail ?? 1);
-        $mform->setType("local_kopere_proctoring_mail", PARAM_INT);
-        $mform->hideIf("local_kopere_proctoring_mail", "local_kopere_proctoring_enable", "eq", "0");
+            $mform->addElement(
+                "static", "local_kopere_proctoring_mail_desk", get_string("mail_label", "local_kopere_proctoring"),
+                get_string("mail_desc", "local_kopere_proctoring")
+            );
+            $mform->addElement("checkbox", "local_kopere_proctoring_mail", "");
+            $mform->setDefault("local_kopere_proctoring_mail", $config->mail ?? 1);
+            $mform->setType("local_kopere_proctoring_mail", PARAM_INT);
+            $mform->hideIf("local_kopere_proctoring_mail", "local_kopere_proctoring_enable", "eq", "0");
 
-        $mform->addElement("html", "</fieldset>");
+            $mform->addElement("html", "</fieldset>");
+        }
     }
 }
 
