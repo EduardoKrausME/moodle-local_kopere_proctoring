@@ -4,7 +4,7 @@
        xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
     <TABLES>
 
-        <TABLE NAME="kopere_proctoring_attempt" COMMENT="">
+        <TABLE NAME="local_kopere_proctoring_att" COMMENT="">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="true"/>
                 <FIELD NAME="attemptid" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false"/>
@@ -24,7 +24,7 @@
             </KEYS>
         </TABLE>
 
-        <TABLE NAME="kopere_proctoring_logs" COMMENT="">
+        <TABLE NAME="local_kopere_proctoring_log" COMMENT="">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="true"/>
                 <FIELD NAME="attemptid" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false"/>

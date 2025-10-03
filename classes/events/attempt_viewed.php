@@ -47,7 +47,7 @@ class attempt_viewed {
         if ($enable) {
             $attemptid = $event->get_data()["objectid"];
 
-            $attempt = $DB->get_record("kopere_proctoring_attempt", [
+            $attempt = $DB->get_record("local_kopere_proctoring_att", [
                 "attemptid" => $attemptid,
                 "userid" => $USER->id,
             ]);

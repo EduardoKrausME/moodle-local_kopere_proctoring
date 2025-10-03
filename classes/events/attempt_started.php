@@ -58,7 +58,7 @@ class attempt_started {
                 "contract_time" => "",
                 "time" => time(),
             ];
-            $DB->insert_record("kopere_proctoring_attempt", $attempt);
+            $DB->insert_record("local_kopere_proctoring_att", $attempt);
 
             $logs = [
                 "attemptid" => $attemptid,
@@ -69,7 +69,7 @@ class attempt_started {
                 "actionvalue" => "attempt_started",
                 "time" => time(),
             ];
-            $DB->insert_record("kopere_proctoring_logs", $logs);
+            $DB->insert_record("local_kopere_proctoring_log", $logs);
         }
     }
 }

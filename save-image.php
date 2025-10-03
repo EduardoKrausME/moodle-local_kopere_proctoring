@@ -41,7 +41,7 @@ $logs = [
     "actionvalue" => $data["actionvalue"],
     "time" => time(),
 ];
-$logsid = $DB->insert_record("kopere_proctoring_logs", $logs);
+$logsid = $DB->insert_record("local_kopere_proctoring_log", $logs);
 
 if (!isset($data["image"])) {
     http_response_code(400);
