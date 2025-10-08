@@ -22,6 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_user\output\myprofile\node;
 use core_user\output\myprofile\tree;
 
 /**
@@ -288,39 +289,6 @@ function local_kopere_proctoring_coursemodule_edit_post_actions($data, $course) 
 }
 
 /**
- * In versions before Moodle 2.9, the supported callbacks have _extends_ (not imperative mood) in their names.
- * This was a consistency bug fixed in MDL-49643.
- *
- * @param global_navigation $nav
- * @return void
- */
-function local_kopere_proctoring_extends_navigation(global_navigation $nav) {
-    local_kopere_proctoring_extend_navigation($nav);
-}
-
-/**
- * call-back method to extend the navigation
- *
- * @param global_navigation $nav
- * @return void
- */
-function local_kopere_proctoring_extend_navigation(global_navigation $nav) {
-    global $CFG;
-
-    $context = context_system::instance();
-    if (isloggedin()) {
-        $node = $nav->add(
-            get_string("pluginname", "local_kopere_proctoring"),
-            new moodle_url($CFG->wwwroot . "/local/kopere_dashboard/open.php?classname=parceiro-parceiro&method=start"),
-            navigation_node::TYPE_CUSTOM, null, null,
-            new pix_icon("icon", get_string("pluginname", "local_kopere_proctoring"), "local_kopere_proctoring")
-        );
-
-        $node->showinflatnavigation = true;
-    }
-}
-
-/**
  * Myprofile navigation
  *
  * @param tree $tree Tree object
@@ -332,26 +300,32 @@ function local_kopere_proctoring_extend_navigation(global_navigation $nav) {
  * @throws Exception
  */
 function local_kopere_proctoring_myprofile_navigation(tree $tree, $user, $iscurrentuser, $course) {
-    global $DB;
+    $node = new node(
+        "contact", "localfacial3",
+        get_string("pluginname", "local_kopere_proctoring"),
+        null, new moodle_url("/local/kopere_proctoring/user-data.php?id={$user->id}"),
+        "Dados do aluno"
+    );
+    $tree->add_node($node);
+}
 
-    $systemcontext = context_system::instance();
-    if (has_capability("moodle/user:create", $systemcontext) || has_capability("moodle/user:update", $systemcontext)) {
-        $sql = "
-            SELECT co.fullname, pl.*
-              FROM {kopere_proctoring_local}     pl
-              JOIN {kopere_proctoring_matricula} pm ON pl.id = pm.parceiroid
-              JOIN {course}                co ON co.id = pm.courseid
-             WHERE pm.userid = {$user->id}";
-        $itens = $DB->get_records_sql($sql);
 
-        foreach ($itens as $item) {
-            $node = new core_user\output\myprofile\node(
-                "contact", "localfacial3", "Parceiro de Matrícula", null, null,
-                "Parceiro {$item->nomeparceiro}, curso {$item->fullname}"
-            );
-            $tree->add_node($node);
-        }
+function local_kopere_proctoring_extend_settings_navigation(navigation_node $navigationnode, $context ) {
+    $keys = $navigationnode->get_children_key_list();
+    $beforekey = null;
+    $i = array_search('modedit', $keys);
+    if ($i === false && array_key_exists(0, $keys)) {
+        $beforekey = $keys[0];
+    } else if (array_key_exists($i + 1, $keys)) {
+        $beforekey = $keys[$i + 1];
     }
 
-    return true;
+    //if (has_capability('moodle/course:manageactivities', $context)) {
+        $node = navigation_node::create(
+            "Relatório Proctoring",
+            new moodle_url('/local/kopere_proctoring/report.php', ['id' => $context->id]),
+            navigation_node::TYPE_SETTING, null, 'kopere_proctoring_report',
+            new pix_icon('i/report', ''));
+        $navigationnode->add_node($node, $beforekey);
+    //}
 }
