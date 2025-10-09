@@ -309,7 +309,14 @@ function local_kopere_proctoring_myprofile_navigation(tree $tree, $user, $iscurr
     $tree->add_node($node);
 }
 
-
+/**
+ * Extend settings navigation
+ *
+ * @param navigation_node $navigationnode
+ * @param $context
+ * @return void
+ * @throws Exception
+ */
 function local_kopere_proctoring_extend_settings_navigation(navigation_node $navigationnode, $context ) {
     $keys = $navigationnode->get_children_key_list();
     $beforekey = null;
@@ -320,12 +327,12 @@ function local_kopere_proctoring_extend_settings_navigation(navigation_node $nav
         $beforekey = $keys[$i + 1];
     }
 
-    //if (has_capability('moodle/course:manageactivities', $context)) {
+    if (has_capability('moodle/course:manageactivities', $context)) {
         $node = navigation_node::create(
             "Relatório Proctoring",
             new moodle_url('/local/kopere_proctoring/report.php', ['id' => $context->id]),
             navigation_node::TYPE_SETTING, null, 'kopere_proctoring_report',
             new pix_icon('i/report', ''));
         $navigationnode->add_node($node, $beforekey);
-    //}
+    }
 }
