@@ -317,7 +317,7 @@ function local_kopere_proctoring_myprofile_navigation(tree $tree, $user, $iscurr
  * @return void
  * @throws Exception
  */
-function local_kopere_proctoring_extend_settings_navigation(navigation_node $navigationnode, $context ) {
+function local_kopere_proctoring_extend_settings_navigation(navigation_node $navigationnode, $context) {
     $keys = $navigationnode->get_children_key_list();
     $beforekey = null;
     $i = array_search('modedit', $keys);
