@@ -223,7 +223,7 @@ function local_kopere_proctoring_coursemodule_standard_elements($formwrapper, $m
         }
 
         // Webcam requirements.
-        if (get_config("local_kopere_proctoring", "webcam")) {
+        if (false && get_config("local_kopere_proctoring", "webcam")) {
             $mform->addElement("html", "<fieldset><legend>" . get_string("webcam_legend", "local_kopere_proctoring") . "</legend>");
 
             $mform->addElement(
