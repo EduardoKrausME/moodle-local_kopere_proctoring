@@ -301,7 +301,7 @@ function local_kopere_proctoring_coursemodule_edit_post_actions($data, $course) 
  */
 function local_kopere_proctoring_myprofile_navigation(tree $tree, $user, $iscurrentuser, $course) {
     $node = new node(
-        "contact", "localfacial3",
+        "contact", "local_proctoring_3",
         get_string("pluginname", "local_kopere_proctoring"),
         null, new moodle_url("/local/kopere_proctoring/user-data.php?id={$user->id}"),
         "Dados do aluno"
