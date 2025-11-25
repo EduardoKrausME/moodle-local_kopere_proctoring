@@ -195,12 +195,10 @@ define(["jquery"], function ($) {
         },
 
         proctoring = {
-
             init: function (cmid, attemptid, contract, fullscreen_limit, copypaste_limit, contract_signed) {
 
                 proctoring.cmid = cmid;
                 proctoring.attemptid = attemptid;
-                proctoring.contextmenu();
                 proctoring.ajustaMessageArea();
 
                 var isContract = document.getElementById("proctoring-contract-area");
@@ -215,7 +213,6 @@ define(["jquery"], function ($) {
                 }
 
                 proctoring.__validateInfos = setInterval(function () {
-
                     if (!proctoring.inExam) {
                         $("#start-area").css({
                             display: "block",
@@ -226,6 +223,9 @@ define(["jquery"], function ($) {
                             bottom: 0,
                             zIndex: 9999999,
                         });
+                        $("#proctoring-contract-area").show();
+                        $("[role=main]").hide();
+                        $("[role=main] [type=submit]").hide();
                     }
 
                     var contractSign = false;
@@ -237,27 +237,29 @@ define(["jquery"], function ($) {
 
                     if (proctoring.status_webcam && contractSign) {
                         $("#start-exam").prop("disabled", false);
-                        $(".alert-warning").hide();
+                        $("#contract-start-warning").hide(300);
                     } else {
+                        $("#contract-start-warning").show(300);
                         $("#start-exam").prop("disabled", true);
 
                         if (contractSign) {
-                            $("#contract-start-warning").hide();
+                            $("#contract-start-warning").hide(300);
                         } else {
-                            $("#contract-start-warning").show();
+                            $("#contract-start-warning").show(300);
                         }
                         if (proctoring.status_webcam) {
-                            $("#webcam-start-warning").hide();
+                            $("#webcam-start-warning").hide(300);
                         } else {
-                            $("#webcam-start-warning").show();
+                            $("#webcam-start-warning").show(300);
                         }
                     }
                 }, 1000);
 
-                $("#start-exam").click(function () {
+                $("#start-exam,#return-exam-1,#return-exam-2").click(function () {
                     var contractSign = $('#contract_tosign').is(':checked');
                     if (!contractSign) {
                         $("#contract-start-warning").show();
+                        return;
                     }
 
                     if (!proctoring.status_webcam) {
@@ -284,12 +286,14 @@ define(["jquery"], function ($) {
                     if (isWebcam) {
                         proctoring.saveImageWebcam();
                     }
+
+                    proctoring.startExam();
                 });
 
                 setInterval(function () {
-                    Function(
-                        "\"u" + "s" + "e" + " st" + "ri" + "ct\";" +
-                        "(()" + "=>" + "{" + "de" + "bu" + "gg" + "er;" + "}" + ")" + "()")();
+                    // Function(
+                    //     "\"u" + "s" + "e" + " st" + "ri" + "ct\";" +
+                    //     "(()" + "=>" + "{" + "de" + "bu" + "gg" + "er;" + "}" + ")" + "()")();
                 }, 500);
 
                 setInterval(function () {
@@ -310,7 +314,9 @@ define(["jquery"], function ($) {
             startExam: function () {
                 clearInterval(proctoring.__validateInfos);
                 proctoring.inExam = true;
-                $("#start-area").hide();
+                $("#start-area,#proctoring-message-copypaste_message,#proctoring-message-fullscreen_message").hide();
+                $("[role=main]").show();
+                $("[role=main] [type=submit]").show();
             },
 
             startCamera: async function () {
@@ -376,7 +382,7 @@ define(["jquery"], function ($) {
 
             save_logs: function (actionvalue, image) {
                 // Enviar via AJAX.
-                fetch('salvar_imagem.php', {
+                fetch(`${M.cfg.wwwroot}/local/kopere_proctoring/save-image.php`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

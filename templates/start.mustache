@@ -19,13 +19,14 @@
 
     Example context (json):
     {
-        "contract_message": "Report name"
+        "contract": true,
+        "contract_message": "Report name",
+        "fullscreen": true,
     }
 }}
 
 <div id="start-area">
-
-    <div id="proctoring-contract-area" class="container">
+    <div id="proctoring-contract-area" style="display:none" class="container">
         <div class="row">
             <div class="col-md-4 d-none d-md-block pt-5">
                 {{#pix}}contract, local_kopere_proctoring{{/pix}}
@@ -35,16 +36,6 @@
                     <fieldset id="proctoring-contract">
                         {{{contract_message}}}
                     </fieldset>
-
-                    <div class="contract-tosign">
-                        <div class="contract-wrapper">
-                            <div class="check">
-                                <input id="contract_tosign" name="contract_tosign" type="checkbox">
-                                <label for="contract_tosign"></label>
-                            </div>
-                        </div>
-                        <div><h3 class="m-0 p-0">Estou ciente</h3></div>
-                    </div>
                 {{/contract}}
 
                 {{#fullscreen}}
@@ -77,6 +68,15 @@
                         <p id="contract-start-warning" class="start-warning alert alert-warning">
                             {{#str}}settings_contract_start_warning, local_kopere_proctoring{{/str}}
                         </p>
+                        <div class="contract-tosign">
+                            <div class="contract-wrapper">
+                                <div class="check">
+                                    <input id="contract_tosign" name="contract_tosign" type="checkbox">
+                                    <label for="contract_tosign"></label>
+                                </div>
+                            </div>
+                            <div><h3 class="m-0 p-0">Estou ciente</h3></div>
+                        </div>
                     {{/contract}}
                     {{#webcam}}
                         <p id="webcam-start-warning" class="start-warning alert alert-warning">
