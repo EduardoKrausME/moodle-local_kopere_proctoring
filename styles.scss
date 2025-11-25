@@ -10,6 +10,7 @@
 
     #message-area {
         overflow: auto;
+        max-height: 100vh;
     }
 
     #proctoring-contract,
@@ -17,6 +18,7 @@
         padding: 7px;
         background: rgba(0, 0, 0, .17);
         border-radius: 6px;
+        margin-bottom: 15px;
     }
 }
 
@@ -36,7 +38,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    margin: 15px 0 40px;
+    margin: 15px 0;
 
     .contract-wrapper .check {
         --size: 40px;
