@@ -43,25 +43,22 @@ $logs = [
 ];
 $logsid = $DB->insert_record("local_kopere_proctoring_log", $logs);
 
-if (!isset($data["image"])) {
-    http_response_code(400);
-    echo json_encode(["error" => "Imagem ausente"]);
-    exit;
+if (isset($data["image"])) {
+    $imgdata = $data["image"];
+    $imgdata = str_replace("data:image/jpeg;base64,", "", $imgdata);
+    $imgdata = str_replace(" ", "+", $imgdata);
+
+    // Salva imagem no moodledata.
+    $filerecord = [
+        "contextid" => $context->id,
+        "component" => "local_kopere_proctoring",
+        "filearea" => "snapshot",
+        "itemid" => $data["cmid"],
+        "filepath" => "/",
+        "filename" => "{$logsid}-{$data["attemptid"]}-{$data["attemptid"]}.jpg",
+        "userid" => $USER->id,
+    ];
+
+    $fs = get_file_storage();
+    $fs->create_file_from_string($filerecord, base64_decode($imgdata));
 }
-$imgdata = $data["image"];
-$imgdata = str_replace("data:image/jpeg;base64,", "", $imgdata);
-$imgdata = str_replace(" ", "+", $imgdata);
-
-// Salva imagem no moodledata.
-$filerecord = [
-    "contextid" => $context->id,
-    "component" => "local_kopere_proctoring",
-    "filearea" => "snapshot",
-    "itemid" => $data["cmid"],
-    "filepath" => "/",
-    "filename" => "{$logsid}-{$data["attemptid"]}-{$data["attemptid"]}.jpg",
-    "userid" => $USER->id,
-];
-
-$fs = get_file_storage();
-$fs->create_file_from_string($filerecord, base64_decode($imgdata));
