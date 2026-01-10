@@ -103,6 +103,7 @@ if ($ADMIN->fulltree) {
             get_string("settings_copypaste_heading", "local_kopere_proctoring"), "",
         );
         $settings->add($setting);
+
         $setting = new admin_setting_configcheckbox(
             "local_kopere_proctoring/copypaste",
             get_string("settings_copypaste", "local_kopere_proctoring"),
@@ -132,6 +133,7 @@ if ($ADMIN->fulltree) {
         $setting = new admin_setting_heading("local_kopere_proctoring/webcam_title",
             get_string("settings_webcam_heading", "local_kopere_proctoring"), "",
         );
+        $settings->add($setting);
 
         $setting = new admin_setting_configcheckbox(
             "local_kopere_proctoring/webcam",
@@ -153,6 +155,7 @@ if ($ADMIN->fulltree) {
         $setting = new admin_setting_heading("local_kopere_proctoring/mail_title",
             get_string("settings_mail_heading", "local_kopere_proctoring"), "",
         );
+        $settings->add($setting);
 
         $setting = new admin_setting_configcheckbox(
             "local_kopere_proctoring/mail",
