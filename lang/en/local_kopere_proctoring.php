@@ -114,3 +114,25 @@ $string['webcam_label'] = 'Require webcam';
 $string['webcam_legend'] = 'Webcam';
 $string['webcam_message_desc'] = 'Message displayed above the camera preview.';
 $string['webcam_message_label'] = 'Message before the webcam';
+
+$string['privacy:metadata:local_kopere_proctoring_att'] = 'Stores the proctoring contract acceptance data related to quiz attempts.';
+$string['privacy:metadata:local_kopere_proctoring_att:attemptid'] = 'The quiz attempt ID.';
+$string['privacy:metadata:local_kopere_proctoring_att:userid'] = 'The user ID.';
+$string['privacy:metadata:local_kopere_proctoring_att:contract'] = 'Whether the honesty pledge was accepted.';
+$string['privacy:metadata:local_kopere_proctoring_att:contract_ip'] = 'The IP address recorded when accepting the pledge.';
+$string['privacy:metadata:local_kopere_proctoring_att:contract_useragent'] = 'The browser user agent recorded when accepting the pledge.';
+$string['privacy:metadata:local_kopere_proctoring_att:contract_screenresolution'] = 'The screen resolution recorded when accepting the pledge.';
+$string['privacy:metadata:local_kopere_proctoring_att:contract_geo'] = 'The geolocation string recorded when accepting the pledge (if provided).';
+$string['privacy:metadata:local_kopere_proctoring_att:contract_time'] = 'The timestamp when the pledge was accepted.';
+$string['privacy:metadata:local_kopere_proctoring_att:time'] = 'The record timestamp.';
+
+$string['privacy:metadata:local_kopere_proctoring_log'] = 'Stores proctoring events logged during quiz attempts.';
+$string['privacy:metadata:local_kopere_proctoring_log:attemptid'] = 'The quiz attempt ID.';
+$string['privacy:metadata:local_kopere_proctoring_log:userid'] = 'The user ID.';
+$string['privacy:metadata:local_kopere_proctoring_log:ip'] = 'The IP address recorded for the event.';
+$string['privacy:metadata:local_kopere_proctoring_log:useragent'] = 'The browser user agent recorded for the event.';
+$string['privacy:metadata:local_kopere_proctoring_log:screenresolution'] = 'The screen resolution recorded for the event.';
+$string['privacy:metadata:local_kopere_proctoring_log:actionvalue'] = 'The action type/value recorded (e.g. fullscreen_exit, copypaste).';
+$string['privacy:metadata:local_kopere_proctoring_log:time'] = 'The event timestamp.';
+
+$string['privacy:metadata:local_kopere_proctoring:files_snapshot'] = 'Stores webcam/screenshot snapshots captured during proctoring.';
