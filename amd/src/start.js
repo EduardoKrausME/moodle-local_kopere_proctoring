@@ -382,7 +382,7 @@ define(["jquery"], function ($) {
 
             save_logs: function (actionvalue, image) {
                 // Enviar via AJAX.
-                fetch(`${M.cfg.wwwroot}/local/kopere_proctoring/save-image.php`, {
+                fetch(`${M.cfg.wwwroot}/local/kopere_proctoring/save-image.php?sesskey=${M.cfg.sesskey}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

@@ -22,15 +22,38 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+declare(strict_types=1);
+define('AJAX_SCRIPT', true);
+
 require_once(__DIR__ . "/../../config.php");
+require_once($CFG->libdir . '/filelib.php');
 
 global $USER, $DB;
 
-$data = json_decode(file_get_contents("php://input"), true);
+// Enforce POST to reduce CSRF surface.
+if (strtoupper($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+    throw new moodle_exception('invalidrequest');
+}
 
-$context = context_module::instance($data["cmid"]);
+$raw = file_get_contents('php://input');
+if ($raw === false || $raw === '') {
+    throw new moodle_exception('invalidrequest');
+}
+
+$data = json_decode($raw, true);
+if (!is_array($data)) {
+    throw new moodle_exception('invalidrequest');
+}
+
 require_login();
+require_sesskey();
+$context = context_module::instance($data["cmid"]);
 require_capability("mod/quiz:attempt", $context, $USER->id);
+
+// Enforce POST to reduce CSRF surface.
+if (strtoupper($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+    throw new moodle_exception('invalidrequest');
+}
 
 $logs = [
     "attemptid" => $data["attemptid"],
