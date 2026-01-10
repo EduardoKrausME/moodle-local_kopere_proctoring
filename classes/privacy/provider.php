@@ -24,8 +24,6 @@
 
 namespace local_kopere_proctoring\privacy;
 
-defined('MOODLE_INTERNAL') || die();
-
 use context;
 use context_module;
 use core_privacy\local\metadata\collection;
@@ -34,7 +32,11 @@ use core_privacy\local\request\contextlist;
 use core_privacy\local\request\helper;
 use core_privacy\local\request\plugin\provider as plugin_provider;
 use core_privacy\local\request\writer;
+use Exception;
 
+/**
+ * Class provider
+ */
 class provider implements
     \core_privacy\local\metadata\provider,
     plugin_provider {
@@ -127,6 +129,7 @@ class provider implements
      * Export user data for the approved contexts.
      *
      * @param approved_contextlist $contextlist
+     * @throws Exception
      */
     public static function export_user_data(approved_contextlist $contextlist): void {
         global $DB;
@@ -204,6 +207,7 @@ class provider implements
      * Delete all user data for all users in the specified context.
      *
      * @param context $context
+     * @throws Exception
      */
     public static function delete_data_for_all_users_in_context(context $context): void {
         global $DB;
@@ -233,6 +237,7 @@ class provider implements
      * Delete user data for a single user in the specified context.
      *
      * @param approved_contextlist $contextlist
+     * @throws Exception
      */
     public static function delete_data_for_user(approved_contextlist $contextlist): void {
         global $DB;
