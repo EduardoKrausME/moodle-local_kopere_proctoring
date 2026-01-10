@@ -21,6 +21,12 @@
                 <KEY NAME="fk_quizattempts" TYPE="foreign" FIELDS="attemptid" REFTABLE="quiz_attempts" REFFIELDS="id"/>
                 <KEY NAME="fk_user" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
             </KEYS>
+            <INDEXES>
+                <INDEX NAME="attemptid_ix" UNIQUE="false" FIELDS="attemptid"/>
+                <INDEX NAME="userid_ix" UNIQUE="false" FIELDS="userid"/>
+                <INDEX NAME="time_ix" UNIQUE="false" FIELDS="time"/>
+                <INDEX NAME="attemptidtime_ix" UNIQUE="false" FIELDS="attemptid, time"/>
+            </INDEXES>
         </TABLE>
 
         <TABLE NAME="local_kopere_proctoring_log" COMMENT="All attempt logs are recorded in this table">
@@ -39,6 +45,13 @@
                 <KEY NAME="fk_quizattempts" TYPE="foreign" FIELDS="attemptid" REFTABLE="quiz_attempts" REFFIELDS="id"/>
                 <KEY NAME="fk_user" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
             </KEYS>
+            <INDEXES>
+                <INDEX NAME="attemptid_ix" UNIQUE="false" FIELDS="attemptid"/>
+                <INDEX NAME="userid_ix" UNIQUE="false" FIELDS="userid"/>
+                <INDEX NAME="time_ix" UNIQUE="false" FIELDS="time"/>
+                <INDEX NAME="attemptidtime_ix" UNIQUE="false" FIELDS="attemptid, time"/>
+                <INDEX NAME="actionvalue_ix" UNIQUE="false" FIELDS="actionvalue"/>
+            </INDEXES>
         </TABLE>
 
     </TABLES>
