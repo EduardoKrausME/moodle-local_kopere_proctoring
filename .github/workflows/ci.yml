@@ -79,6 +79,15 @@ jobs:
       if: ${{ !cancelled() }}
       run: moodle-plugin-ci phpcs --max-warnings 0 --exclude="Universal.WhiteSpace.CommaSpacing,PSR12.Classes.ClassInstantiation,PSR12.Classes.OpeningBraceSpace,Universal.Lists.DisallowLongListSyntax,PSR2.Methods.FunctionCallSignature,PSR12.ControlStructures.ControlStructureSpacing,Squiz.WhiteSpace.ControlStructureSpacing,PSR2.ControlStructures.SwitchDeclaration,Squiz.Functions.MultiLineFunctionDeclaration,PSR2.Classes.ClassDeclaration"
 
+    - name: Check privacy provider exists
+      id: privacy
+      run: |
+        if [ -f "plugin/classes/privacy/provider.php" ]; then
+          echo "has_privacy_provider=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "has_privacy_provider=false" >> "$GITHUB_OUTPUT"
+        fi
+
     - name: Validating
       if: ${{ !cancelled() }}
       run: moodle-plugin-ci validate
@@ -112,3 +121,4 @@ jobs:
     - name: Mark cancelled jobs as failed.
       if: ${{ cancelled() }}
       run: exit 1
+
