@@ -30,7 +30,6 @@ use core_privacy\local\metadata\collection;
 use core_privacy\local\request\approved_contextlist;
 use core_privacy\local\request\contextlist;
 use core_privacy\local\request\helper;
-use core_privacy\local\request\plugin\provider as plugin_provider;
 use core_privacy\local\request\writer;
 use Exception;
 
@@ -39,7 +38,7 @@ use Exception;
  */
 class provider implements
     \core_privacy\local\metadata\provider,
-    plugin_provider {
+    \core_privacy\local\request\plugin\provider {
 
     /**
      * Return the metadata about this plugin's stored user data.
