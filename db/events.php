@@ -29,8 +29,4 @@ $observers = [
         "eventname" => '\mod_quiz\event\attempt_started',
         "callback"  => '\local_kopere_proctoring\events\attempt_started::process',
     ],
-    [
-        "eventname" => '\mod_quiz\event\attempt_viewed',
-        "callback"  => '\local_kopere_proctoring\events\attempt_viewed::process',
-    ],
 ];
