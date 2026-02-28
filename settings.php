@@ -22,155 +22,16 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use local_kopere_proctoring\policy\manager;
+
 defined('MOODLE_INTERNAL') || die;
 
-$settings = new admin_settingpage("kopere_proctoring", get_string("pluginname", "local_kopere_proctoring"));
-$ADMIN->add("localplugins", $settings);
+require_once($CFG->dirroot . '/local/kopere_proctoring/classes/policy/manager.php');
 
-if ($hassiteconfig) {
-    if (!$ADMIN->locate("integracaoroot")) {
-        $ADMIN->add("root", new admin_category("integracaoroot", get_string("integracaoroot", "local_kopere_proctoring")));
-    }
-
-    $ADMIN->add("integracaoroot",
-        new admin_externalpage(
-            "local_kopere_proctoring",
-            get_string("modulename", "local_kopere_proctoring"),
-            "{$CFG->wwwroot}/local/kopere_proctoring/view.php?classname=dashboard&method=start"
-        )
-    );
-}
+$settings = new admin_settingpage('local_kopere_proctoring', get_string('pluginname', 'local_kopere_proctoring'));
+$ADMIN->add('localplugins', $settings);
 
 if ($ADMIN->fulltree) {
-
-    if (method_exists($settings, "add")) {
-
-        // Honesty contract.
-        $setting = new admin_setting_heading("local_kopere_proctoring/contract_title",
-            get_string("settings_contract_heading", "local_kopere_proctoring"), "",
-        );
-        $settings->add($setting);
-
-        $setting = new admin_setting_configcheckbox(
-            "local_kopere_proctoring/contract",
-            get_string("settings_contract", "local_kopere_proctoring"),
-            get_string("settings_contract_desc", "local_kopere_proctoring"),
-            1
-        );
-        $settings->add($setting);
-
-        $setting = new admin_setting_confightmleditor(
-            "local_kopere_proctoring/contract_message",
-            get_string("settings_contract_message", "local_kopere_proctoring"),
-            get_string("settings_contract_message_desc", "local_kopere_proctoring"),
-            get_string("settings_contract_message_default", "local_kopere_proctoring", fullname($USER))
-        );
-        $settings->add($setting);
-
-        // Fullscreen requirements.
-        $setting = new admin_setting_heading("local_kopere_proctoring/fullscreen_title",
-            get_string("settings_fullscreen_heading", "local_kopere_proctoring"), "",
-        );
-        $settings->add($setting);
-
-        $setting = new admin_setting_configcheckbox(
-            "local_kopere_proctoring/fullscreen",
-            get_string("settings_fullscreen", "local_kopere_proctoring"),
-            get_string("settings_fullscreen_desc", "local_kopere_proctoring"),
-            1
-        );
-        $settings->add($setting);
-
-        $setting = new admin_setting_configtext(
-            "local_kopere_proctoring/fullscreen_limit",
-            get_string("settings_fullscreen_limit", "local_kopere_proctoring"),
-            get_string("settings_fullscreen_limit_desc", "local_kopere_proctoring"),
-            2,
-            PARAM_INT
-        );
-        $settings->add($setting);
-
-        $setting = new admin_setting_confightmleditor(
-            "local_kopere_proctoring/fullscreen_message",
-            get_string("settings_fullscreen_message", "local_kopere_proctoring"),
-            get_string("settings_fullscreen_message_desc", "local_kopere_proctoring"),
-            get_string("settings_fullscreen_message_default", "local_kopere_proctoring")
-        );
-        $settings->add($setting);
-
-        // Copy & paste restrictions.
-        $setting = new admin_setting_heading("local_kopere_proctoring/copypaste_title",
-            get_string("settings_copypaste_heading", "local_kopere_proctoring"), "",
-        );
-        $settings->add($setting);
-
-        $setting = new admin_setting_configcheckbox(
-            "local_kopere_proctoring/copypaste",
-            get_string("settings_copypaste", "local_kopere_proctoring"),
-            get_string("settings_copypaste_desc", "local_kopere_proctoring"),
-            1
-        );
-        $settings->add($setting);
-
-        $setting = new admin_setting_configtext(
-            "local_kopere_proctoring/copypaste_limit",
-            get_string("settings_copypaste_limit", "local_kopere_proctoring"),
-            get_string("settings_copypaste_limit_desc", "local_kopere_proctoring"),
-            2,
-            PARAM_INT
-        );
-        $settings->add($setting);
-
-        $setting = new admin_setting_confightmleditor(
-            "local_kopere_proctoring/copypaste_message",
-            get_string("settings_copypaste_message", "local_kopere_proctoring"),
-            get_string("settings_copypaste_message_desc", "local_kopere_proctoring"),
-            get_string("settings_copypaste_message_default", "local_kopere_proctoring")
-        );
-        $settings->add($setting);
-
-        // Webcam.
-        $setting = new admin_setting_heading("local_kopere_proctoring/webcam_title",
-            get_string("settings_webcam_heading", "local_kopere_proctoring"), "",
-        );
-        $settings->add($setting);
-
-        $setting = new admin_setting_configcheckbox(
-            "local_kopere_proctoring/webcam",
-            get_string("settings_webcam", "local_kopere_proctoring"),
-            get_string("settings_webcam_desc", "local_kopere_proctoring"),
-            1
-        );
-        $settings->add($setting);
-
-        $setting = new admin_setting_confightmleditor(
-            "local_kopere_proctoring/webcam_message",
-            get_string("settings_webcam_message", "local_kopere_proctoring"),
-            get_string("settings_webcam_message_desc", "local_kopere_proctoring"),
-            get_string("settings_webcam_message_default", "local_kopere_proctoring")
-        );
-        $settings->add($setting);
-
-        // E-mail.
-        $setting = new admin_setting_heading("local_kopere_proctoring/mail_title",
-            get_string("settings_mail_heading", "local_kopere_proctoring"), "",
-        );
-        $settings->add($setting);
-
-        $setting = new admin_setting_configcheckbox(
-            "local_kopere_proctoring/mail",
-            get_string("settings_mail", "local_kopere_proctoring"),
-            get_string("settings_mail_desc", "local_kopere_proctoring"),
-            1
-        );
-        $settings->add($setting);
-
-        $setting = new admin_setting_configcheckbox(
-            "local_kopere_proctoring/mail_moment",
-            get_string("settings_mail_moment", "local_kopere_proctoring"),
-            get_string("settings_mail_moment_desc", "local_kopere_proctoring"),
-            1
-        );
-        $settings->add($setting);
-    }
+    // Container only; each policy adds its own settings here.
+    manager::add_admin_settings($settings);
 }

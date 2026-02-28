@@ -1,6 +1,6 @@
 @charset "UTF-8";
 #start-area {
-  background: #fff;
+  background: #ffffff;
 }
 #start-area .icon {
   width: 100%;
@@ -130,4 +130,27 @@
 
 body.path-mod-quiz fieldset#id_seb {
   display: none;
+}
+
+.proctoring-block {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 6px;
+  padding: 1.25rem 1.25rem 1.5rem;
+  margin: 1.5rem 0;
+  background-color: #848687 0d;
+}
+.proctoring-block legend {
+  width: auto;
+  padding: 0 0.75rem;
+  float: unset;
+}
+.proctoring-block .form-group,
+.proctoring-block .fitem {
+  margin-bottom: 1rem;
+}
+.proctoring-block .fitem_fcheckbox {
+  margin-bottom: 0.75rem;
+}
+.proctoring-block .helptooltip {
+  margin-left: 0.25rem;
 }

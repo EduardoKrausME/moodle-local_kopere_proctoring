@@ -15,22 +15,30 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * phpcs:disable moodle.Files.LangFilesOrdering.IncorrectOrder
+ * signal_service.php
  *
- * En lang file
- *
- * @package   local_kopere_proctoring
- * @copyright 2025 Eduardo Kraus {@link https://eduardokraus.com}
+ * @package   proctoringpolicy_securitysignals
+ * @copyright 2026 Eduardo Kraus {@link https://eduardokraus.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string["enabled"] = "Enable Proctoring";
-$string['modulename'] = 'Kopere Proctoring';
-$string['pluginname'] = 'Kopere Proctoring';
-$string["start_title"] = "Exam access";
-$string["start_button"] = "Start exam";
-$string["locked_title"] = "Exam locked";
-$string["locked_default_message"] = "The exam is temporarily locked due to proctoring rules.";
-$string["return_button"] = "I understand, return to Exam";
-$string['managekopere_proctoringplugins'] = 'Manage Proctoring plugins';
-$string['subplugintype_proctoringpolicy_plural'] = 'Proctoring policies';
+namespace proctoringpolicy_securitysignals;
+
+/**
+ * Class signal_service
+ */
+class signal_service {
+
+    /**
+     * Normalize config for JS.
+     *
+     * @param array $cfg
+     * @return array
+     */
+    public static function normalize_js_config(array $cfg): array {
+        return [
+            "pulsems" => ($cfg["pulsems"] ?? 8000),
+            "devtoolsthreshold" => ($cfg["devtoolsthreshold"] ?? 160),
+        ];
+    }
+}

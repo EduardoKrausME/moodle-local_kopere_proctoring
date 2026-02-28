@@ -15,22 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * phpcs:disable moodle.Files.LangFilesOrdering.IncorrectOrder
- *
- * En lang file
+ * hooks.php
  *
  * @package   local_kopere_proctoring
- * @copyright 2025 Eduardo Kraus {@link https://eduardokraus.com}
+ * @copyright 2026 Eduardo Kraus {@link https://eduardokraus.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string["enabled"] = "Enable Proctoring";
-$string['modulename'] = 'Kopere Proctoring';
-$string['pluginname'] = 'Kopere Proctoring';
-$string["start_title"] = "Exam access";
-$string["start_button"] = "Start exam";
-$string["locked_title"] = "Exam locked";
-$string["locked_default_message"] = "The exam is temporarily locked due to proctoring rules.";
-$string["return_button"] = "I understand, return to Exam";
-$string['managekopere_proctoringplugins'] = 'Manage Proctoring plugins';
-$string['subplugintype_proctoringpolicy_plural'] = 'Proctoring policies';
+use core\hook\output\before_footer_html_generation;
+
+defined('MOODLE_INTERNAL') || die;
+
+$callbacks = [
+    [
+        'hook' => before_footer_html_generation::class,
+        'callback' => '\\local_kopere_proctoring\\core_hook_output::before_footer_html_generation',
+    ],
+];
