@@ -30,35 +30,40 @@ use Exception;
 /**
  * Attempt started
  */
-class attempt_started {
+class attempt {
+
     /**
-     * process
+     * attempt_started
      *
      * @param base $event
      * @throws Exception
      */
-    public static function process(base $event): void {
+    public static function started(base $event): void {
         global $USER, $DB;
 
         $cm = get_coursemodule_from_id(null, $event->get_data()["contextinstanceid"]);
-        $name = "local_kopere_proctoring_enable_{$cm->id}";
+        $name = "kopere_proctoring_enabled_{$cm->id}";
         $enable = get_config("local_kopere_proctoring", $name);
 
         if ($enable) {
             $attemptid = $event->get_data()["objectid"];
 
-            $attempt = [
-                "attemptid" => $attemptid,
-                "userid" => $USER->id,
-                "contract" => 0,
-                "contract_ip" => "",
-                "contract_useragent" => "",
-                "contract_screenresolution" => "",
-                "contract_geo" => "",
-                "contract_time" => "",
-                "time" => time(),
-            ];
-            $DB->insert_record("local_kopere_proctoring_att", $attempt);
+            $DB->get_record("local_kopere_proctoring_att", ["attemptid" => $attemptid, "userid" => $USER->id]);
+
+            if ($event->eventname == '\mod_quiz\event\attempt_started') {
+                $attempt = [
+                    "attemptid" => $attemptid,
+                    "userid" => $USER->id,
+                    "contract" => 0,
+                    "contract_ip" => "",
+                    "contract_useragent" => "",
+                    "contract_screenresolution" => "",
+                    "contract_geo" => "",
+                    "contract_time" => "",
+                    "time" => time(),
+                ];
+                $DB->insert_record("local_kopere_proctoring_att", $attempt);
+            }
 
             $logs = [
                 "attemptid" => $attemptid,
@@ -66,10 +71,14 @@ class attempt_started {
                 "ip" => getremoteaddr(),
                 "useragent" => $_SERVER['HTTP_USER_AGENT'],
                 "screenresolution" => "",
-                "actionvalue" => "attempt_started",
+                "actionvalue" => $event->eventname,
                 "time" => time(),
             ];
             $DB->insert_record("local_kopere_proctoring_log", $logs);
         }
+    }
+
+    public static function module_viewed(base $event): void {
+
     }
 }

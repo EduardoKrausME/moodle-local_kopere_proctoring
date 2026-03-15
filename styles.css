@@ -1,19 +1,19 @@
 @charset "UTF-8";
-#start-area {
-  background: #fff;
+#kopere-proctoring {
+  background: #ffffff;
 }
-#start-area .icon {
+#kopere-proctoring .icon {
   width: 100%;
   height: auto;
   max-width: initial;
   max-height: initial;
 }
-#start-area #message-area {
+#kopere-proctoring #message-area {
   overflow: auto;
   max-height: 100vh;
 }
-#start-area #proctoring-contract,
-#start-area #proctoring-webcam {
+#kopere-proctoring #proctoring-contract,
+#kopere-proctoring #proctoring-webcam {
   padding: 7px;
   background: rgba(0, 0, 0, 0.17);
   border-radius: 6px;
@@ -68,10 +68,10 @@
 .contract-tosign .contract-wrapper .check input[type=checkbox] {
   position: absolute;
   z-index: 1;
-  width: calc(.8 * var(--size));
-  height: calc(.8 * var(--size));
-  top: calc(.1 * var(--size));
-  left: calc(.1 * var(--size));
+  width: calc(0.8 * var(--size));
+  height: calc(0.8 * var(--size));
+  top: calc(0.1 * var(--size));
+  left: calc(0.1 * var(--size));
   background: linear-gradient(45deg, #dedede, #ffffff);
   box-shadow: 0 6px 7px rgba(0, 0, 0, 0.3);
   outline: none;
@@ -88,39 +88,39 @@
   content: "· ·";
   position: absolute;
   overflow: hidden;
-  left: calc(.15 * var(--size));
-  top: calc(.5 * var(--size));
+  left: calc(0.15 * var(--size));
+  top: calc(0.5 * var(--size));
   height: var(--size);
   letter-spacing: calc(-0.04 * var(--size));
   color: #9b9b9b;
   font-family: "Times New Roman", serif;
   z-index: 2;
-  font-size: calc(.6 * var(--size));
+  font-size: calc(0.6 * var(--size));
   border-radius: 0;
   transform-origin: 0 0 calc(-0.5 * var(--size));
   backface-visibility: hidden;
 }
 .contract-tosign .contract-wrapper .check label::after {
   content: "●";
-  top: calc(.65 * var(--size));
-  left: calc(.2 * var(--size));
-  height: calc(.1 * var(--size));
-  width: calc(.35 * var(--size));
-  font-size: calc(.2 * var(--size));
+  top: calc(0.65 * var(--size));
+  left: calc(0.2 * var(--size));
+  height: calc(0.1 * var(--size));
+  width: calc(0.35 * var(--size));
+  font-size: calc(0.2 * var(--size));
   transform-origin: 0 0 calc(-0.4 * var(--size));
 }
 .contract-tosign .contract-wrapper .check input[type=checkbox]:checked + label::before,
 .contract-tosign .contract-wrapper .check input[type=checkbox]:checked + label::after {
   left: calc(1.55 * var(--size));
-  top: calc(.4 * var(--size));
-  line-height: calc(.1 * var(--size));
+  top: calc(0.4 * var(--size));
+  line-height: calc(0.1 * var(--size));
   transform: rotateY(360deg);
 }
 .contract-tosign .contract-wrapper .check input[type=checkbox]:checked + label::after {
-  height: calc(.16 * var(--size));
-  top: calc(.55 * var(--size));
+  height: calc(0.16 * var(--size));
+  top: calc(0.55 * var(--size));
   left: calc(1.6 * var(--size));
-  font-size: calc(.6 * var(--size));
+  font-size: calc(0.6 * var(--size));
   line-height: 0;
 }
 
@@ -131,3 +131,38 @@
 body.path-mod-quiz fieldset#id_seb {
   display: none;
 }
+
+fieldset.proctoring-block {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 6px;
+  padding: 1.25rem 1.25rem 1.5rem;
+  margin: 1.5rem 0;
+  background-color: rgba(132, 134, 135, 0.0509803922);
+  max-height: 5000px;
+  opacity: 1;
+  transition: all 0.35s ease;
+}
+fieldset.proctoring-block legend {
+  width: auto;
+  padding: 0 0.75rem;
+  float: unset;
+}
+fieldset.proctoring-block .form-group,
+fieldset.proctoring-block .fitem {
+  margin-bottom: 1rem;
+}
+fieldset.proctoring-block .fitem_fcheckbox {
+  margin-bottom: 0.75rem;
+}
+fieldset.proctoring-block .helptooltip {
+  margin-left: 0.25rem;
+}
+fieldset.proctoring-block:has(> [id$=_enabled][hidden]), fieldset.proctoring-block:has(> [id$=_enabled][hidden]) * {
+  max-height: 0;
+  opacity: 0;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+}
+
+/*# sourceMappingURL=styles.css.map */

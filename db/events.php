@@ -27,6 +27,14 @@ defined('MOODLE_INTERNAL') || die;
 $observers = [
     [
         "eventname" => '\mod_quiz\event\attempt_started',
-        "callback"  => '\local_kopere_proctoring\events\attempt_started::process',
+        "callback"  => '\local_kopere_proctoring\events\attempt::started',
+    ],
+    [
+        "eventname" => '\mod_quiz\event\course_module_viewed',
+        "callback"  => '\local_kopere_proctoring\events\attempt::module_viewed',
+    ],
+    [
+        "eventname" => '\mod_quiz\event\attempt_viewed',
+        "callback"  => '\local_kopere_proctoring\events\attempt::started',
     ],
 ];

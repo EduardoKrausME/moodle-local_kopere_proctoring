@@ -1,0 +1,65 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template proctoringpolicy_contract/contract
+
+    Example context (json):
+    {
+        // Aqui tem que criar o context em inglês
+    }
+}}
+
+<div id="kopere-proctoring-contract-overlay" class="kopere-proctoring-contract-overlay" style="display: none;">
+    <div class="kopere-proctoring-contract-dialog">
+        <div class="kopere-proctoring-contract-header">
+            <h3 class="kopere-proctoring-contract-title">
+                {{#str}}title, proctoringpolicy_contract{{/str}}
+            </h3>
+        </div>
+
+        <div class="kopere-proctoring-contract-body">
+            {{{contract_html}}}
+        </div>
+
+        <div class="kopere-proctoring-contract-footer">
+            <label class="kopere-proctoring-contract-accept">
+                <input type="checkbox" data-role="contract-accept">
+                <span>
+                    {{#str}}accept_label, proctoringpolicy_contract{{/str}}
+                </span>
+            </label>
+
+            <div class="kopere-proctoring-contract-actions">
+                <button type="button"
+                        class="btn btn-primary"
+                        data-role="contract-accept-button">
+                    {{#str}}accept_button, proctoringpolicy_contract{{/str}}
+                </button>
+
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-role="contract-cancel-button">
+                    {{#str}}cancel_button, proctoringpolicy_contract{{/str}}
+                </button>
+            </div>
+
+            <div class="kopere-proctoring-contract-error" data-role="contract-error" style="display: none;">
+                {{#str}}error_not_accepted, proctoringpolicy_contract{{/str}}
+            </div>
+        </div>
+    </div>
+</div>

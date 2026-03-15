@@ -26,7 +26,7 @@ declare(strict_types=1);
 define('AJAX_SCRIPT', true);
 
 require_once(__DIR__ . "/../../config.php");
-require_once($CFG->libdir . '/filelib.php');
+require_once(  "{$CFG->libdir}/filelib.php");
 
 global $USER, $DB;
 
