@@ -189,15 +189,7 @@ class provider implements policy_interface {
         }
 
         return [
-            "enable" => 1,
             "limit" => 1,
-            "message" => cm_config::get("fullscreen", "message", $cmid, ""),
-            // DOM ids used by the policy JS (kept compatible with current template).
-            "selectors" => [
-                "startbutton" => "#start-exam,#return-exam-1",
-                "messagebox" => "#proctoring-message-fullscreen_message",
-                "statusdanger" => "#status-danger",
-            ],
         ];
     }
 
@@ -223,13 +215,26 @@ class provider implements policy_interface {
     }
 
     /**
-     * Function get_attempt_templates
+     * Render HTML fragment for the start.mustache policies area.
      *
      * @param int $cmid
      * @param int $attemptid
-     * @return array|array[]
+     * @return string
+     * @throws dml_exception
      */
-    public static function get_attempt_templates(int $cmid, int $attemptid): array {
-        return [];
+    public static function render_start_html(int $cmid, int $attemptid): string {
+        global $OUTPUT;
+
+        if (!cm_config::get("fullscreen", "enabled", $cmid, 0)) {
+            return "";
+        }
+
+        $limit = cm_config::get("fullscreen", "limit", $cmid, get_config("proctoringpolicy_fullscreen", "limit_default"));
+        $message = cm_config::get("fullscreen", "message", $cmid, get_config("proctoringpolicy_fullscreen", "message_default"));
+
+        return $OUTPUT->render_from_template("proctoringpolicy_fullscreen/start", [
+            "limit" => (int) $limit,
+            "message" => $message,
+        ]);
     }
 }

@@ -70,7 +70,6 @@ define(["jquery"], function ($) {
         }
 
         var $status = $container.find("[data-kppass=\"status\"]");
-        var $btnRequest = $container.find("[data-kppass=\"request\"]");
         var $inputPassword = $container.find("[data-kppass=\"password\"]");
         var $btnSubmit = $container.find("[data-kppass=\"submit\"]");
 
@@ -122,26 +121,9 @@ define(["jquery"], function ($) {
                 }).done(function (r) {
                     handleStatusResponse(r);
                 });
-            }, 5000);
+            }, 3000);
         }
-
-        $btnRequest.on("click", function () {
-            setStatus(getString("js_status_waiting", "Waiting for teacher approval..."));
-
-            postAjax(`${M.cfg.wwwroot}/local/kopere_proctoring/policy/password/ajax.php`, {
-                action: "request",
-                cmid: cmid,
-                attemptid: attemptid,
-                browserinfo: buildBrowserInfo()
-            }).done(function (resp) {
-                if (resp && resp.error === "blocked") {
-                    setStatus(getString("js_toomany_errors", "Too many wrong attempts. Please wait 10 minutes."));
-                    return;
-                }
-                setStatus(getString("js_status_waiting", "Waiting for teacher approval..."));
-                startPolling();
-            });
-        });
+        startPolling();
 
         $btnSubmit.on("click", function () {
             var code = ($inputPassword.val() || "").replace(/\D/g, "");

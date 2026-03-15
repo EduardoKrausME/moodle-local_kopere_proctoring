@@ -149,9 +149,9 @@ class provider implements policy_interface {
         $mform->addElement("html", "</fieldset>");
 
         $formwrapper->set_data([
-            cm_config::key("fullscreen", "enabled") => cm_config::get("fullscreen", "enabled", $cmid),
-            cm_config::key("fullscreen", "limit") => cm_config::get("fullscreen", "limit", $cmid),
-            cm_config::key("fullscreen", "message") => cm_config::get("fullscreen", "message", $cmid),
+            cm_config::key("focus", "enabled") => cm_config::get("focus", "enabled", $cmid),
+            cm_config::key("focus", "limit") => cm_config::get("focus", "limit", $cmid),
+            cm_config::key("focus", "message") => cm_config::get("focus", "message", $cmid),
         ]);
     }
 
@@ -195,9 +195,7 @@ class provider implements policy_interface {
         }
 
         return [
-            "enabled" => 1,
             "limit" => cm_config::get("focus", "limit", $cmid, 3),
-            "message" => cm_config::get("focus", "message", $cmid, ""),
         ];
     }
 
@@ -223,14 +221,28 @@ class provider implements policy_interface {
     public static function handle_server_event(string $eventkey, int $cmid, int $attemptid, array $payload): void {
     }
 
+
     /**
-     * Function get_attempt_templates
+     * Render HTML fragment for the start.mustache policies area.
      *
      * @param int $cmid
      * @param int $attemptid
-     * @return array|array[]
+     * @return string
      */
-    public static function get_attempt_templates(int $cmid, int $attemptid): array {
-        return [];
+    public static function render_start_html(int $cmid, int $attemptid): string {
+        global $OUTPUT;
+
+        if (!cm_config::get("focus", "enabled", $cmid, 0)) {
+            return "";
+        }
+
+        $limit = cm_config::get("focus", "limit", $cmid, get_config("proctoringpolicy_focus", "limit_default"));
+        $message = cm_config::get("focus", "message", $cmid, get_config("proctoringpolicy_focus", "message_default"));
+
+        return $OUTPUT->render_from_template("proctoringpolicy_focus/start", [
+            "limit" => (int) $limit,
+            "message" => $message,
+        ]);
     }
+
 }

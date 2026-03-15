@@ -38,11 +38,10 @@ $string['message_cm'] = 'Block message';
 $string['message_cm_desc'] = 'Message shown when the attempt is blocked due to fullscreen.';
 $string['message_default'] = 'Default block message';
 $string['message_default_desc'] = 'Default message used when configuring new quiz activities.';
-$string['message_default_text'] = '<h2>📷 Webcam Sharing is Mandatory</h2>
-<p>To ensure security and integrity, <strong>your webcam must be shared during the entire exam</strong>.</p>
-<p>The video capture will be used exclusively for monitoring and fraud prevention, following privacy and data protection guidelines.</p>
-<p>If camera access is not granted, <strong>the exam cannot start or will be automatically terminated</strong>.</p>
-<p>Ensure you are in a proper, well-lit environment with a working webcam.</p>';
+$string['message_default_text'] = '<h2>🖥️ Fullscreen Mode is Mandatory</h2>
+<p>To ensure security and integrity, <strong>you must remain in fullscreen mode during the entire exam</strong>.</p>
+<p>If you leave fullscreen repeatedly, <strong>the exam may be blocked or automatically terminated</strong>.</p>
+<p>Please close any unnecessary applications and keep the exam window active and in fullscreen mode at all times.</p>';
 $string['message_init'] = 'This attempt requires fullscreen mode.';
 $string['pluginname'] = 'Fullscreen ';
 $string['teacher_info'] = 'Enable this when the student must stay in fullscreen for the entire exam. Set how many exits from fullscreen are tolerated before the attempt is blocked.';

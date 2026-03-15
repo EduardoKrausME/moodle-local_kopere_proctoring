@@ -272,13 +272,7 @@ class provider implements policy_interface {
      * @return array
      */
     public static function get_js_config(int $cmid, int $attemptid): array {
-        if (!cm_config::get("notifications", "enabled", $cmid, 0)) {
-            return [];
-        }
-        return [
-            "enabled" => 1,
-            "limit" => 1,
-        ];
+        return [];
     }
 
     /**
@@ -307,13 +301,13 @@ class provider implements policy_interface {
     }
 
     /**
-     * Function get_attempt_templates
+     * Render HTML fragment for the start.mustache policies area.
      *
      * @param int $cmid
      * @param int $attemptid
-     * @return array|array[]
+     * @return string
      */
-    public static function get_attempt_templates(int $cmid, int $attemptid): array {
-        return [];
+    public static function render_start_html(int $cmid, int $attemptid): string {
+        return "";
     }
 }

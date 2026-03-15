@@ -161,7 +161,6 @@ class provider implements policy_interface {
         $pulsemsdefault = get_config("proctoringpolicy_securitysignals", "pulsems_default");
 
         return [
-            "enable" => 1,
             "limit" => 1,
             "pulsems" => cm_config::get("securitysignals", "pulsems", $cmid, $pulsemsdefault),
         ];
@@ -189,13 +188,13 @@ class provider implements policy_interface {
     }
 
     /**
-     * Function get_attempt_templates
+     * Render HTML fragment for the start.mustache policies area.
      *
      * @param int $cmid
      * @param int $attemptid
-     * @return array|array[]
+     * @return string
      */
-    public static function get_attempt_templates(int $cmid, int $attemptid): array {
-        return [];
+    public static function render_start_html(int $cmid, int $attemptid): string {
+        return "";
     }
 }

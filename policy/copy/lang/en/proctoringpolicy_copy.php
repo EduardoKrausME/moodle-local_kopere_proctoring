@@ -42,5 +42,3 @@ $string['message_default_text'] = '<h2>🚫 Warning! Copy/paste attempt detected
 <p>Please keep your commitment to academic honesty.</p>';
 $string['pluginname'] = 'Copy ';
 $string['teacher_info'] = 'Enable this to discourage copy and paste from the exam page. Define how many blocked attempts should still show the warning and customize the message presented to the student.';
-$string['warning_body'] = 'Copy, cut, paste and context menu are disabled during this exam.';
-$string['warning_title'] = 'Copy/paste blocked';

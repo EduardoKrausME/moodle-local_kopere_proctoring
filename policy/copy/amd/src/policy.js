@@ -30,7 +30,7 @@ define(["jquery"], function ($) {
      * @param {Object} cfg Policy config {limit, message}.
      */
     function initCopyPolicy(context, cfg) {
-        var message = cfg && cfg.message ? cfg.message : "";
+        let message = $("#proctoringpolicy_copy-message").html();
         var limit = cfg && cfg.limit ? parseInt(cfg.limit, 10) : 0;
         if (isNaN(limit)) {
             limit = 0;

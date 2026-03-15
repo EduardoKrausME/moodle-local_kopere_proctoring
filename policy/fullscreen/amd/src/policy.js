@@ -53,21 +53,15 @@ define(["jquery"], function ($) {
     }
 
     function showMessage(cfg) {
-        if (cfg && cfg.selectors && cfg.selectors.messagebox) {
-            $(cfg.selectors.messagebox).show();
-        }
+        $("#proctoringpolicy_fullscreen-message").show();
     }
 
     function hideMessage(cfg) {
-        if (cfg && cfg.selectors && cfg.selectors.messagebox) {
-            $(cfg.selectors.messagebox).hide();
-        }
+        $("#proctoringpolicy_fullscreen-message").hide();
     }
 
     function warnStatus(cfg, text) {
-        if (cfg && cfg.selectors && cfg.selectors.statusdanger) {
-            $(cfg.selectors.statusdanger).show().html(text);
-        }
+        $("#status-danger").show().html(text);
     }
 
     function emitLog(ctx, action, value) {
@@ -102,8 +96,7 @@ define(["jquery"], function ($) {
     }
 
     function gateStart(ctx, cfg, state) {
-        var selectors = (cfg && cfg.selectors) ? cfg.selectors : {};
-        var startsel = selectors.startbutton || "#start-exam,#return-exam-1";
+        var startsel = "#start-exam,#return-exam-1";
 
         $(document).on("click", startsel, function (e) {
             // If already fullscreen, just allow the core flow (do not block).

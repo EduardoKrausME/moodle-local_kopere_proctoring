@@ -59,7 +59,8 @@ define(["jquery"], function ($) {
             }
 
             if (count > limit && typeof ctx.lock === "function") {
-                ctx.lock("focus", cfg.message || "");
+                let message = $("#proctoringpolicy_focus-message").html();
+                ctx.lock("focus", message || "");
             }
         }
 

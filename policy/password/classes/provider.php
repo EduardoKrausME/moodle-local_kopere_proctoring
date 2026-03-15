@@ -162,7 +162,6 @@ class provider implements policy_interface {
         global $PAGE;
         $PAGE->requires->strings_for_js([
             "student_title",
-            "student_request_button",
             "student_waiting",
             "student_enter_password",
             "student_password_label",
@@ -178,7 +177,6 @@ class provider implements policy_interface {
         ], "proctoringpolicy_password");
 
         return [
-            "enable" => 1,
             "limit" => 1,
             "maxerrors" => get_config("proctoringpolicy_password", "maxerrors"),
         ];
@@ -206,13 +204,35 @@ class provider implements policy_interface {
     }
 
     /**
-     * get_attempt_templates
+     * Render HTML fragment for the start.mustache policies area.
      *
      * @param int $cmid
      * @param int $attemptid
-     * @return array|array[]
+     * @return string
+     * @throws dml_exception
      */
-    public static function get_attempt_templates(int $cmid, int $attemptid): array {
-        return [];
+    public static function render_start_html(int $cmid, int $attemptid): string {
+        global $OUTPUT, $USER;
+
+        if (!cm_config::get("password", "enabled", $cmid, 0)) {
+            return false;
+        }
+
+        $cm = get_coursemodule_from_id("quiz", $cmid, 0, false, MUST_EXIST);
+
+        $browserinfo = optional_param("browserinfo", "", PARAM_RAW_TRIMMED);
+        $useragent = $_SERVER["HTTP_USER_AGENT"] ?? "";
+
+        password_service::create_or_get_request(
+            $cm->course,
+            $cmid,
+            $attemptid,
+            $USER->id,
+            getremoteaddr(),
+            $useragent,
+            $browserinfo
+        );
+
+        return $OUTPUT->render_from_template("proctoringpolicy_password/password_student", []);
     }
 }

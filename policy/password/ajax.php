@@ -52,7 +52,6 @@ if (password_service::is_blocked(
 
 if ($action === "request") {
     $browserinfo = optional_param("browserinfo", "", PARAM_RAW_TRIMMED);
-    $ip = getremoteaddr();
     $useragent = $_SERVER["HTTP_USER_AGENT"] ?? "";
 
     $req = password_service::create_or_get_request(
@@ -60,7 +59,7 @@ if ($action === "request") {
         $cmid,
         $attemptid,
         $USER->id,
-        $ip,
+        getremoteaddr(),
         $useragent,
         $browserinfo
     );

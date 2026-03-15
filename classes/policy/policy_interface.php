@@ -95,13 +95,14 @@ interface policy_interface {
     public static function handle_server_event(string $eventkey, int $cmid, int $attemptid, array $payload): void;
 
     /**
-     * Return list of Mustache templates to be rendered on attempt page.
+     * Render HTML fragment for the start.mustache policies area.
      *
-     * Each item: ["template" => "component/template_name", "context" => array].
+     * The returned HTML will be injected into the
+     * local_kopere_proctoring/start template inside the policies block.
      *
      * @param int $cmid
      * @param int $attemptid
-     * @return array[]
+     * @return string
      */
-    public static function get_attempt_templates(int $cmid, int $attemptid): array;
+    public static function render_start_html(int $cmid, int $attemptid): string;
 }

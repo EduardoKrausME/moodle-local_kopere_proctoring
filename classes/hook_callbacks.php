@@ -56,7 +56,7 @@ class hook_callbacks {
         }
 
         // Only quiz module pages.
-        if (!empty($PAGE->cm) || ($PAGE->cm->modname ?? '') !== 'quiz') {
+        if (($PAGE->cm->modname ?? '') != 'quiz') {
             return;
         }
 
@@ -98,47 +98,25 @@ class hook_callbacks {
             return;
         }
 
-        $mustachedata = [];
+        $mustachedata = [
+            "description" => "",
+            "policies" => manager::get_start_policy_html($cmid, $attemptid),
+        ];
 
-        $contractenable = get_config('local_kopere_proctoring', "local_kopere_proctoring_contract_{$cmid}");
-        $mustachedata['contract'] = $contractenable;
-        $mustachedata['contract_signed'] = !empty($attempt->contract);
-
-        if ($contractenable) {
-            $msg = get_config('local_kopere_proctoring', "local_kopere_proctoring_contract_message_{$cmid}");
-            $fullname = fullname($USER);
-            $msg = str_replace(
-                [
-                    '{name}',
-                    '{$a}',
-                ], $fullname, $msg
-            );
-            $mustachedata['contract_message'] = $msg;
-        }
-
-        $mustachedata['fullscreen'] = get_config('local_kopere_proctoring', "local_kopere_proctoring_fullscreen_{$cmid}");
-        $mustachedata['fullscreen_limit'] =
-            get_config('local_kopere_proctoring', "local_kopere_proctoring_fullscreen_limit_{$cmid}");
-        $mustachedata['fullscreen_message'] =
-            get_config('local_kopere_proctoring', "local_kopere_proctoring_fullscreen_message_{$cmid}");
-
-        $mustachedata['copypaste'] = get_config('local_kopere_proctoring', "local_kopere_proctoring_copypaste_{$cmid}");
-        $mustachedata['copypaste_limit'] = get_config('local_kopere_proctoring', "local_kopere_proctoring_copypaste_limit_{$cmid}");
-        $mustachedata['copypaste_message'] =
-            get_config('local_kopere_proctoring', "local_kopere_proctoring_copypaste_message_{$cmid}");
-
-        $mustachedata['webcam'] = get_config('local_kopere_proctoring', "local_kopere_proctoring_webcam_{$cmid}");
-        $mustachedata['webcam_info'] = get_config('local_kopere_proctoring', "local_kopere_proctoring_webcam_message_{$cmid}");
+        //echo '<pre>';
+        //print_r($mustachedata);
+        //echo '</pre>';die;
 
         // Require assets in the normal render flow.
         $payload = manager::get_js_payload($cmid, $attemptid);
-        echo '<pre>';
-        print_r($payload);
-        echo '</pre>';
+        //echo '<pre>';
+        //print_r($payload);
+        //echo '</pre>';die;
         $PAGE->requires->js_call_amd('local_kopere_proctoring/start', 'init', $payload);
 
         // Inject HTML via hook.
-        echo $OUTPUT->render_from_template('local_kopere_proctoring/start', $mustachedata);
+        // echo $OUTPUT->render_from_template('local_kopere_proctoring/start', $mustachedata);
+        $hook->add_html($OUTPUT->render_from_template('local_kopere_proctoring/start', $mustachedata));
 
         $rendered = true;
     }

@@ -41,4 +41,5 @@ $string['message_default_text'] = '<h2>Exam locked due to loss of focus</h2>
 <p>The exam window was left or hidden more times than allowed by the focus policy.</p>
 <p>If you believe this was a technical issue, please contact your instructor or the support team.</p>';
 $string['pluginname'] = 'Focus ';
+$string['start_limit_label'] = 'Allowed focus changes:';
 $string['teacher_info'] = 'Enable this when the student must remain on the exam tab or window. Use the limit to define how many focus losses are tolerated before the attempt is blocked.';

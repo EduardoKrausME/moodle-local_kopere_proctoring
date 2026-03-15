@@ -178,7 +178,7 @@ class provider implements policy_interface {
         }
 
         return [
-            "enabled" => 1,
+            "limit" => 1,
         ];
     }
 
@@ -192,27 +192,36 @@ class provider implements policy_interface {
     }
 
     /**
-     * Mustache templates to be rendered on attempt page.
+     * Render HTML fragment for the start.mustache policies area.
      *
      * @param int $cmid
      * @param int $attemptid
-     * @return array[]
+     * @return string
      * @throws dml_exception
      */
-    public static function get_attempt_templates(int $cmid, int $attemptid): array {
+    public static function render_start_html(int $cmid, int $attemptid): string {
+        global $OUTPUT, $USER, $CFG;
+
         $cfg = self::get_effective_cm_config($cmid);
         if (empty($cfg["enabled"])) {
-            return [];
+            return "";
         }
 
-        $context = contract_renderer::build_context($cfg["message"]);
-
-        return [
+        $message = str_replace(
             [
-                "template" => "proctoringpolicy_contract/contract",
-                "context" => $context,
+                "{name}",
+                "{\$a}",
             ],
+            fullname($USER),
+            $cfg["message"]
+        );
+
+        $context = [
+            "wwwroot"=>$CFG->wwwroot,
+            "contract_html" => $message,
         ];
+
+        return $OUTPUT->render_from_template("proctoringpolicy_contract/contract", $context);
     }
 
     /**

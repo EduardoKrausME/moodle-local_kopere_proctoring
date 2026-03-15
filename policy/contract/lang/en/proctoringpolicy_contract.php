@@ -24,7 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$string['accept_button'] = 'Start exam';
 $string['accept_label'] = 'I have read and agree with the above terms';
 $string['cancel_button'] = 'Cancel';
 $string['enabled'] = 'Enable contract ';
@@ -49,4 +48,3 @@ $string['message_default_text'] = '<h2>Academic Honesty Commitment</h2>
 </ol>';
 $string['pluginname'] = 'Contract ';
 $string['teacher_info'] = 'Use this policy when the student must read and accept rules, an honor code, a privacy notice, or institution terms before the first question is shown. You can customize the contract text for this exam.';
-$string['title'] = 'Exam acknowledgement';

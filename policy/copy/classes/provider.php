@@ -179,12 +179,9 @@ class provider implements policy_interface {
         }
 
         $limit = cm_config::get("copy", "limit", $cmid, get_config("proctoringpolicy_copy", "limit_default"));
-        $message = cm_config::get("copy", "message", $cmid, get_config("proctoringpolicy_copy", "message_default"));
 
         return [
-            "enabled" => 1,
             "limit" => $limit,
-            "message" => $message,
         ];
     }
 
@@ -212,15 +209,26 @@ class provider implements policy_interface {
     }
 
     /**
-     * Return list of Mustache templates to be rendered on attempt page.
-     *
-     * Each item: ["template" => "component/template_name", "context" => array].
+     * Render HTML fragment for the start.mustache policies area.
      *
      * @param int $cmid
      * @param int $attemptid
-     * @return array[]
+     * @return string
+     * @throws dml_exception
      */
-    public static function get_attempt_templates(int $cmid, int $attemptid): array {
-        return [];
+    public static function render_start_html(int $cmid, int $attemptid): string {
+        global $OUTPUT;
+
+        if (!cm_config::get("copy", "enabled", $cmid, 0)) {
+            return "";
+        }
+
+        $limit = cm_config::get("copy", "limit", $cmid, get_config("proctoringpolicy_copy", "limit_default"));
+        $message = cm_config::get("copy", "message", $cmid, get_config("proctoringpolicy_copy", "message_default"));
+
+        return $OUTPUT->render_from_template("proctoringpolicy_copy/start", [
+            "limit" => $limit,
+            "message" => $message,
+        ]);
     }
 }

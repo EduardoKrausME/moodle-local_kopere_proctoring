@@ -29,9 +29,6 @@
      class="kopere-proctoring"
      data-kopere-proctoring="container">
 
-    <!-- ============================= -->
-    <!-- START / WAITING STATE         -->
-    <!-- ============================= -->
     <div class="kopere-proctoring-start"
          data-kopere-proctoring="start">
 
@@ -43,21 +40,18 @@
             {{{description}}}
         </div>
 
-        <!-- Dynamic messages injected by policies -->
         <div class="kopere-proctoring-messages mb-3"
              data-kopere-proctoring="messages"
              aria-live="polite">
         </div>
 
-        <!-- Policy injected UI (password, contract, etc.) -->
         <div class="kopere-proctoring-policies mb-4"
              data-kopere-proctoring="policies">
             {{#policies}}
-                {{{.}}}
+                {{{text}}}
             {{/policies}}
         </div>
 
-        <!-- Start / Resume buttons -->
         <div class="kopere-proctoring-actions">
             <button type="button"
                     id="kopere-proctoring-start-button"
@@ -69,9 +63,6 @@
         </div>
     </div>
 
-    <!-- ============================= -->
-    <!-- LOCKED STATE                  -->
-    <!-- ============================= -->
     <div class="kopere-proctoring-locked"
          data-kopere-proctoring="locked"
          style="display:none;">
@@ -94,15 +85,9 @@
         </div>
     </div>
 
-    <!-- ============================= -->
-    <!-- RUNNING STATE (EXAM STARTED)  -->
-    <!-- ============================= -->
     <div class="kopere-proctoring-running"
          data-kopere-proctoring="running"
          style="display:none;">
-
-        <!-- Empty by design -->
-        <!-- Policies may hook here if needed -->
     </div>
 
 </div>

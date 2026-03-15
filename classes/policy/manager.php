@@ -323,29 +323,32 @@ class manager {
     }
 
     /**
-     * get_attempt_templates
+     * Render the HTML blocks that each policy wants to inject into the
+     * local_kopere_proctoring/start mustache.
      *
      * @param int $cmid
      * @param int $attemptid
-     * @return void
+     * @return array
      * @throws moodle_exception
      * @throws dml_exception
      */
-    public static function get_attempt_templates(int $cmid, int $attemptid): void {
-        global $OUTPUT;
+    public static function get_start_policy_html(int $cmid, int $attemptid): array {
+        $items = [];
 
         /** @var policy_interface $classname */
         foreach (self::get_policy_classes(true) as $classname) {
-            $list = $classname::get_attempt_templates($cmid, $attemptid);
-            if (!empty($list) && is_array($list)) {
-                foreach ($list as $item) {
-                    if (!is_array($item) || empty($item["template"])) {
-                        continue;
-                    }
-                    echo $OUTPUT->render_from_template($item["template"], $item["context"]);
-                }
+
+            $html = trim($classname::render_start_html($cmid, $attemptid));
+            //echo "<h1>{$classname}</h1>";
+            //echo htmlentities($html);
+            if (isset($html[3])) {
+                $items[] = [
+                    "text"=>$html
+                ];
             }
         }
+
+        return $items;
     }
 
     /**
