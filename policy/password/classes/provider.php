@@ -179,6 +179,7 @@ class provider implements policy_interface {
         return [
             "limit" => 1,
             "maxerrors" => get_config("proctoringpolicy_password", "maxerrors"),
+            "requirementlabel" => get_string("requirement_label", "proctoringpolicy_password"),
         ];
     }
 

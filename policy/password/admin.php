@@ -26,80 +26,137 @@ use proctoringpolicy_password\password_service;
 
 require_once(__DIR__ . "/../../../../config.php");
 
-$courseid = required_param("courseid", PARAM_INT);
+require_login();
 
-$course = $DB->get_record("course", ["id" => $courseid], "*", MUST_EXIST);
-$context = context_course::instance($courseid);
+$systemcontext = context_system::instance();
+$action = optional_param('action', '', PARAM_ALPHA);
+$requestid = optional_param('requestid', 0, PARAM_INT);
+$ajax = optional_param('ajax', 0, PARAM_BOOL);
 
-require_login($course);
+$pageurl = new moodle_url('/local/kopere_proctoring/policy/password/admin.php');
 
-$PAGE->set_url(new moodle_url("/local/kopere_proctoring/policy/password/admin.php", ["courseid" => $courseid]));
-$PAGE->set_context($context);
-$PAGE->set_pagelayout("report");
-$PAGE->set_title(get_string("adminpage_title", "proctoringpolicy_password"));
-$PAGE->set_heading(format_string($course->fullname));
+if (!password_service::user_can_manage_any_course()) {
+    throw new required_capability_exception(
+        $systemcontext,
+        'moodle/course:manageactivities',
+        'nopermissions',
+        ''
+    );
+}
 
-$rolesallowed = get_config("proctoringpolicy_password", "rolesallowed");
-$rolesallowed = $rolesallowed ? explode(",", $rolesallowed) : [];
+if ($action === 'approve' && $requestid) {
+    require_sesskey();
 
-$canmanage = false;
-if (!empty($rolesallowed)) {
-    $userroles = get_user_roles($context, $USER->id, false);
-    foreach ($userroles as $ur) {
-        if (in_array($ur->roleid, $rolesallowed)) {
-            $canmanage = true;
-            break;
-        }
+    $request = password_service::get_request_by_id($requestid);
+    if ($request && password_service::user_can_manage_course((int)$request->courseid)) {
+        password_service::approve_auto($requestid);
     }
+
+    redirect($pageurl);
 }
 
-if (!$canmanage) {
-    require_capability("moodle/course:view", $context); // fallback
-}
+$PAGE->set_url($pageurl);
+$PAGE->set_context($systemcontext);
+$PAGE->set_pagelayout('report');
+$PAGE->set_title(get_string('adminpage_title', 'proctoringpolicy_password'));
+$PAGE->set_heading(get_string('adminpage_title', 'proctoringpolicy_password'));
 
-$action = optional_param("action", "", PARAM_ALPHA);
-$requestid = optional_param("requestid", 0, PARAM_INT);
+/**
+ * Build the template context for the admin page.
+ *
+ * @return array
+ * @throws dml_exception
+ */
+function proctoringpolicy_password_build_admin_context(): array {
+    global $DB;
 
-if ($action === "approve" && $requestid) {
-    password_service::approve_auto($requestid);
-    redirect($PAGE->url);
-}
+    $requests = password_service::get_pending_requests_for_user();
+    $rows = [];
+    $coursecache = [];
+    $modinfocache = [];
 
-echo $OUTPUT->header();
+    foreach ($requests as $request) {
+        $courseid = (int)$request->courseid;
+        if (!array_key_exists($courseid, $coursecache)) {
+            $coursecache[$courseid] = $DB->get_record('course', ['id' => $courseid], 'id,fullname,shortname', IGNORE_MISSING);
+            if ($coursecache[$courseid]) {
+                $modinfocache[$courseid] = get_fast_modinfo($coursecache[$courseid]);
+            }
+        }
 
-$requests = password_service::get_pending_requests_for_course($courseid);
+        $course = $coursecache[$courseid] ?? null;
+        if (!$course) {
+            continue;
+        }
 
-$templatecontext = [
-    "hasrequests" => !empty($requests),
-    "requests" => [],
-];
+        $user = $DB->get_record('user', ['id' => $request->userid], '*', IGNORE_MISSING);
+        if (!$user) {
+            continue;
+        }
 
-if ($requests) {
-    $modinfo = get_fast_modinfo($course);
+        $cm = $modinfocache[$courseid]->cms[$request->cmid] ?? null;
 
-    foreach ($requests as $r) {
-        $user = $DB->get_record("user", ["id" => $r->userid], "*", MUST_EXIST);
-        $cm = $modinfo->cms[$r->cmid] ?? null;
-
-        $templatecontext["requests"][] = [
-            "id" => $r->id,
-            "userfullname" => fullname($user),
-            "userid" => $user->id,
-            "attemptid" => $r->attemptid,
-            "cmname" => $cm ? format_string($cm->name, true) : "",
-            "ip" => s($r->ip),
-            "browserinfo" => s($r->browserinfo),
-            "timecreated" => userdate($r->timecreated),
-            "status" => get_string("status_" . $r->status, "proctoringpolicy_password"),
-            "password" => $r->password,
-            "approveurl" => (new moodle_url($PAGE->url, [
-                "action" => "approve",
-                "requestid" => $r->id,
+        $rows[] = [
+            'id' => $request->id,
+            'coursefullname' => format_string($course->fullname),
+            'courseshortname' => s($course->shortname),
+            'courseurl' => (new moodle_url('/course/view.php', ['id' => $course->id]))->out(false),
+            'userfullname' => fullname($user),
+            'userid' => $user->id,
+            'attemptid' => $request->attemptid,
+            'cmname' => $cm ? format_string($cm->name, true) : '',
+            'cmurl' => $cm ? $cm->url->out(false) : '',
+            'hascmurl' => !empty($cm) && !empty($cm->url),
+            'ip' => s($request->ip),
+            'browserinfo' => s($request->browserinfo),
+            'timecreated' => userdate($request->timecreated),
+            'status' => get_string('status_' . $request->status, 'proctoringpolicy_password'),
+            'password' => s($request->password),
+            'approveurl' => (new moodle_url('/local/kopere_proctoring/policy/password/admin.php', [
+                'action' => 'approve',
+                'requestid' => $request->id,
+                'sesskey' => sesskey(),
             ]))->out(false),
         ];
     }
+
+    return [
+        'hasrequests' => !empty($rows),
+        'requests' => $rows,
+        'requestscount' => count($rows),
+        'lastupdated' => userdate(time()),
+    ];
 }
 
-echo $OUTPUT->render_from_template("proctoringpolicy_password/password_admin", $templatecontext);
+$templatecontext = proctoringpolicy_password_build_admin_context();
+$tablehtml = $OUTPUT->render_from_template('proctoringpolicy_password/password_admin_table', $templatecontext);
+
+if ($ajax) {
+    header('Content-Type: application/json');
+    echo json_encode([
+        'html' => $tablehtml,
+        'count' => $templatecontext['requestscount'],
+        'lastupdated' => $templatecontext['lastupdated'],
+    ]);
+    die;
+}
+
+$PAGE->requires->strings_for_js([
+    'admin_refreshing',
+], 'proctoringpolicy_password');
+$PAGE->requires->js_call_amd('proctoringpolicy_password/admin', 'init', [
+    'url' => (new moodle_url('/local/kopere_proctoring/policy/password/admin.php', [
+        'ajax' => 1,
+        'sesskey' => sesskey(),
+    ]))->out(false),
+    'interval' => 10000,
+]);
+
+echo $OUTPUT->header();
+
+echo $OUTPUT->render_from_template('proctoringpolicy_password/password_admin', [
+    'tablehtml' => $tablehtml,
+    'lastupdated' => $templatecontext['lastupdated'],
+]);
 
 echo $OUTPUT->footer();

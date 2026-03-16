@@ -178,7 +178,9 @@ class provider implements policy_interface {
         }
 
         return [
+            "enabled" => true,
             "limit" => 1,
+            "requirementlabel" => get_string("requirement_label", "proctoringpolicy_contract"),
         ];
     }
 

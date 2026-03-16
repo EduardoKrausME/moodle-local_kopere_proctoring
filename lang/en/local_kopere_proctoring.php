@@ -27,6 +27,8 @@
 defined('MOODLE_INTERNAL') || die;
 
 $string['enabled'] = 'Enable Proctoring';
+$string['description_pending'] = 'Complete or wait for the following required items before the exam can start:';
+$string['description_ready'] = 'All required items have been approved. You can now start the exam.';
 $string['locked_default_message'] = 'The exam is temporarily locked due to proctoring rules.';
 $string['locked_title'] = 'Exam locked';
 $string['managekopere_proctoringplugins'] = 'Manage Proctoring policies plugins';

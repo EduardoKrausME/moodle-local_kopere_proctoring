@@ -21,30 +21,97 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(["jquery"], function($) {
+define(["jquery"], function ($) {
     "use strict";
 
-    function init(payload) {
-        if (!payload || !payload.policies) {
+    function getString(key, fallback) {
+        try {
+            if (window.M && window.M.util && window.M.util.get_string) {
+                return window.M.util.get_string(key, "local_kopere_proctoring");
+            }
+        } catch (e) {
+            // Ignore string loading errors and use fallback.
+        }
+
+        return fallback || "";
+    }
+
+    function escapeHtml(text) {
+        return String(text || "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/\"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function init(cmid, attemptid, policies) {
+
+        var $container = $("[data-kopere-proctoring=\"container\"]");
+        if ($container.length === 0) {
             return;
         }
 
+        var $messages = $container.find("[data-kopere-proctoring=\"messages\"]");
+        var $startButton = $container.find("[data-kopere-proctoring=\"start-button\"]");
+        var pendingModules = 0;
+
         // Gatekeepers registered by policies (ex: contract).
         var gatekeepers = [];
+        var requirements = {};
 
-        // Shared context passed to all policies.
-        var context = {
-            cmid: payload.cmid,
-            attemptid: payload.attemptid
-        };
+        function getMissingRequirements() {
+            return Object.keys(requirements).map(function (key) {
+                return requirements[key];
+            }).filter(function (item) {
+                return !item.satisfied;
+            });
+        }
+
+        function renderRequirementsDescription() {
+            if ($messages.length === 0) {
+                return;
+            }
+
+            var missing = getMissingRequirements();
+            if (missing.length === 0) {
+                $messages.html(
+                    escapeHtml(getString(
+                        "description_ready",
+                        M.util.get_string("description_ready", "local_kopere_proctoring")
+                    ))
+                );
+                return;
+            }
+
+            var items = missing.map(function (requirement) {
+                return "<li>" + escapeHtml(requirement.label || "") + "</li>";
+            }).join("");
+
+            $messages.html(
+                "<div class=\"mb-2\"><strong>" +
+                escapeHtml(getString(
+                    "description_pending",
+                    M.util.get_string("description_pending", "local_kopere_proctoring")
+                )) +
+                "</strong></div>" +
+                "<ul class=\"mb-0 pl-3\">" + items + "</ul>"
+            );
+        }
+
+        function refreshStartState() {
+            var ready = getMissingRequirements().length === 0;
+            $startButton.prop("disabled", !ready);
+            renderRequirementsDescription();
+        }
 
         /**
          * Run all registered gatekeepers in sequence.
          *
          * Each gatekeeper can:
-         *  - return true/undefined  -> continua para o próximo
-         *  - return false           -> aborta a sequência (resultado final = false)
-         *  - return jQuery.Promise  -> resolve(true/false) controlando a sequência
+         *  - return true/undefined  -> continue to the next one
+         *  - return false           -> abort the sequence (final result = false)
+         *  - return jQuery.Promise  -> resolve(true/false) controlling the sequence
          *
          * @returns {jQuery.Promise} resolves(true|false)
          */
@@ -64,20 +131,18 @@ define(["jquery"], function($) {
                 try {
                     result = fn(context);
                 } catch (e) {
-                    // On error, we fail safe: do not start the exam.
                     deferred.resolve(false);
                     return;
                 }
 
-                // Async gatekeeper using Promise-like (ex: jQuery.Promise).
                 if (result && typeof result.then === "function") {
-                    result.then(function(ok) {
+                    result.then(function (ok) {
                         if (ok === false) {
                             deferred.resolve(false);
                         } else {
                             next();
                         }
-                    }).fail(function() {
+                    }).fail(function () {
                         deferred.resolve(false);
                     });
                 } else if (result === false) {
@@ -91,30 +156,92 @@ define(["jquery"], function($) {
             return deferred.promise();
         }
 
+        // Shared context passed to all policies.
+        var context = {
+            cmid: cmid,
+            attemptid: attemptid
+        };
+
         /**
          * Shared API exposed to all policies.
-         * - registerGatekeeper(fn): policies can add pre-start checks.
-         * - runGatekeepers(): code that actually starts the exam can call this.
          */
         context.api = {
-            registerGatekeeper: function(fn) {
+            registerGatekeeper: function (fn) {
                 if (typeof fn === "function") {
                     gatekeepers.push(fn);
                 }
             },
-            runGatekeepers: runGatekeepers
+            runGatekeepers: runGatekeepers,
+            registerRequirement: function (key, requirement) {
+                if (!key) {
+                    return;
+                }
+
+                requirements[key] = $.extend({
+                    key: key,
+                    label: key,
+                    satisfied: false
+                }, requirement || {});
+
+                refreshStartState();
+            },
+            updateRequirement: function (key, updates) {
+                if (!key || !requirements[key]) {
+                    return;
+                }
+
+                requirements[key] = $.extend(requirements[key], updates || {});
+                refreshStartState();
+            },
+            refreshStartState: refreshStartState,
+            isReady: function () {
+                return getMissingRequirements().length === 0;
+            }
         };
 
-        // Load and init all policies.
-        payload.policies.forEach(function(p) {
-            if (!p.amd) {
+        $startButton.on("click", function (e) {
+            if (!context.api.isReady()) {
+                e.preventDefault();
+                e.stopPropagation();
+                refreshStartState();
                 return;
             }
 
-            requirejs([p.amd], function(mod) {
+            runGatekeepers().done(function (ok) {
+                if (ok === false) {
+                    refreshStartState();
+                }
+            });
+        });
+
+        function markModuleLoaded() {
+            pendingModules = pendingModules - 1;
+            if (pendingModules <= 0) {
+                refreshStartState();
+            }
+        }
+
+        if (!policies || policies.length === 0) {
+            refreshStartState();
+            return;
+        }
+
+        pendingModules = policies.length;
+
+        policies.forEach(function (p) {
+            if (!p.amd) {
+                markModuleLoaded();
+                return;
+            }
+
+            requirejs([p.amd], function (mod) {
                 if (mod && typeof mod.init === "function") {
                     mod.init(context, p.config || {});
                 }
+
+                markModuleLoaded();
+            }, function () {
+                markModuleLoaded();
             });
         });
     }

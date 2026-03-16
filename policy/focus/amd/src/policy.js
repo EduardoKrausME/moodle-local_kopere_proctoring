@@ -33,8 +33,6 @@ define(["jquery"], function ($) {
         if (!message.length || !$.trim(message.html())) {
             return;
         }
-
-        message.show();
     }
 
     /**
@@ -44,7 +42,7 @@ define(["jquery"], function ($) {
      * @param {Object} cfg Configuration for this policy
      */
     function init(ctx, cfg) {
-        if (!ctx || !cfg || !cfg.enabled) {
+        if (!ctx || !cfg) {
             return;
         }
 

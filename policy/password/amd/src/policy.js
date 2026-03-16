@@ -21,30 +21,19 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(["jquery"], function ($) {
+define(["jquery"], function($) {
     "use strict";
 
     function getString(key, fallback) {
-        let component = "proctoringpolicy_password";
+        var component = "proctoringpolicy_password";
         try {
             if (window.M && window.M.util && window.M.util.get_string) {
                 return window.M.util.get_string(key, component);
             }
         } catch (e) {
-            // ignore
+            // Ignore and use fallback.
         }
         return fallback || "";
-    }
-
-    function buildBrowserInfo() {
-        let info = {
-            userAgent: navigator.userAgent || "",
-            platform: navigator.platform || "",
-            language: navigator.language || "",
-            screen: String(screen.width) + "x" + String(screen.height),
-            timezoneOffset: new Date().getTimezoneOffset()
-        };
-        return JSON.stringify(info);
     }
 
     function postAjax(url, data) {
@@ -57,23 +46,38 @@ define(["jquery"], function ($) {
     }
 
     function init(ctx, cfg) {
-        if (!cfg ) {
+        if (!cfg) {
             return;
         }
 
-        let cmid = Number(ctx.cmid || 0);
-        let attemptid = Number(ctx.attemptid || 0);
+        var cmid = Number(ctx.cmid || 0);
+        var attemptid = Number(ctx.attemptid || 0);
 
-        let $container = $("[data-kppass=\"container\"]");
+        var $container = $("[data-kppass=\"container\"]");
         if ($container.length === 0) {
             return;
         }
 
-        let $status = $container.find("[data-kppass=\"status\"]");
-        let $inputPassword = $container.find("[data-kppass=\"password\"]");
-        let $btnSubmit = $container.find("[data-kppass=\"submit\"]");
+        var $status = $container.find("[data-kppass=\"status\"]");
+        var $inputPassword = $container.find("[data-kppass=\"password\"]");
+        var $btnSubmit = $container.find("[data-kppass=\"submit\"]");
 
-        let polling = null;
+        var polling = null;
+
+        if (ctx.api && typeof ctx.api.registerRequirement === "function") {
+            ctx.api.registerRequirement("password", {
+                label: cfg.requirementlabel || "Teacher approval or exam password",
+                satisfied: false
+            });
+        }
+
+        function setRequirementSatisfied(satisfied) {
+            if (ctx.api && typeof ctx.api.updateRequirement === "function") {
+                ctx.api.updateRequirement("password", {
+                    satisfied: !!satisfied
+                });
+            }
+        }
 
         function setStatus(text) {
             $status.text(text || "");
@@ -85,22 +89,23 @@ define(["jquery"], function ($) {
             }
 
             if (resp.status === "pending") {
+                setRequirementSatisfied(false);
                 setStatus(getString("js_status_pending", "Request sent. Waiting approval."));
             } else if (resp.status === "approved") {
+                setRequirementSatisfied(true);
                 setStatus(getString("js_status_approved", "Approved. You can start the exam."));
-                // Notify core (generic event, sem chamada direta ao plugin mãe).
-                let ev = new CustomEvent("kopere_proctoring_password_authorized", {
+                window.dispatchEvent(new CustomEvent("kopere_proctoring_password_authorized", {
                     detail: {
                         cmid: cmid,
                         attemptid: attemptid
                     }
-                });
-                window.dispatchEvent(ev);
+                }));
                 if (polling) {
                     window.clearInterval(polling);
                     polling = null;
                 }
             } else if (resp.status === "blocked") {
+                setRequirementSatisfied(false);
                 setStatus(getString("js_status_blocked", "You are temporarily blocked."));
                 if (polling) {
                     window.clearInterval(polling);
@@ -109,43 +114,51 @@ define(["jquery"], function ($) {
             }
         }
 
+        function checkStatus() {
+            return postAjax(M.cfg.wwwroot + "/local/kopere_proctoring/policy/password/ajax.php", {
+                action: "check",
+                cmid: cmid,
+                attemptid: attemptid
+            }).done(function(response) {
+                handleStatusResponse(response);
+            });
+        }
+
         function startPolling() {
             if (polling) {
                 return;
             }
-            polling = window.setInterval(function () {
-                postAjax(`${M.cfg.wwwroot}/local/kopere_proctoring/policy/password/ajax.php`, {
-                    action: "check",
-                    cmid: cmid,
-                    attemptid: attemptid
-                }).done(function (r) {
-                    handleStatusResponse(r);
-                });
-            }, 3000);
+
+            checkStatus();
+            polling = window.setInterval(checkStatus, 3000);
         }
+
         startPolling();
 
-        $btnSubmit.on("click", function () {
-            let code = ($inputPassword.val() || "").replace(/\D/g, "");
+        $btnSubmit.on("click", function() {
+            var code = ($inputPassword.val() || "").replace(/\D/g, "");
             if (code.length !== 8) {
+                setRequirementSatisfied(false);
                 setStatus(getString("js_wrong_password", "Invalid password."));
                 return;
             }
 
-            postAjax(`${M.cfg.wwwroot}/local/kopere_proctoring/policy/password/ajax.php`, {
+            postAjax(M.cfg.wwwroot + "/local/kopere_proctoring/policy/password/ajax.php", {
                 action: "submitcode",
                 cmid: cmid,
                 attemptid: attemptid,
                 code: code
-            }).done(function (resp) {
+            }).done(function(resp) {
                 if (!resp) {
                     return;
                 }
                 if (resp.error === "blocked") {
+                    setRequirementSatisfied(false);
                     setStatus(getString("js_toomany_errors", "Too many wrong attempts. Please wait 10 minutes."));
                     return;
                 }
                 if (resp.error === "wrong") {
+                    setRequirementSatisfied(false);
                     setStatus(getString("js_wrong_password", "Invalid password."));
                     return;
                 }

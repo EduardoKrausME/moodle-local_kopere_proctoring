@@ -69,19 +69,21 @@ function local_kopere_proctoring_coursemodule_edit_post_actions($data, $course) 
  */
 function local_kopere_proctoring_myprofile_navigation(tree $tree, $user, $iscurrentuser, $course) {
     $node = new node(
-        "contact", "local_proctoring_3",
-        get_string("pluginname", "local_kopere_proctoring"),
+        'contact', 'local_proctoring_3',
+        get_string('pluginname', 'local_kopere_proctoring'),
         null, new moodle_url("/local/kopere_proctoring/user-data.php?id={$user->id}"),
-        "Dados do aluno"
+        'Dados do aluno'
     );
     $tree->add_node($node);
+
+    return true;
 }
 
 /**
- * Extend settings navigation
+ * Extend settings navigation.
  *
  * @param navigation_node $navigationnode
- * @param $context
+ * @param context $context
  * @return void
  * @throws Exception
  */
@@ -97,10 +99,14 @@ function local_kopere_proctoring_extend_settings_navigation(navigation_node $nav
 
     if (has_capability('moodle/course:manageactivities', $context)) {
         $node = navigation_node::create(
-            "Relatório Proctoring",
+            'Relatório Proctoring',
             new moodle_url('/local/kopere_proctoring/report.php', ['id' => $context->id]),
-            navigation_node::TYPE_SETTING, null, 'kopere_proctoring_report',
-            new pix_icon('i/report', ''));
+            navigation_node::TYPE_SETTING,
+            null,
+            'kopere_proctoring_report',
+            new pix_icon('i/report', '')
+        );
         $navigationnode->add_node($node, $beforekey);
     }
+
 }

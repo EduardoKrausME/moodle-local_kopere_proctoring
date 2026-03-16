@@ -99,15 +99,23 @@ class hook_callbacks {
         }
 
         $mustachedata = [
-            "description" => "",
             "policies" => manager::get_start_policy_html($cmid, $attemptid),
         ];
 
+        //echo '<pre>';
+        //print_r($mustachedata);
+        //echo '</pre>';die;
+
+        $PAGE->requires->strings_for_js([
+            "description_pending",
+            "description_ready",
+        ], "local_kopere_proctoring");
+
         // Require assets in the normal render flow.
         $payload = manager::get_js_payload($cmid, $attemptid);
-        echo '<pre>';
-        print_r($payload);
-        echo '</pre>';die;
+        //echo '<pre>';
+        //print_r($payload);
+        //echo '</pre>';die;
         $PAGE->requires->js_call_amd('local_kopere_proctoring/start', 'init', $payload);
 
         // Inject HTML via hook.

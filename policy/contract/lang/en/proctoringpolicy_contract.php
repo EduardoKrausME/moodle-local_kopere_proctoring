@@ -47,6 +47,7 @@ $string['message_default_text'] = '<p><strong>I,</strong> <u>{name}</u>, aware o
     <li>I am aware that <strong>any violation of this pledge may result in academic sanctions</strong>, according to the institutional regulations, including exam annulment, failure, or other applicable penalties.</li>
 </ol>';
 $string['pluginname'] = 'Contract ';
+$string['requirement_label'] = 'Read and accept the proctoring terms';
 $string['teacher_info'] = 'Use this policy when the student must read and accept rules, an honor code, a privacy notice, or institution terms before the first question is shown. You can customize the contract text for this exam.';
 $string['pdf_subject'] = 'Digital signature receipt';
 $string['pdf_receipt_title'] = 'DIGITAL SIGNATURE RECEIPT';

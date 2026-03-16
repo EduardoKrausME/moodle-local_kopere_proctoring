@@ -57,8 +57,6 @@ define(["jquery"], function ($) {
         if (!message.length || !$.trim(message.html())) {
             return;
         }
-
-        message.show();
     }
 
     function hideViolationMessage() {

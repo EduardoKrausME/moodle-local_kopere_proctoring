@@ -48,7 +48,6 @@ define(["jquery"], function ($) {
             }
 
             warningsCount++;
-            message.show();
         }
 
         function isBlockedKeyEvent(e) {

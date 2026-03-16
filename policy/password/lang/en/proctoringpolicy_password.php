@@ -73,3 +73,6 @@ $string['student_toomany_errors'] = 'Too many wrong attempts. Please wait 10 min
 $string['student_waiting'] = 'Waiting for teacher approval...';
 $string['student_wrong_password'] = 'Invalid password.';
 $string['teacher_info'] = 'Enable this for in-person or supervised exams where the teacher must manually release students at the correct moment. Students can wait for approval or enter the password provided by the teacher.';
+$string['requirement_label'] = 'Teacher approval or exam password';
+$string['admin_refreshing'] = 'Automatically refreshing every 10 seconds. Last update:';
+$string['column_course'] = 'Course';

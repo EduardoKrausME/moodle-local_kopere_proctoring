@@ -24,6 +24,8 @@
 
 namespace proctoringpolicy_password;
 
+use context;
+use context_course;
 use dml_exception;
 use Random\RandomException;
 use stdClass;
@@ -34,7 +36,7 @@ use stdClass;
 class password_service {
 
     /** @var string */
-    protected const TABLE_REQ = "local_kppassword_req";
+    protected const TABLE_REQ = 'local_kppassword_req';
 
     /**
      * Create or reuse a pending request for this cmid/attempt/user.
@@ -47,6 +49,7 @@ class password_service {
      * @param string $useragent
      * @param string $browserinfo
      * @return stdClass
+     * @throws dml_exception|RandomException
      */
     public static function create_or_get_request(
         int $courseid,
@@ -60,35 +63,36 @@ class password_service {
         global $DB;
 
         $params = [
-            "cmid" => $cmid,
-            "attemptid" => $attemptid,
-            "userid" => $userid,
-            "status" => "pending",
+            'cmid' => $cmid,
+            'attemptid' => $attemptid,
+            'userid' => $userid,
+            'status' => 'pending',
         ];
 
-        $existing = $DB->get_record("local_kppassword_req", $params);
+        $existing = $DB->get_record(self::TABLE_REQ, $params);
         if ($existing) {
             return $existing;
         }
 
-        $kppassword = $DB->get_record("local_kppassword_req", ["cmid" => $cmid, "attemptid" => $attemptid, "userid" => $userid]);
+        $kppassword = $DB->get_record(self::TABLE_REQ, ['cmid' => $cmid, 'attemptid' => $attemptid, 'userid' => $userid]);
         if ($kppassword) {
             $kppassword->timemodified = time();
-            $kppassword->id = $DB->update_record("local_kppassword_req", $kppassword);
+            $DB->update_record(self::TABLE_REQ, $kppassword);
         } else {
             $kppassword = new stdClass();
             $kppassword->courseid = $courseid;
             $kppassword->cmid = $cmid;
             $kppassword->attemptid = $attemptid;
             $kppassword->userid = $userid;
-            $kppassword->status = "pending"; // pending, approved, blocked
+            $kppassword->status = 'pending'; // pending, approved, blocked.
             $kppassword->password = self::generate_password();
-            $kppassword->timecreated = $kppassword->timemodified = time();
+            $kppassword->timecreated = time();
+            $kppassword->timemodified = $kppassword->timecreated;
             $kppassword->ip = $ip;
             $kppassword->useragent = $useragent;
             $kppassword->browserinfo = $browserinfo;
 
-            $kppassword->id = $DB->insert_record("local_kppassword_req", $kppassword);
+            $kppassword->id = $DB->insert_record(self::TABLE_REQ, $kppassword);
         }
 
         return $kppassword;
@@ -107,11 +111,24 @@ class password_service {
         global $DB;
 
         $params = [
-            "cmid" => $cmid,
-            "attemptid" => $attemptid,
-            "userid" => $userid,
+            'cmid' => $cmid,
+            'attemptid' => $attemptid,
+            'userid' => $userid,
         ];
-        return $DB->get_record("local_kppassword_req", $params);
+        return $DB->get_record(self::TABLE_REQ, $params) ?: null;
+    }
+
+    /**
+     * Get a request by id.
+     *
+     * @param int $requestid
+     * @return stdClass|null
+     * @throws dml_exception
+     */
+    public static function get_request_by_id(int $requestid): ?stdClass {
+        global $DB;
+
+        return $DB->get_record(self::TABLE_REQ, ['id' => $requestid]) ?: null;
     }
 
     /**
@@ -121,8 +138,7 @@ class password_service {
      * @throws RandomException
      */
     public static function generate_password(): string {
-        $n = random_int(10000000, 99999999);
-        return $n;
+        return (string)random_int(10000000, 99999999);
     }
 
     /**
@@ -151,10 +167,10 @@ class password_service {
                    AND userid = :userid
                    AND timecreated > :since";
         $params = [
-            "cmid" => $cmid,
-            "attemptid" => $attemptid,
-            "userid" => $userid,
-            "since" => $tenminutesago,
+            'cmid' => $cmid,
+            'attemptid' => $attemptid,
+            'userid' => $userid,
+            'since' => $tenminutesago,
         ];
 
         $count = $DB->count_records_sql($sql, $params);
@@ -179,7 +195,7 @@ class password_service {
         $rec->userid = $userid;
         $rec->timecreated = time();
 
-        $DB->insert_record("local_kppassword_attempt", $rec);
+        $DB->insert_record('local_kppassword_attempt', $rec);
     }
 
     /**
@@ -192,14 +208,14 @@ class password_service {
     public static function approve_auto(int $requestid): void {
         global $DB;
 
-        if (!$req = $DB->get_record("local_kppassword_req", ["id" => $requestid])) {
+        if (!$req = $DB->get_record(self::TABLE_REQ, ['id' => $requestid])) {
             return;
         }
 
-        $req->status = "approved";
+        $req->status = 'approved';
         $req->timemodified = time();
 
-        $DB->update_record("local_kppassword_req", $req);
+        $DB->update_record(self::TABLE_REQ, $req);
     }
 
     /**
@@ -225,11 +241,11 @@ class password_service {
             return false;
         }
 
-        if ($req->status !== "pending" && $req->status !== "approved") {
+        if ($req->status !== 'pending' && $req->status !== 'approved') {
             return false;
         }
 
-        if (!preg_match("/^[0-9]{8}$/", $password)) {
+        if (!preg_match('/^[0-9]{8}$/', $password)) {
             return false;
         }
 
@@ -237,9 +253,9 @@ class password_service {
             return false;
         }
 
-        $req->status = "approved";
+        $req->status = 'approved';
         $req->timemodified = time();
-        $DB->update_record("local_kppassword_req", $req);
+        $DB->update_record(self::TABLE_REQ, $req);
 
         return true;
     }
@@ -256,16 +272,116 @@ class password_service {
     public static function get_request_status(int $cmid, int $attemptid, int $userid): array {
         $req = self::get_request_for_user($cmid, $attemptid, $userid);
         if (!$req) {
-            return ["status" => "none"];
+            return ['status' => 'none'];
         }
 
         return [
-            "status" => $req->status,
+            'status' => $req->status,
         ];
     }
 
     /**
-     * Get pending requests for admin page.
+     * Parse the configured allowed roles into an integer array.
+     *
+     * @return int[]
+     */
+    public static function get_rolesallowed_ids(): array {
+        $rolesallowed = get_config('proctoringpolicy_password', 'rolesallowed');
+
+        if (empty($rolesallowed)) {
+            return [];
+        }
+
+        if (is_array($rolesallowed)) {
+            return array_values(array_unique(array_map('intval', $rolesallowed)));
+        }
+
+        $decoded = json_decode((string)$rolesallowed, true);
+        if (is_array($decoded)) {
+            return array_values(array_unique(array_map('intval', $decoded)));
+        }
+
+        preg_match_all('/\d+/', (string)$rolesallowed, $matches);
+        if (empty($matches[0])) {
+            return [];
+        }
+
+        return array_values(array_unique(array_map('intval', $matches[0])));
+    }
+
+    /**
+     * Check whether the user can manage password requests in a context.
+     *
+     * @param context $context
+     * @param int $userid
+     * @return bool
+     */
+    public static function user_can_manage_context(context $context, int $userid = 0): bool {
+        global $USER;
+
+        $userid = $userid ?: (int)$USER->id;
+
+        if (has_capability('moodle/course:manageactivities', $context, $userid)) {
+            return true;
+        }
+
+        $rolesallowed = self::get_rolesallowed_ids();
+        if (empty($rolesallowed)) {
+            return false;
+        }
+
+        $userroles = get_user_roles($context, $userid, true);
+        foreach ($userroles as $userrole) {
+            if (in_array((int)$userrole->roleid, $rolesallowed, true)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Check whether the user can manage password requests in a course.
+     *
+     * @param int $courseid
+     * @param int $userid
+     * @return bool
+     */
+    public static function user_can_manage_course(int $courseid, int $userid = 0): bool {
+        if ($courseid <= 0) {
+            return false;
+        }
+
+        return self::user_can_manage_context(context_course::instance($courseid), $userid);
+    }
+
+    /**
+     * Check whether the user can manage at least one course.
+     *
+     * @param int $userid
+     * @return bool
+     */
+    public static function user_can_manage_any_course(int $userid = 0): bool {
+        global $USER;
+
+        $userid = $userid ?: (int)$USER->id;
+
+        if (is_siteadmin($userid)) {
+            return true;
+        }
+
+        $courses = get_user_capability_course('moodle/course:view', $userid, true, 'id');
+        foreach ($courses as $course) {
+            if (self::user_can_manage_course((int)$course->id, $userid)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Get pending requests for admin page limited to a course.
      *
      * @param int $courseid
      * @return stdClass[]
@@ -279,6 +395,37 @@ class password_service {
                  WHERE r.courseid = :courseid
                    AND r.status = :status
               ORDER BY r.timecreated ASC";
-        return $DB->get_records_sql($sql, ["courseid" => $courseid, "status" => "pending"]);
+        return $DB->get_records_sql($sql, ['courseid' => $courseid, 'status' => 'pending']);
+    }
+
+    /**
+     * Get all pending requests that the given user can manage.
+     *
+     * @param int $userid
+     * @return stdClass[]
+     * @throws dml_exception
+     */
+    public static function get_pending_requests_for_user(int $userid = 0): array {
+        global $DB, $USER;
+
+        $userid = $userid ?: (int)$USER->id;
+
+        $sql = "SELECT r.*
+                  FROM {local_kppassword_req} r
+                 WHERE r.status = :status
+              ORDER BY r.timecreated ASC";
+        $requests = $DB->get_records_sql($sql, ['status' => 'pending']);
+
+        if (empty($requests)) {
+            return [];
+        }
+
+        foreach ($requests as $key => $request) {
+            if (!self::user_can_manage_course((int)$request->courseid, $userid)) {
+                unset($requests[$key]);
+            }
+        }
+
+        return $requests;
     }
 }

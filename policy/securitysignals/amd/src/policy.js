@@ -48,7 +48,7 @@ define(["jquery"], function ($) {
             let i;
             for (i = 0; i < input.length; i++) {
                 h = (h * 31 + input.charCodeAt(i)) >>> 0;
-            } 
+            }
             return h.toString(16);
         }
 
