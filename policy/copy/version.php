@@ -23,7 +23,7 @@
  */
 
 $plugin->component = "proctoringpolicy_copy";
-$plugin->version = 2026011600;
+$plugin->version = 2026031500;
 $plugin->requires = 2022041900;
 $plugin->maturity = MATURITY_STABLE;
 $plugin->release = "1.0.1";

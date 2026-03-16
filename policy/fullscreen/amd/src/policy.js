@@ -33,9 +33,9 @@ define(["jquery"], function ($) {
     }
 
     function requestFullscreen() {
-        var element = document.documentElement;
+        let element = document.documentElement;
 
-        var fn = element.requestFullscreen ||
+        let fn = element.requestFullscreen ||
             element.webkitRequestFullscreen ||
             element.mozRequestFullScreen ||
             element.msRequestFullscreen;
@@ -52,15 +52,20 @@ define(["jquery"], function ($) {
         }
     }
 
-    function showMessage(cfg) {
-        $("#proctoringpolicy_fullscreen-message").show();
+    function showViolationMessage() {
+        let message = $("#proctoringpolicy_fullscreen-message");
+        if (!message.length || !$.trim(message.html())) {
+            return;
+        }
+
+        message.show();
     }
 
-    function hideMessage(cfg) {
+    function hideViolationMessage() {
         $("#proctoringpolicy_fullscreen-message").hide();
     }
 
-    function warnStatus(cfg, text) {
+    function warnStatus(text) {
         $("#status-danger").show().html(text);
     }
 
@@ -81,14 +86,14 @@ define(["jquery"], function ($) {
             if (!state.inexam) {
                 return;
             }
+
             if (!isFullscreenActive()) {
                 state.exits = state.exits + 1;
                 emitLog(ctx, "fullscreen_exit", String(state.exits));
+                showViolationMessage();
 
-                showMessage(cfg);
-
-                if (state.exits > state.limit) {
-                    warnStatus(cfg, "Fullscreen limit exceeded.");
+                if (state.limit > 0 && state.exits > state.limit) {
+                    warnStatus("Fullscreen limit exceeded.");
                     emitLog(ctx, "fullscreen_blocked", "limit");
                 }
             }
@@ -96,23 +101,23 @@ define(["jquery"], function ($) {
     }
 
     function gateStart(ctx, cfg, state) {
-        var startsel = "#start-exam,#return-exam-1";
+        let startsel = "#start-exam,#return-exam-1";
 
         $(document).on("click", startsel, function (e) {
             // If already fullscreen, just allow the core flow (do not block).
             if (isFullscreenActive()) {
-                hideMessage(cfg);
+                hideViolationMessage();
                 state.inexam = true;
                 return;
             }
 
             // Try request fullscreen (must be in user gesture).
-            var ok = requestFullscreen();
+            let ok = requestFullscreen();
             if (!ok) {
                 e.preventDefault();
                 e.stopPropagation();
-                showMessage(cfg);
-                warnStatus(cfg, "Your browser does not support fullscreen.");
+                showViolationMessage();
+                warnStatus("Your browser does not support fullscreen.");
                 emitLog(ctx, "fullscreen_not_supported", "");
                 return;
             }
@@ -121,11 +126,11 @@ define(["jquery"], function ($) {
             e.preventDefault();
             e.stopPropagation();
 
-            var start = Date.now();
-            var t = setInterval(function () {
+            let start = Date.now();
+            let t = setInterval(function () {
                 if (isFullscreenActive()) {
                     clearInterval(t);
-                    hideMessage(cfg);
+                    hideViolationMessage();
                     state.inexam = true;
                     emitLog(ctx, "fullscreen_entered", "");
                     // Trigger a custom event so the core can continue start flow if it wants.
@@ -135,7 +140,7 @@ define(["jquery"], function ($) {
 
                 if ((Date.now() - start) > 3000) {
                     clearInterval(t);
-                    showMessage(cfg);
+                    showViolationMessage();
                     emitLog(ctx, "fullscreen_failed", "");
                 }
             }, 100);
@@ -144,10 +149,11 @@ define(["jquery"], function ($) {
 
     return {
         init: function (ctx, cfg) {
-            var state = {
+            let parsedlimit = Number(cfg.limit || 0);
+            let state = {
                 inexam: false,
                 exits: 0,
-                limit: Number(cfg.limit || 2)
+                limit: isNaN(parsedlimit) ? 0 : parsedlimit
             };
 
             bindFullscreenExit(ctx, cfg, state);

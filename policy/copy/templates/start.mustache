@@ -2,8 +2,18 @@
     @template proctoringpolicy_copy/start
 }}
 
-<div class="alert alert-warning kopere-proctoring-policy-copy mb-3">
-    <div class="mt-2" id="proctoringpolicy_copy-message">
+<div class="alert alert-warning kopere-password-policy kopere-proctoring-policy-copy mb-3">
+    <div class="kopere-proctoring-header">
+        <h3 class="kopere-proctoring-title">
+            {{#str}}heading, proctoringpolicy_copy{{/str}}
+        </h3>
+    </div>
+
+    <div class="mt-2" id="proctoringpolicy_copy-start-message">
+        {{{start_message}}}
+    </div>
+
+    <div class="mt-2" id="proctoringpolicy_copy-message" style="display:none;">
         {{{message}}}
     </div>
 </div>

@@ -25,7 +25,7 @@ define(["jquery"], function ($) {
     "use strict";
 
     function getString(key, fallback) {
-        var component = "proctoringpolicy_password";
+        let component = "proctoringpolicy_password";
         try {
             if (window.M && window.M.util && window.M.util.get_string) {
                 return window.M.util.get_string(key, component);
@@ -37,7 +37,7 @@ define(["jquery"], function ($) {
     }
 
     function buildBrowserInfo() {
-        var info = {
+        let info = {
             userAgent: navigator.userAgent || "",
             platform: navigator.platform || "",
             language: navigator.language || "",
@@ -61,19 +61,19 @@ define(["jquery"], function ($) {
             return;
         }
 
-        var cmid = Number(ctx.cmid || 0);
-        var attemptid = Number(ctx.attemptid || 0);
+        let cmid = Number(ctx.cmid || 0);
+        let attemptid = Number(ctx.attemptid || 0);
 
-        var $container = $("[data-kppass=\"container\"]");
+        let $container = $("[data-kppass=\"container\"]");
         if ($container.length === 0) {
             return;
         }
 
-        var $status = $container.find("[data-kppass=\"status\"]");
-        var $inputPassword = $container.find("[data-kppass=\"password\"]");
-        var $btnSubmit = $container.find("[data-kppass=\"submit\"]");
+        let $status = $container.find("[data-kppass=\"status\"]");
+        let $inputPassword = $container.find("[data-kppass=\"password\"]");
+        let $btnSubmit = $container.find("[data-kppass=\"submit\"]");
 
-        var polling = null;
+        let polling = null;
 
         function setStatus(text) {
             $status.text(text || "");
@@ -89,7 +89,7 @@ define(["jquery"], function ($) {
             } else if (resp.status === "approved") {
                 setStatus(getString("js_status_approved", "Approved. You can start the exam."));
                 // Notify core (generic event, sem chamada direta ao plugin mãe).
-                var ev = new CustomEvent("kopere_proctoring_password_authorized", {
+                let ev = new CustomEvent("kopere_proctoring_password_authorized", {
                     detail: {
                         cmid: cmid,
                         attemptid: attemptid
@@ -126,7 +126,7 @@ define(["jquery"], function ($) {
         startPolling();
 
         $btnSubmit.on("click", function () {
-            var code = ($inputPassword.val() || "").replace(/\D/g, "");
+            let code = ($inputPassword.val() || "").replace(/\D/g, "");
             if (code.length !== 8) {
                 setStatus(getString("js_wrong_password", "Invalid password."));
                 return;

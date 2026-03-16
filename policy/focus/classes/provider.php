@@ -61,8 +61,6 @@ class provider implements policy_interface {
      * @throws coding_exception
      */
     public static function add_admin_settings(admin_settingpage $settings): void {
-
-        // Heading.
         $settings->add(
             new admin_setting_heading(
                 "proctoringpolicy_focus/heading",
@@ -71,7 +69,6 @@ class provider implements policy_interface {
             )
         );
 
-        // Default limit for focus loss.
         $settings->add(
             new admin_setting_configtext(
                 "proctoringpolicy_focus/limit_default",
@@ -82,7 +79,15 @@ class provider implements policy_interface {
             )
         );
 
-        // Default message shown when the limit is exceeded.
+        $settings->add(
+            new admin_setting_confightmleditor(
+                "proctoringpolicy_focus/start_message_default",
+                get_string("start_message_default", "proctoringpolicy_focus"),
+                get_string("start_message_default_desc", "proctoringpolicy_focus"),
+                ""
+            )
+        );
+
         $settings->add(
             new admin_setting_confightmleditor(
                 "proctoringpolicy_focus/message_default",
@@ -104,21 +109,20 @@ class provider implements policy_interface {
      * @throws coding_exception
      */
     public static function add_module_form(moodleform_mod $formwrapper, MoodleQuickForm $mform, int $cmid): void {
-        // Load current values if editing an existing cm.
         $limitcm = get_config("proctoringpolicy_focus", "limit_default");
+        $startmessagecm = get_config("proctoringpolicy_focus", "start_message_default");
         $messagecm = get_config("proctoringpolicy_focus", "message_default");
 
         if ($cmid) {
             $limitcm = cm_config::get("focus", "limit", $cmid, $limitcm);
+            $startmessagecm = cm_config::get("focus", "start_message", $cmid, $startmessagecm);
             $messagecm = cm_config::get("focus", "message", $cmid, $messagecm);
         }
 
-        // Fieldset wrapper for better UI grouping.
         $legend = get_string("legend", "proctoringpolicy_focus");
         $info = get_string("teacher_info", "proctoringpolicy_focus");
         $mform->addElement("html", "<fieldset class='proctoring-block'><legend>{$legend}</legend><h5 class='mb-4'>{$info}</h5>");
 
-        // Enable checkbox.
         $mform->addElement("selectyesno", "kopere_policy_focus_enabled",
             get_string("form_enabled_label", "proctoringpolicy_focus")
         );
@@ -126,24 +130,36 @@ class provider implements policy_interface {
         $mform->setDefault("kopere_policy_focus_enabled", 1);
         $mform->hideIf("kopere_policy_focus_enabled", "kopere_proctoring_enabled", "eq", 0);
 
-        // Limit field.
         $mform->addElement("text", "kopere_policy_focus_limit",
             get_string("form_limit_label", "proctoringpolicy_focus"),
             ["size" => 5]
         );
         $mform->setType("kopere_policy_focus_limit", PARAM_INT);
         $mform->setDefault("kopere_policy_focus_limit", $limitcm);
-        $mform->hideIf("kopere_policy_focus_limit", "kopere_policy_focus_enabled", "neq");
+        $mform->hideIf("kopere_policy_focus_limit", "kopere_policy_focus_enabled", "eq", 0);
         $mform->hideIf("kopere_policy_focus_limit", "kopere_proctoring_enabled", "eq", 0);
 
-        // Message editor.
+        $mform->addElement(
+            "editor",
+            "kopere_policy_focus_start_message",
+            get_string("form_start_message_label", "proctoringpolicy_focus"),
+            ['rows' => 4]
+        );
+        $mform->setType("kopere_policy_focus_start_message", PARAM_CLEANHTML);
+        $mform->setDefault("kopere_policy_focus_start_message", [
+            "text" => $startmessagecm,
+            "format" => FORMAT_HTML,
+        ]);
+        $mform->hideIf("kopere_policy_focus_start_message", "kopere_policy_focus_enabled", "eq", 0);
+        $mform->hideIf("kopere_policy_focus_start_message", "kopere_proctoring_enabled", "eq", 0);
+
         $mform->addElement("editor", "kopere_policy_focus_message", get_string("form_message_label", "proctoringpolicy_focus"));
         $mform->setType("kopere_policy_focus_message", PARAM_CLEANHTML);
         $mform->setDefault("kopere_policy_focus_message", [
             "text" => $messagecm,
             "format" => FORMAT_HTML,
         ]);
-        $mform->hideIf("kopere_policy_focus_message", "kopere_policy_focus_enabled", "neq");
+        $mform->hideIf("kopere_policy_focus_message", "kopere_policy_focus_enabled", "eq", 0);
         $mform->hideIf("kopere_policy_focus_message", "kopere_proctoring_enabled", "eq", 0);
 
         $mform->addElement("html", "</fieldset>");
@@ -151,6 +167,7 @@ class provider implements policy_interface {
         $formwrapper->set_data([
             cm_config::key("focus", "enabled") => cm_config::get("focus", "enabled", $cmid),
             cm_config::key("focus", "limit") => cm_config::get("focus", "limit", $cmid),
+            cm_config::key("focus", "start_message") => cm_config::get("focus", "start_message", $cmid),
             cm_config::key("focus", "message") => cm_config::get("focus", "message", $cmid),
         ]);
     }
@@ -164,8 +181,16 @@ class provider implements policy_interface {
      */
     public static function save_module_form(stdClass $data, int $cmid): void {
         $enabled = $data->kopere_policy_focus_enabled ?? 0;
-
         $limit = $data->kopere_policy_focus_limit ?? 0;
+
+        $startmessage = "";
+        if (isset($data->kopere_policy_focus_start_message)) {
+            if (is_array($data->kopere_policy_focus_start_message)) {
+                $startmessage = ($data->kopere_policy_focus_start_message["text"] ?? "");
+            } else {
+                $startmessage = $data->kopere_policy_focus_start_message;
+            }
+        }
 
         $message = "";
         if (isset($data->kopere_policy_focus_message)) {
@@ -178,6 +203,7 @@ class provider implements policy_interface {
 
         cm_config::set("focus", "enabled", $cmid, $enabled);
         cm_config::set("focus", "limit", $cmid, $limit);
+        cm_config::set("focus", "start_message", $cmid, $startmessage);
         cm_config::set("focus", "message", $cmid, $message);
     }
 
@@ -195,7 +221,8 @@ class provider implements policy_interface {
         }
 
         return [
-            "limit" => cm_config::get("focus", "limit", $cmid, 3),
+            "enabled" => true,
+            "limit" => cm_config::get("focus", "limit", $cmid, get_config("proctoringpolicy_focus", "limit_default")),
         ];
     }
 
@@ -205,7 +232,6 @@ class provider implements policy_interface {
      * @return string|null
      */
     public static function get_amd_module(): ?string {
-        // AMD module path: local/kopere_proctoring/policy/focus/amd/src/policy.js
         return "proctoringpolicy_focus/policy";
     }
 
@@ -220,7 +246,6 @@ class provider implements policy_interface {
      */
     public static function handle_server_event(string $eventkey, int $cmid, int $attemptid, array $payload): void {
     }
-
 
     /**
      * Render HTML fragment for the start.mustache policies area.
@@ -237,12 +262,18 @@ class provider implements policy_interface {
         }
 
         $limit = cm_config::get("focus", "limit", $cmid, get_config("proctoringpolicy_focus", "limit_default"));
+        $startmessage = cm_config::get(
+            "focus",
+            "start_message",
+            $cmid,
+            get_config("proctoringpolicy_focus", "start_message_default")
+        );
         $message = cm_config::get("focus", "message", $cmid, get_config("proctoringpolicy_focus", "message_default"));
 
         return $OUTPUT->render_from_template("proctoringpolicy_focus/start", [
             "limit" => (int) $limit,
+            "start_message" => $startmessage,
             "message" => $message,
         ]);
     }
-
 }

@@ -24,16 +24,15 @@
 
 /**
  * Install function
+ *
  * @return bool
  * @throws Exception
  */
 function xmldb_proctoringpolicy_copy_install() {
     set_config("sortorder", 40, "proctoringpolicy_copy");
-
     set_config("limit_default", 0, "proctoringpolicy_copy");
-
-    $default = get_string("message_default_text", "proctoringpolicy_copy");
-    set_config("message_default", $default, "proctoringpolicy_copy");
+    set_config("start_message_default", get_string("start_message_default_text", "proctoringpolicy_copy"), "proctoringpolicy_copy");
+    set_config("message_default", get_string("message_default_text", "proctoringpolicy_copy"), "proctoringpolicy_copy");
 
     return true;
 }

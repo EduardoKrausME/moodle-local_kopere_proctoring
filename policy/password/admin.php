@@ -55,7 +55,6 @@ if (!empty($rolesallowed)) {
 
 if (!$canmanage) {
     require_capability("moodle/course:view", $context); // fallback
-    throw new moodle_exception('nopermissions', 'error');
 }
 
 $action = optional_param("action", "", PARAM_ALPHA);

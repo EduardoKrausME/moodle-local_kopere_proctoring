@@ -38,10 +38,6 @@ use stdClass;
 
 /**
  * Fullscreen policy provider.
- *
- * @package   proctoringpolicy_fullscreen
- * @copyright 2026 Eduardo
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements policy_interface {
 
@@ -62,7 +58,6 @@ class provider implements policy_interface {
      * @throws coding_exception
      */
     public static function add_admin_settings(admin_settingpage $settings): void {
-
         $settings->add(
             new admin_setting_heading(
                 "proctoringpolicy_fullscreen/heading",
@@ -78,6 +73,15 @@ class provider implements policy_interface {
                 get_string("limit_default_desc", "proctoringpolicy_fullscreen"),
                 2,
                 PARAM_INT
+            )
+        );
+
+        $settings->add(
+            new admin_setting_confightmleditor(
+                "proctoringpolicy_fullscreen/start_message_default",
+                get_string("start_message_default", "proctoringpolicy_fullscreen"),
+                get_string("start_message_default_desc", "proctoringpolicy_fullscreen"),
+                ""
             )
         );
 
@@ -103,31 +107,44 @@ class provider implements policy_interface {
      */
     public static function add_module_form(moodleform_mod $formwrapper, MoodleQuickForm $mform, int $cmid): void {
         $defaultlimit = get_config("proctoringpolicy_fullscreen", "limit_default");
+        $defaultstartmessage = get_config("proctoringpolicy_fullscreen", "start_message_default");
         $defaultmessage = get_config("proctoringpolicy_fullscreen", "message_default");
+
+        if ($cmid) {
+            $defaultlimit = cm_config::get("fullscreen", "limit", $cmid, $defaultlimit);
+            $defaultstartmessage = cm_config::get("fullscreen", "start_message", $cmid, $defaultstartmessage);
+            $defaultmessage = cm_config::get("fullscreen", "message", $cmid, $defaultmessage);
+        }
 
         $legend = get_string("legend", "proctoringpolicy_fullscreen");
         $info = get_string("teacher_info", "proctoringpolicy_fullscreen");
         $mform->addElement("html", "<fieldset class='proctoring-block'><legend>{$legend}</legend><h5 class='mb-4'>{$info}</h5>");
 
         $mform->addElement(
-            "selectyesno", "kopere_policy_fullscreen_enabled", get_string("enabled_cm", "proctoringpolicy_fullscreen")
+            "selectyesno",
+            "kopere_policy_fullscreen_enabled",
+            get_string("enabled_cm", "proctoringpolicy_fullscreen")
         );
         $mform->setType("kopere_policy_fullscreen_enabled", PARAM_INT);
         $mform->setDefault("kopere_policy_fullscreen_enabled", 1);
         $mform->hideIf("kopere_policy_fullscreen_enabled", "kopere_proctoring_enabled", "eq", 0);
-
-        // If the core still has a master enable checkbox, keep compatibility.
         $mform->hideIf("kopere_policy_fullscreen_enabled", "local_kopere_proctoring_enable", "eq", 0);
 
         $mform->addElement(
-            "static", "kopere_policy_fullscreen_limit_desc", "", get_string("limit_cm_desc", "proctoringpolicy_fullscreen")
+            "static",
+            "kopere_policy_fullscreen_limit_desc",
+            "",
+            get_string("limit_cm_desc", "proctoringpolicy_fullscreen")
         );
         $mform->hideIf("kopere_policy_fullscreen_limit_desc", "kopere_proctoring_enabled", "eq", 0);
         $mform->hideIf("kopere_policy_fullscreen_limit_desc", "kopere_policy_fullscreen_enabled", "eq", 0);
         $mform->hideIf("kopere_policy_fullscreen_limit_desc", "local_kopere_proctoring_enable", "eq", 0);
 
         $mform->addElement(
-            "text", "kopere_policy_fullscreen_limit", get_string("limit_cm", "proctoringpolicy_fullscreen"), ["size" => 10]
+            "text",
+            "kopere_policy_fullscreen_limit",
+            get_string("limit_cm", "proctoringpolicy_fullscreen"),
+            ["size" => 10]
         );
         $mform->setType("kopere_policy_fullscreen_limit", PARAM_INT);
         $mform->setDefault("kopere_policy_fullscreen_limit", $defaultlimit);
@@ -135,15 +152,39 @@ class provider implements policy_interface {
         $mform->hideIf("kopere_policy_fullscreen_limit", "local_kopere_proctoring_enable", "eq", 0);
 
         $mform->addElement(
-            "static", "kopere_policy_fullscreen_message_desc", "", get_string("message_cm_desc", "proctoringpolicy_fullscreen")
+            "editor",
+            "kopere_policy_fullscreen_start_message",
+            get_string("start_message_cm", "proctoringpolicy_fullscreen"),
+            ['rows' => 4]
+        );
+        $mform->setType("kopere_policy_fullscreen_start_message", PARAM_CLEANHTML);
+        $mform->setDefault("kopere_policy_fullscreen_start_message", [
+            "text" => $defaultstartmessage,
+            "format" => FORMAT_HTML,
+        ]);
+        $mform->hideIf("kopere_policy_fullscreen_start_message", "kopere_policy_fullscreen_enabled", "eq", 0);
+        $mform->hideIf("kopere_policy_fullscreen_start_message", "local_kopere_proctoring_enable", "eq", 0);
+
+        $mform->addElement(
+            "static",
+            "kopere_policy_fullscreen_message_desc",
+            "",
+            get_string("message_cm_desc", "proctoringpolicy_fullscreen")
         );
         $mform->hideIf("kopere_policy_fullscreen_message_desc", "kopere_proctoring_enabled", "eq", 0);
         $mform->hideIf("kopere_policy_fullscreen_message_desc", "kopere_policy_fullscreen_enabled", "eq", 0);
         $mform->hideIf("kopere_policy_fullscreen_message_desc", "local_kopere_proctoring_enable", "eq", 0);
 
-        $mform->addElement("editor", "kopere_policy_fullscreen_message", get_string("message_cm", "proctoringpolicy_fullscreen"));
+        $mform->addElement(
+            "editor",
+            "kopere_policy_fullscreen_message",
+            get_string("message_cm", "proctoringpolicy_fullscreen")
+        );
         $mform->setType("kopere_policy_fullscreen_message", PARAM_CLEANHTML);
-        $mform->setDefault("kopere_policy_fullscreen_message", ["text" => $defaultmessage, "format" => FORMAT_HTML]);
+        $mform->setDefault("kopere_policy_fullscreen_message", [
+            "text" => $defaultmessage,
+            "format" => FORMAT_HTML,
+        ]);
         $mform->hideIf("kopere_policy_fullscreen_message", "kopere_policy_fullscreen_enabled", "eq", 0);
         $mform->hideIf("kopere_policy_fullscreen_message", "local_kopere_proctoring_enable", "eq", 0);
 
@@ -152,6 +193,7 @@ class provider implements policy_interface {
         $formwrapper->set_data([
             cm_config::key("fullscreen", "enabled") => cm_config::get("fullscreen", "enabled", $cmid),
             cm_config::key("fullscreen", "limit") => cm_config::get("fullscreen", "limit", $cmid),
+            cm_config::key("fullscreen", "start_message") => cm_config::get("fullscreen", "start_message", $cmid),
             cm_config::key("fullscreen", "message") => cm_config::get("fullscreen", "message", $cmid),
         ]);
     }
@@ -167,11 +209,15 @@ class provider implements policy_interface {
         $enabled = ($data->kopere_policy_fullscreen_enabled ?? 0);
         $limit = ($data->kopere_policy_fullscreen_limit ?? 0);
 
+        $startmessage = $data->kopere_policy_fullscreen_start_message ?? null;
+        $startmessagetext = is_array($startmessage) ? ($startmessage["text"] ?? "") : $startmessage;
+
         $message = $data->kopere_policy_fullscreen_message ?? null;
         $messagetext = is_array($message) ? ($message["text"] ?? "") : $message;
 
         cm_config::set("fullscreen", "enabled", $cmid, $enabled);
         cm_config::set("fullscreen", "limit", $cmid, $limit);
+        cm_config::set("fullscreen", "start_message", $cmid, $startmessagetext);
         cm_config::set("fullscreen", "message", $cmid, $messagetext);
     }
 
@@ -189,7 +235,12 @@ class provider implements policy_interface {
         }
 
         return [
-            "limit" => 1,
+            "limit" => (int) cm_config::get(
+                "fullscreen",
+                "limit",
+                $cmid,
+                get_config("proctoringpolicy_fullscreen", "limit_default")
+            ),
         ];
     }
 
@@ -230,10 +281,22 @@ class provider implements policy_interface {
         }
 
         $limit = cm_config::get("fullscreen", "limit", $cmid, get_config("proctoringpolicy_fullscreen", "limit_default"));
-        $message = cm_config::get("fullscreen", "message", $cmid, get_config("proctoringpolicy_fullscreen", "message_default"));
+        $startmessage = cm_config::get(
+            "fullscreen",
+            "start_message",
+            $cmid,
+            get_config("proctoringpolicy_fullscreen", "start_message_default")
+        );
+        $message = cm_config::get(
+            "fullscreen",
+            "message",
+            $cmid,
+            get_config("proctoringpolicy_fullscreen", "message_default")
+        );
 
         return $OUTPUT->render_from_template("proctoringpolicy_fullscreen/start", [
             "limit" => (int) $limit,
+            "start_message" => $startmessage,
             "message" => $message,
         ]);
     }

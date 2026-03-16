@@ -44,18 +44,18 @@ define(["jquery"], function ($) {
 
         function hashString(input) {
             // Lightweight non-crypto hash (deterministic).
-            var h = 0;
-            var i;
+            let h = 0;
+            let i;
             for (i = 0; i < input.length; i++) {
                 h = (h * 31 + input.charCodeAt(i)) >>> 0;
-            }
+            } 
             return h.toString(16);
         }
 
         function buildBaseline() {
-            var fetchSig = "";
-            var timeoutSig = "";
-            var addEvSig = "";
+            let fetchSig = "";
+            let timeoutSig = "";
+            let addEvSig = "";
 
             try {
                 fetchSig = String(window.fetch).slice(0, 80);
@@ -101,24 +101,24 @@ define(["jquery"], function ($) {
         }
 
         function init(ctx, cfg) {
-            var component = "proctoringpolicy_securitysignals";
+            let component = "proctoringpolicy_securitysignals";
 
-            var cmid = Number(ctx.cmid || 0);
-            var attemptid = Number(ctx.attemptid || 0);
+            let cmid = Number(ctx.cmid || 0);
+            let attemptid = Number(ctx.attemptid || 0);
 
-            var pulseMs = Number(cfg.pulsems || 8) * 1000;
+            let pulseMs = Number(cfg.pulsems || 8) * 1000;
 
-            var baseline = buildBaseline();
-            var clientToken = hashString([
+            let baseline = buildBaseline();
+            let clientToken = hashString([
                 String(Date.now()),
                 baseline.userAgent,
                 String(screen.width) + "x" + String(screen.height)
             ].join("|"));
 
-            var lastSentAt = 0;
+            let lastSentAt = 0;
 
             function shouldSendNow() {
-                var now = Date.now();
+                let now = Date.now();
                 if ((now - lastSentAt) < 1500) {
                     return false;
                 }
@@ -127,7 +127,7 @@ define(["jquery"], function ($) {
             }
 
             function checkIntegrity() {
-                var current = buildBaseline();
+                let current = buildBaseline();
                 if (
                     current.fetchSig !== baseline.fetchSig ||
                     current.timeoutSig !== baseline.timeoutSig ||
@@ -145,7 +145,7 @@ define(["jquery"], function ($) {
             }
 
             function pulse() {
-                var integrity = checkIntegrity();
+                let integrity = checkIntegrity();
 
                 // Only report when something is suspicious.
                 if (integrity.integrityok === 1) {
@@ -156,7 +156,7 @@ define(["jquery"], function ($) {
                     return;
                 }
 
-                var payload = {
+                let payload = {
                     cmid: cmid,
                     attemptid: attemptid,
                     action: "securitysignals_pulse",

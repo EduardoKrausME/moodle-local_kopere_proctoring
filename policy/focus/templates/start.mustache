@@ -2,8 +2,18 @@
     @template proctoringpolicy_focus/start
 }}
 
-<div class="alert alert-warning kopere-proctoring-policy-focus mb-3">
-    <div class="mt-3" id="proctoringpolicy_focus-message">
+<div class="alert alert-warning kopere-password-policy kopere-proctoring-policy-focus mb-3">
+    <div class="kopere-proctoring-header">
+        <h3 class="kopere-proctoring-title">
+            {{#str}}legend, proctoringpolicy_focus{{/str}}
+        </h3>
+    </div>
+
+    <div class="mt-3" id="proctoringpolicy_focus-start-message">
+        {{{start_message}}}
+    </div>
+
+    <div class="mt-3" id="proctoringpolicy_focus-message" style="display:none;">
         {{{message}}}
     </div>
 </div>

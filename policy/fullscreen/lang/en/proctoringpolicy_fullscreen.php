@@ -28,20 +28,23 @@ $string['enabled'] = 'Enable fullscreen ';
 $string['enabled_cm'] = 'Require fullscreen during the attempt';
 $string['enabled_desc'] = 'If enabled, the policy can be configured per quiz activity.';
 $string['heading'] = 'Fullscreen ';
-$string['heading_info'] = 'Requires the client to remain in browser fullscreen mode throughout the attempt. The policy counts fullscreen exit events, applies a per-activity tolerance limit, and can lock the attempt with a custom message when the threshold is exceeded.';
+$string['heading_info'] = 'Requires the client to remain in browser fullscreen mode throughout the attempt. The policy can show one short instruction before the attempt starts and a different warning message only after the student exits fullscreen mode.';
 $string['legend'] = 'Fullscreen requirements';
 $string['limit_cm'] = 'Max exits allowed';
 $string['limit_cm_desc'] = 'How many times the student can exit fullscreen before being blocked.';
 $string['limit_default'] = 'Default max exits allowed';
 $string['limit_default_desc'] = 'Default value used when configuring new quiz activities.';
-$string['message_cm'] = 'Block message';
-$string['message_cm_desc'] = 'Message shown when the attempt is blocked due to fullscreen.';
-$string['message_default'] = 'Default block message';
-$string['message_default_desc'] = 'Default message used when configuring new quiz activities.';
-$string['message_default_text'] = '<h2>🖥️ Fullscreen Mode is Mandatory</h2>
-<p>To ensure security and integrity, <strong>you must remain in fullscreen mode during the entire exam</strong>.</p>
-<p>If you leave fullscreen repeatedly, <strong>the exam may be blocked or automatically terminated</strong>.</p>
-<p>Please close any unnecessary applications and keep the exam window active and in fullscreen mode at all times.</p>';
+$string['message_cm'] = 'Violation message shown when the student leaves the page';
+$string['message_cm_desc'] = 'Message shown only when the student exits fullscreen mode.';
+$string['message_default'] = 'Default violation message';
+$string['message_default_desc'] = 'Default message shown only when the student exits fullscreen mode.';
+$string['message_default_text'] = '<h2>🖥️ Fullscreen mode was exited</h2>
+<p><strong>You left fullscreen mode during the exam.</strong></p>
+<p>Please return to fullscreen immediately. Repeated exits may block or terminate the attempt.</p>';
 $string['message_init'] = 'This attempt requires fullscreen mode.';
 $string['pluginname'] = 'Fullscreen ';
-$string['teacher_info'] = 'Enable this when the student must stay in fullscreen for the entire exam. Set how many exits from fullscreen are tolerated before the attempt is blocked.';
+$string['start_message_cm'] = 'Start message shown before the exam starts';
+$string['start_message_default'] = 'Default start message';
+$string['start_message_default_desc'] = 'Short message shown before the attempt starts to explain that fullscreen mode is required.';
+$string['start_message_default_text'] = '<p>You must stay in fullscreen mode during the entire attempt.</p>';
+$string['teacher_info'] = 'Enable this when the student must stay in fullscreen during the entire exam. Use the start message to explain the rule before the attempt starts, and use the violation message to warn the student only after fullscreen mode is exited.';

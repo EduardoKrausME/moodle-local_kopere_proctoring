@@ -24,16 +24,15 @@
 
 /**
  * Install function
+ *
  * @return bool
  * @throws Exception
  */
 function xmldb_proctoringpolicy_focus_install() {
     set_config("sortorder", 30, "proctoringpolicy_focus");
-
     set_config("limit_default", 3, "proctoringpolicy_focus");
-
-    $default = get_string("message_default_text", "proctoringpolicy_focus");
-    set_config("message_default", $default, "proctoringpolicy_focus");
+    set_config("start_message_default", get_string("start_message_default_text", "proctoringpolicy_focus"), "proctoringpolicy_focus");
+    set_config("message_default", get_string("message_default_text", "proctoringpolicy_focus"), "proctoringpolicy_focus");
 
     return true;
 }

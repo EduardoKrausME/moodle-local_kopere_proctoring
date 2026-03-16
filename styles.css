@@ -81,10 +81,7 @@
   margin: 0 auto 34px;
 }
 #kopere-proctoring .kopere-proctoring-policies > *,
-#kopere-proctoring .kopere-password-policy,
-#kopere-proctoring .kopere-proctoring-policy-fullscreen,
-#kopere-proctoring .kopere-proctoring-policy-copy,
-#kopere-proctoring .kopere-proctoring-policy-focus {
+#kopere-proctoring .kopere-password-policy {
   background: #ffffff;
   border: 2px solid #d9dee8;
   border-radius: 18px;
@@ -206,11 +203,11 @@
   filter: grayscale(0.06);
 }
 #kopere-proctoring .text-danger,
-#kopere-proctoring .kopere-proctoring-contract-error {
+#kopere-proctoring .kopere-proctoring-error {
   color: #b94b4b !important;
   font-weight: 700;
 }
-#kopere-proctoring .kopere-proctoring-contract-dialog {
+#kopere-proctoring .kopere-proctoring-dialog {
   width: 100%;
   max-width: 900px;
   max-height: calc(100vh - 48px);
@@ -220,37 +217,39 @@
   border: 1px solid #dbe1ea;
   box-shadow: 0 24px 72px rgba(15, 23, 42, 0.22);
 }
-#kopere-proctoring .kopere-proctoring-contract-header,
-#kopere-proctoring .kopere-proctoring-contract-body,
-#kopere-proctoring .kopere-proctoring-contract-footer {
+#kopere-proctoring .kopere-proctoring-header,
+#kopere-proctoring .kopere-proctoring-body,
+#kopere-proctoring .kopere-proctoring-footer {
   padding-left: 28px;
   padding-right: 28px;
+  margin: 0 -18px -22px;
 }
-#kopere-proctoring .kopere-proctoring-contract-header {
+#kopere-proctoring .kopere-proctoring-header {
   padding-top: 28px;
   padding-bottom: 14px;
   border-bottom: 1px solid #e6ebf2;
+  margin: -22px -18px 0;
 }
-#kopere-proctoring .kopere-proctoring-contract-body {
+#kopere-proctoring .kopere-proctoring-body {
   padding-top: 22px;
   padding-bottom: 22px;
   font-size: 18px;
   line-height: 1.65;
   color: #263041;
 }
-#kopere-proctoring .kopere-proctoring-contract-footer {
+#kopere-proctoring .kopere-proctoring-footer {
   padding-top: 18px;
   padding-bottom: 28px;
   border-top: 1px solid #e6ebf2;
 }
-#kopere-proctoring .kopere-proctoring-contract-title {
+#kopere-proctoring .kopere-proctoring-title {
   margin: 0;
   font-size: 32px;
   line-height: 1.2;
   font-weight: 800;
   color: #172133;
 }
-#kopere-proctoring .kopere-proctoring-contract-accept {
+#kopere-proctoring .kopere-proctoring-accept {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -258,7 +257,7 @@
   line-height: 1.4;
   color: #263041;
 }
-#kopere-proctoring .kopere-proctoring-contract-actions {
+#kopere-proctoring .kopere-proctoring-actions {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
@@ -289,10 +288,7 @@
     font-size: 18px;
   }
   #kopere-proctoring .kopere-proctoring-policies > *,
-  #kopere-proctoring .kopere-password-policy,
-  #kopere-proctoring .kopere-proctoring-policy-fullscreen,
-  #kopere-proctoring .kopere-proctoring-policy-copy,
-  #kopere-proctoring .kopere-proctoring-policy-focus {
+  #kopere-proctoring .kopere-password-policy {
     padding: 22px 18px;
   }
   #kopere-proctoring #kopere-proctoring-start-button,
@@ -315,9 +311,7 @@ body:has(#kopere-proctoring) .othernav {
   user-select: none !important;
 }
 
-#start-area,
-#proctoring-message-copypaste_message,
-#proctoringpolicy_fullscreen-message {
+#start-area {
   position: fixed;
   top: 0;
   right: 0;

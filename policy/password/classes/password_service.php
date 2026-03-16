@@ -47,7 +47,6 @@ class password_service {
      * @param string $useragent
      * @param string $browserinfo
      * @return stdClass
-     * @throws dml_exception|RandomException
      */
     public static function create_or_get_request(
         int $courseid,
@@ -72,24 +71,27 @@ class password_service {
             return $existing;
         }
 
-        $now = time();
+        $kppassword = $DB->get_record("local_kppassword_req", ["cmid" => $cmid, "attemptid" => $attemptid, "userid" => $userid]);
+        if ($kppassword) {
+            $kppassword->timemodified = time();
+            $kppassword->id = $DB->update_record("local_kppassword_req", $kppassword);
+        } else {
+            $kppassword = new stdClass();
+            $kppassword->courseid = $courseid;
+            $kppassword->cmid = $cmid;
+            $kppassword->attemptid = $attemptid;
+            $kppassword->userid = $userid;
+            $kppassword->status = "pending"; // pending, approved, blocked
+            $kppassword->password = self::generate_password();
+            $kppassword->timecreated = $kppassword->timemodified = time();
+            $kppassword->ip = $ip;
+            $kppassword->useragent = $useragent;
+            $kppassword->browserinfo = $browserinfo;
 
-        $rec = new stdClass();
-        $rec->courseid = $courseid;
-        $rec->cmid = $cmid;
-        $rec->attemptid = $attemptid;
-        $rec->userid = $userid;
-        $rec->status = "pending"; // pending, approved, blocked
-        $rec->password = self::generate_password();
-        $rec->timecreated = $now;
-        $rec->timemodified = $now;
-        $rec->ip = $ip;
-        $rec->useragent = $useragent;
-        $rec->browserinfo = $browserinfo;
+            $kppassword->id = $DB->insert_record("local_kppassword_req", $kppassword);
+        }
 
-        $rec->id = $DB->insert_record("local_kppassword_req", $rec);
-
-        return $rec;
+        return $kppassword;
     }
 
     /**

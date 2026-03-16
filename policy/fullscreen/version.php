@@ -23,8 +23,8 @@
  */
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->component = "d";
-$plugin->version = 2026011600;
+$plugin->component = "proctoringpolicy_fullscreen";
+$plugin->version = 2026031500;
 $plugin->requires = 2022041900; // Moodle 4.0+
 $plugin->maturity = MATURITY_STABLE;
 $plugin->release = "0.1.0";

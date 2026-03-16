@@ -24,23 +24,37 @@
 define(["jquery"], function ($) {
 
     /**
+     * Show the focus violation message.
+     *
+     * @return {void}
+     */
+    function showViolationMessage() {
+        let message = $("#proctoringpolicy_focus-message");
+        if (!message.length || !$.trim(message.html())) {
+            return;
+        }
+
+        message.show();
+    }
+
+    /**
      * Initialize focus policy on quiz attempt.
      *
-     * @param {Object} ctx   Shared context created by the parent plugin
-     * @param {Object} cfg   Configuration for this policy
+     * @param {Object} ctx Shared context created by the parent plugin
+     * @param {Object} cfg Configuration for this policy
      */
     function init(ctx, cfg) {
         if (!ctx || !cfg || !cfg.enabled) {
             return;
         }
 
-        var limit = parseInt(cfg.limit || 0, 10);
-        if (!limit || limit < 0) {
+        let limit = parseInt(cfg.limit || 0, 10);
+        if (isNaN(limit) || limit < 0) {
             limit = 3;
         }
 
-        var count = 0;
-        var namespace = ".kopere_proctoring_focus";
+        let count = 0;
+        let namespace = ".kopere_proctoring_focus";
 
         /**
          * Register one focus-loss event.
@@ -50,6 +64,7 @@ define(["jquery"], function ($) {
          */
         function registerEvent(kind, detail) {
             count++;
+            showViolationMessage();
 
             if (typeof ctx.sendEvent === "function") {
                 ctx.sendEvent("focus_" + kind, {
@@ -58,7 +73,7 @@ define(["jquery"], function ($) {
                 });
             }
 
-            if (count > limit && typeof ctx.lock === "function") {
+            if (limit > 0 && count > limit && typeof ctx.lock === "function") {
                 let message = $("#proctoringpolicy_focus-message").html();
                 ctx.lock("focus", message || "");
             }

@@ -23,21 +23,38 @@
     }
 }}
 
-    <div id="kopere-proctoring-contract-overlay" class="kopere-proctoring-contract-dialog">
-        <div class="kopere-proctoring-contract-body">
+    <div id="kopere-proctoring-overlay" class="kopere-proctoring-dialog">
+        <div class="kopere-proctoring-header">
+            <h3 class="kopere-proctoring-title">
+                {{#str}}contract_title, proctoringpolicy_contract{{/str}}
+            </h3>
+        </div>
+
+        <div class="kopere-proctoring-body">
             {{{contract_html}}}
         </div>
 
-        <div class="kopere-proctoring-contract-footer">
-            <label class="kopere-proctoring-contract-accept">
+        <div class="kopere-proctoring-footer">
+            <label class="kopere-proctoring-accept">
                 <input type="checkbox" data-role="contract-accept">
                 <span>
                     {{#str}}accept_label, proctoringpolicy_contract{{/str}}
                 </span>
             </label>
 
-            <div class="kopere-proctoring-contract-error" data-role="contract-error" style="display: none;">
+            <div class="kopere-proctoring-error" data-role="contract-error" style="display: none;">
                 {{#str}}error_not_accepted, proctoringpolicy_contract{{/str}}
+            </div>
+
+            <div class="kopere-proctoring-proof mt-2"
+                 data-role="proof"
+                 {{^accepted}}style="display: none;"{{/accepted}}>
+                <a href="{{proofurl}}"
+                   target="_blank"
+                   rel="noopener"
+                   data-role="proof-link">
+                    {{#str}}proof_link, proctoringpolicy_contract{{/str}}
+                </a>
             </div>
         </div>
     </div>

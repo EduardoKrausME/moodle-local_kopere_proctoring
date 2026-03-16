@@ -30,16 +30,16 @@ define(["jquery"], function ($) {
      * @param {Object} cfg Policy config {limit, message}.
      */
     function initCopyPolicy(context, cfg) {
-        let message = $("#proctoringpolicy_copy-message").html();
-        var limit = cfg && cfg.limit ? parseInt(cfg.limit, 10) : 0;
+        let message = $("#proctoringpolicy_copy-message");
+        let limit = cfg && cfg.limit ? parseInt(cfg.limit, 10) : 0;
         if (isNaN(limit)) {
             limit = 0;
         }
 
-        var warningsCount = 0;
+        let warningsCount = 0;
 
         function showWarning() {
-            if (!message) {
+            if (!message.length || !$.trim(message.html())) {
                 return;
             }
 
@@ -48,16 +48,12 @@ define(["jquery"], function ($) {
             }
 
             warningsCount++;
-
-            // Simple message strategy. If you have a dedicated
-            // container in your overlay, you could enhance this
-            // to inject HTML there instead of using alert.
-            window.alert(message);
+            message.show();
         }
 
         function isBlockedKeyEvent(e) {
-            var key = e.key ? e.key.toLowerCase() : "";
-            var ctrlOrCmd = e.ctrlKey || e.metaKey;
+            let key = e.key ? e.key.toLowerCase() : "";
+            let ctrlOrCmd = e.ctrlKey || e.metaKey;
 
             if (!ctrlOrCmd) {
                 return false;
@@ -90,7 +86,6 @@ define(["jquery"], function ($) {
             showWarning();
         }
 
-        // Attach global listeners with capture to intercept early.
         $(document).on("keydown.local_kopere_proctoring_copy", handleKeydown);
         $(document).on("copy.local_kopere_proctoring_copy", handleClipboardEvent);
         $(document).on("cut.local_kopere_proctoring_copy", handleClipboardEvent);

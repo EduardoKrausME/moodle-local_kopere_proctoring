@@ -78,6 +78,15 @@ class provider implements policy_interface {
 
         $settings->add(
             new admin_setting_confightmleditor(
+                "proctoringpolicy_copy/start_message_default",
+                get_string("start_message_default", "proctoringpolicy_copy"),
+                get_string("start_message_default_desc", "proctoringpolicy_copy"),
+                ""
+            )
+        );
+
+        $settings->add(
+            new admin_setting_confightmleditor(
                 "proctoringpolicy_copy/message_default",
                 get_string("message_default", "proctoringpolicy_copy"),
                 get_string("message_default_desc", "proctoringpolicy_copy"),
@@ -98,13 +107,16 @@ class provider implements policy_interface {
      */
     public static function add_module_form(moodleform_mod $formwrapper, MoodleQuickForm $mform, int $cmid): void {
         $globallimit = get_config("proctoringpolicy_copy", "limit_default");
+        $globalstartmessage = get_config("proctoringpolicy_copy", "start_message_default");
         $globalmessage = get_config("proctoringpolicy_copy", "message_default");
 
         $limitdefault = $globallimit;
+        $startmessagedefault = $globalstartmessage;
         $messagedefault = $globalmessage;
 
         if ($cmid) {
             $limitdefault = cm_config::get("copy", "limit", $cmid, $globallimit);
+            $startmessagedefault = cm_config::get("copy", "start_message", $cmid, $globalstartmessage);
             $messagedefault = cm_config::get("copy", "message", $cmid, $globalmessage);
         }
 
@@ -123,6 +135,20 @@ class provider implements policy_interface {
         $mform->hideIf("kopere_policy_copy_limit", "kopere_policy_copy_enabled", "eq", 0);
         $mform->hideIf("kopere_policy_copy_limit", "kopere_proctoring_enabled", "eq", 0);
 
+        $mform->addElement(
+            "editor",
+            "kopere_policy_copy_start_message",
+            get_string("start_message_cm", "proctoringpolicy_copy"),
+            ['rows' => 4]
+        );
+        $mform->setType("kopere_policy_copy_start_message", PARAM_CLEANHTML);
+        $mform->setDefault("kopere_policy_copy_start_message", [
+            "text" => $startmessagedefault,
+            "format" => FORMAT_HTML,
+        ]);
+        $mform->hideIf("kopere_policy_copy_start_message", "kopere_policy_copy_enabled", "eq", 0);
+        $mform->hideIf("kopere_policy_copy_start_message", "kopere_proctoring_enabled", "eq", 0);
+
         $mform->addElement("editor", "kopere_policy_copy_message", get_string("message_cm", "proctoringpolicy_copy"));
         $mform->setType("kopere_policy_copy_message", PARAM_CLEANHTML);
         $mform->setDefault("kopere_policy_copy_message", [
@@ -137,6 +163,7 @@ class provider implements policy_interface {
         $formwrapper->set_data([
             cm_config::key("copy", "enabled") => cm_config::get("copy", "enabled", $cmid),
             cm_config::key("copy", "limit") => cm_config::get("copy", "limit", $cmid),
+            cm_config::key("copy", "start_message") => cm_config::get("copy", "start_message", $cmid),
             cm_config::key("copy", "message") => cm_config::get("copy", "message", $cmid),
         ]);
     }
@@ -152,6 +179,14 @@ class provider implements policy_interface {
         $enabled = ($data->kopere_policy_copy_enabled ?? 0);
         $limit = ($data->kopere_policy_copy_limit ?? 0);
 
+        $startmessagefield = $data->kopere_policy_copy_start_message ?? null;
+        $startmessagetext = "";
+        if (is_array($startmessagefield) && isset($startmessagefield["text"])) {
+            $startmessagetext = $startmessagefield["text"];
+        } else if (!is_array($startmessagefield) && $startmessagefield !== null) {
+            $startmessagetext = $startmessagefield;
+        }
+
         $messagefield = $data->kopere_policy_copy_message ?? null;
         $messagetext = "";
         if (is_array($messagefield) && isset($messagefield["text"])) {
@@ -162,6 +197,7 @@ class provider implements policy_interface {
 
         cm_config::set("copy", "enabled", $cmid, $enabled);
         cm_config::set("copy", "limit", $cmid, $limit);
+        cm_config::set("copy", "start_message", $cmid, $startmessagetext);
         cm_config::set("copy", "message", $cmid, $messagetext);
     }
 
@@ -224,10 +260,17 @@ class provider implements policy_interface {
         }
 
         $limit = cm_config::get("copy", "limit", $cmid, get_config("proctoringpolicy_copy", "limit_default"));
+        $startmessage = cm_config::get(
+            "copy",
+            "start_message",
+            $cmid,
+            get_config("proctoringpolicy_copy", "start_message_default")
+        );
         $message = cm_config::get("copy", "message", $cmid, get_config("proctoringpolicy_copy", "message_default"));
 
         return $OUTPUT->render_from_template("proctoringpolicy_copy/start", [
             "limit" => $limit,
+            "start_message" => $startmessage,
             "message" => $message,
         ]);
     }

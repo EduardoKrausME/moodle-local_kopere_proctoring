@@ -21,11 +21,20 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(["jquery"], function ($) {
+define(["jquery"], function($) {
     "use strict";
 
+    function showProofLink(overlay, proofurl) {
+        if (!proofurl) {
+            return;
+        }
+
+        overlay.find('[data-role="contract-proof-link"]').attr('href', proofurl);
+        overlay.find('[data-role="contract-proof"]').show();
+    }
+
     return {
-        init: function (ctx, cfg) {
+        init: function(ctx, cfg) {
             if (!cfg || !cfg.enabled) {
                 return;
             }
@@ -38,21 +47,52 @@ define(["jquery"], function ($) {
                 return;
             }
 
-            var accepted = false;
-            // ... pega checkbox, botões etc.
+            var accepted = !!cfg.accepted;
+            var checkbox = overlay.find('[data-role="contract-accept"]');
+            var errorbox = overlay.find('[data-role="contract-error"]');
 
-            ctx.api.registerGatekeeper(function () {
+            if (accepted) {
+                checkbox.prop("checked", true).prop("disabled", true);
+                showProofLink(overlay, cfg.proofurl || "");
+            }
+
+            ctx.api.registerGatekeeper(function() {
                 if (accepted) {
                     return true;
                 }
 
-                // Mostra overlay e retorna um jQuery.Promise que resolve true/false
-                var d = $.Deferred();
+                if (!checkbox.is(":checked")) {
+                    errorbox.show();
+                    return false;
+                }
 
-                // ex.: ao clicar "aceitar", marcar accepted = true e d.resolve(true);
-                // ao clicar "cancelar", d.resolve(false);
+                errorbox.hide();
 
-                return d.promise();
+                return $.ajax({
+                    url: cfg.ajaxurl,
+                    method: "POST",
+                    dataType: "json",
+                    data: {
+                        action: "accept",
+                        cmid: ctx.cmid,
+                        attemptid: ctx.attemptid,
+                        sesskey: cfg.sesskey,
+                        screenresolution: (window.screen ? (window.screen.width + "x" + window.screen.height) : "")
+                    }
+                }).then(function(response) {
+                    if (!response || !response.accepted) {
+                        errorbox.show();
+                        return false;
+                    }
+
+                    accepted = true;
+                    checkbox.prop("disabled", true);
+                    showProofLink(overlay, response.pdfurl || cfg.proofurl || "");
+                    return true;
+                }).fail(function() {
+                    errorbox.show();
+                    return false;
+                });
             });
         }
     };
