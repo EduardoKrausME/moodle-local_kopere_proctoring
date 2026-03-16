@@ -59,11 +59,20 @@ define(["jquery"], function ($) {
         let $startBlock = $container.find("[data-kopere-proctoring=\"start\"]");
         let $lockedBlock = $container.find("[data-kopere-proctoring=\"locked\"]");
         let $lockedMessage = $container.find("[data-kopere-proctoring=\"locked-message\"]");
+        let $runningBlock = $container.find("[data-kopere-proctoring=\"running\"]");
         let pendingModules = 0;
+        let examStarted = false;
+        let examLocked = false;
+        let startInProgress = false;
 
         // Gatekeepers registered by policies (ex: contract).
         let gatekeepers = [];
         let requirements = {};
+
+        function syncContainerState() {
+            $container.attr("data-kopere-exam-started", examStarted ? "1" : "0");
+            $container.attr("data-kopere-exam-locked", examLocked ? "1" : "0");
+        }
 
         function getMissingRequirements() {
             return Object.keys(requirements).map(function (key) {
@@ -94,17 +103,17 @@ define(["jquery"], function ($) {
 
             $description.html(
                 '<div class="alert alert-warning mb-0">' +
-                "<div class=\"mb-2\"><strong>" +
+                '<div class="mb-2"><strong>' +
                 M.util.get_string("description_pending", "local_kopere_proctoring") +
                 "</strong></div>" +
-                "<ul class=\"mb-0 pl-3\">" + items + "</ul>" +
+                '<ul class="mb-0 pl-3">' + items + "</ul>" +
                 "</div>"
             );
         }
 
         function refreshStartState() {
-            let ready = getMissingRequirements().length === 0;
-            $startButton.prop("disabled", !ready);
+            let ready = !examStarted && !examLocked && getMissingRequirements().length === 0;
+            $startButton.prop("disabled", !ready || startInProgress);
             renderRequirementsDescription();
         }
 
@@ -139,7 +148,31 @@ define(["jquery"], function ($) {
             $messages.empty().hide();
         }
 
+        function startExam() {
+            examStarted = true;
+            examLocked = false;
+            startInProgress = false;
+            syncContainerState();
+            hideViolationMessage();
+
+            if ($startBlock.length) {
+                $startBlock.hide();
+            }
+            if ($lockedBlock.length) {
+                $lockedBlock.hide();
+            }
+            if ($runningBlock.length) {
+                $runningBlock.show();
+            }
+
+            $container.hide();
+            refreshStartState();
+        }
+
         function lockExam(policyKey, html) {
+            examLocked = true;
+            startInProgress = false;
+            syncContainerState();
             showViolationMessage(policyKey, html || "");
             $startButton.prop("disabled", true);
 
@@ -147,8 +180,15 @@ define(["jquery"], function ($) {
                 $lockedMessage.html(html || M.util.get_string("locked_default_message", "local_kopere_proctoring"));
             }
 
-            if ($startBlock.length && $lockedBlock.length) {
+            $container.show();
+
+            if ($startBlock.length) {
                 $startBlock.hide();
+            }
+            if ($runningBlock.length) {
+                $runningBlock.hide();
+            }
+            if ($lockedBlock.length) {
                 $lockedBlock.show();
             }
         }
@@ -243,8 +283,15 @@ define(["jquery"], function ($) {
             },
             refreshStartState: refreshStartState,
             isReady: function () {
-                return getMissingRequirements().length === 0;
+                return !examStarted && !examLocked && getMissingRequirements().length === 0;
             },
+            isExamStarted: function () {
+                return examStarted;
+            },
+            isExamActive: function () {
+                return examStarted && !examLocked;
+            },
+            startExam: startExam,
             showViolationMessage: showViolationMessage,
             hideViolationMessage: hideViolationMessage,
             lockExam: lockExam
@@ -264,19 +311,32 @@ define(["jquery"], function ($) {
         };
 
         $startButton.on("click", function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (startInProgress) {
+                return;
+            }
+
             if (!context.api.isReady()) {
-                e.preventDefault();
-                e.stopPropagation();
                 refreshStartState();
                 return;
             }
 
+            startInProgress = true;
+            refreshStartState();
+
             runGatekeepers().done(function (ok) {
                 if (ok === false) {
+                    startInProgress = false;
                     refreshStartState();
-                } else {
-                    hideViolationMessage();
+                    return;
                 }
+
+                context.api.startExam();
+            }).fail(function () {
+                startInProgress = false;
+                refreshStartState();
             });
         });
 
@@ -286,6 +346,8 @@ define(["jquery"], function ($) {
                 refreshStartState();
             }
         }
+
+        syncContainerState();
 
         if (!policies || policies.length === 0) {
             refreshStartState();

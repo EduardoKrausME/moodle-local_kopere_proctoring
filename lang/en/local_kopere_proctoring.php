@@ -74,3 +74,4 @@ $string['userdata_total_attempts'] = 'Attempts';
 $string['userdata_total_contracts'] = 'Accepted contracts';
 $string['userdata_total_logs'] = 'Logs';
 $string['userdata_useragent'] = 'User agent';
+$string['subplugintype_proctoringpolicy'] = 'Proctoring Polices';

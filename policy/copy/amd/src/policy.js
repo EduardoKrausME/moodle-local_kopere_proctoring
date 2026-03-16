@@ -28,9 +28,18 @@ define(["jquery"], function ($) {
         return $.trim($("#proctoringpolicy_copy-message").html() || "");
     }
 
+    function isExamActive(context) {
+        return !!(
+            context &&
+            context.api &&
+            typeof context.api.isExamActive === "function" &&
+            context.api.isExamActive()
+        );
+    }
+
     function showWarning(context) {
         let html = getViolationHtml();
-        if (!html) {
+        if (!html || !isExamActive(context)) {
             return;
         }
 
@@ -54,6 +63,10 @@ define(["jquery"], function ($) {
         let warningsCount = 0;
 
         function registerWarning() {
+            if (!isExamActive(context)) {
+                return;
+            }
+
             if (limit > 0 && warningsCount >= limit) {
                 return;
             }
@@ -78,20 +91,30 @@ define(["jquery"], function ($) {
         }
 
         function handleKeydown(e) {
-            if (isBlockedKeyEvent(e)) {
-                e.preventDefault();
-                e.stopPropagation();
-                registerWarning();
+            if (!isExamActive(context) || !isBlockedKeyEvent(e)) {
+                return;
             }
+
+            e.preventDefault();
+            e.stopPropagation();
+            registerWarning();
         }
 
         function handleClipboardEvent(e) {
+            if (!isExamActive(context)) {
+                return;
+            }
+
             e.preventDefault();
             e.stopPropagation();
             registerWarning();
         }
 
         function handleContextmenu(e) {
+            if (!isExamActive(context)) {
+                return;
+            }
+
             e.preventDefault();
             e.stopPropagation();
             registerWarning();

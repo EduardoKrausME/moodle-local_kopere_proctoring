@@ -27,9 +27,18 @@ define(["jquery"], function ($) {
         return $.trim($("#proctoringpolicy_focus-message").html() || "");
     }
 
+    function isExamActive(ctx) {
+        return !!(
+            ctx &&
+            ctx.api &&
+            typeof ctx.api.isExamActive === "function" &&
+            ctx.api.isExamActive()
+        );
+    }
+
     function showViolationMessage(ctx) {
         let html = getViolationHtml();
-        if (!html) {
+        if (!html || !isExamActive(ctx)) {
             return;
         }
 
@@ -64,6 +73,10 @@ define(["jquery"], function ($) {
          * @param {String} detail
          */
         function registerEvent(kind, detail) {
+            if (!isExamActive(ctx)) {
+                return;
+            }
+
             count++;
             showViolationMessage(ctx);
 

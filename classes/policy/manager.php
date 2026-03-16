@@ -244,7 +244,7 @@ class manager {
 
         /** @var policy_interface $classname */
         foreach (self::get_policy_classes(true) as $classname) {
-            $classname::add_module_form($formwrapper, $mform, $cmid);
+            $classname::add_module_form($formwrapper, $mform, (int)$cmid);
         }
 
         $formwrapper->set_data([
