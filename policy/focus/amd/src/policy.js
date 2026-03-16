@@ -23,15 +23,18 @@
 
 define(["jquery"], function ($) {
 
-    /**
-     * Show the focus violation message.
-     *
-     * @return {void}
-     */
-    function showViolationMessage() {
-        let message = $("#proctoringpolicy_focus-message");
-        if (!message.length || !$.trim(message.html())) {
+    function getViolationHtml() {
+        return $.trim($("#proctoringpolicy_focus-message").html() || "");
+    }
+
+    function showViolationMessage(ctx) {
+        let html = getViolationHtml();
+        if (!html) {
             return;
+        }
+
+        if (ctx.api && typeof ctx.api.showViolationMessage === "function") {
+            ctx.api.showViolationMessage("focus", html);
         }
     }
 
@@ -62,7 +65,7 @@ define(["jquery"], function ($) {
          */
         function registerEvent(kind, detail) {
             count++;
-            showViolationMessage();
+            showViolationMessage(ctx);
 
             if (typeof ctx.sendEvent === "function") {
                 ctx.sendEvent("focus_" + kind, {
@@ -72,17 +75,14 @@ define(["jquery"], function ($) {
             }
 
             if (limit > 0 && count > limit && typeof ctx.lock === "function") {
-                let message = $("#proctoringpolicy_focus-message").html();
-                ctx.lock("focus", message || "");
+                ctx.lock("focus", getViolationHtml());
             }
         }
 
-        // Window blur.
         $(window).on("blur" + namespace, function () {
             registerEvent("blur", "window");
         });
 
-        // Visibility change (tab change, minimize, etc.).
         $(document).on("visibilitychange" + namespace, function () {
             if (document.hidden) {
                 registerEvent("visibilitychange", "hidden");

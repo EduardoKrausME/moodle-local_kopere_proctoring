@@ -52,24 +52,37 @@ define(["jquery"], function ($) {
         }
     }
 
-    function showViolationMessage() {
-        let message = $("#proctoringpolicy_fullscreen-message");
-        if (!message.length || !$.trim(message.html())) {
+    function getViolationHtml() {
+        return $.trim($("#proctoringpolicy_fullscreen-message").html() || "");
+    }
+
+    function showViolationMessage(ctx) {
+        let html = getViolationHtml();
+
+        $("body").hasClass("")
+
+        if (!html) {
             return;
+        }
+
+        if (ctx.api && typeof ctx.api.showViolationMessage === "function") {
+            ctx.api.showViolationMessage("fullscreen", html);
         }
     }
 
-    function hideViolationMessage() {
-        $("#proctoringpolicy_fullscreen-message").hide();
+    function hideViolationMessage(ctx) {
+        if (ctx.api && typeof ctx.api.hideViolationMessage === "function") {
+            ctx.api.hideViolationMessage();
+        }
     }
 
-    function warnStatus(text) {
-        $("#status-danger").show().html(text);
+    function warnStatus(ctx, text) {
+        if (ctx.api && typeof ctx.api.showViolationMessage === "function") {
+            ctx.api.showViolationMessage("fullscreen", "<p><strong>" + String(text || "") + "</strong></p>" + getViolationHtml());
+        }
     }
 
     function emitLog(ctx, action, value) {
-        // No fixed coupling to parent: emit a jQuery event.
-        // The core may listen and persist logs.
         $(document).trigger("local_kopere_proctoring:policy_log", [{
             cmid: ctx.cmid,
             attemptid: ctx.attemptid,
@@ -79,7 +92,7 @@ define(["jquery"], function ($) {
         }]);
     }
 
-    function bindFullscreenExit(ctx, cfg, state) {
+    function bindFullscreenExit(ctx, state) {
         $(document).on("fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange", function () {
             if (!state.inexam) {
                 return;
@@ -88,60 +101,62 @@ define(["jquery"], function ($) {
             if (!isFullscreenActive()) {
                 state.exits = state.exits + 1;
                 emitLog(ctx, "fullscreen_exit", String(state.exits));
-                showViolationMessage();
+                showViolationMessage(ctx);
 
                 if (state.limit > 0 && state.exits > state.limit) {
-                    warnStatus("Fullscreen limit exceeded.");
+                    warnStatus(ctx, "Fullscreen limit exceeded.");
                     emitLog(ctx, "fullscreen_blocked", "limit");
+                    if (typeof ctx.lock === "function") {
+                        ctx.lock("fullscreen", getViolationHtml());
+                    }
                 }
             }
         });
     }
 
-    function gateStart(ctx, cfg, state) {
-        let startsel = "#start-exam,#return-exam-1";
+    function registerStartGatekeeper(ctx, state) {
+        if (!ctx.api || typeof ctx.api.registerGatekeeper !== "function") {
+            return;
+        }
 
-        $(document).on("click", startsel, function (e) {
-            // If already fullscreen, just allow the core flow (do not block).
+        ctx.api.registerGatekeeper(function () {
+            let deferred = $.Deferred();
+
             if (isFullscreenActive()) {
-                hideViolationMessage();
+                hideViolationMessage(ctx);
                 state.inexam = true;
-                return;
+                deferred.resolve(true);
+                return deferred.promise();
             }
 
-            // Try request fullscreen (must be in user gesture).
-            let ok = requestFullscreen();
-            if (!ok) {
-                e.preventDefault();
-                e.stopPropagation();
-                showViolationMessage();
-                warnStatus("Your browser does not support fullscreen.");
+            if (!requestFullscreen()) {
+                showViolationMessage(ctx);
+                warnStatus(ctx, "Your browser does not support fullscreen.");
                 emitLog(ctx, "fullscreen_not_supported", "");
-                return;
+                deferred.resolve(false);
+                return deferred.promise();
             }
-
-            // If request was accepted, wait a short time to confirm.
-            e.preventDefault();
-            e.stopPropagation();
 
             let start = Date.now();
-            let t = setInterval(function () {
+            let timer = window.setInterval(function () {
                 if (isFullscreenActive()) {
-                    clearInterval(t);
-                    hideViolationMessage();
+                    window.clearInterval(timer);
+                    hideViolationMessage(ctx);
                     state.inexam = true;
                     emitLog(ctx, "fullscreen_entered", "");
-                    // Trigger a custom event so the core can continue start flow if it wants.
-                    $(document).trigger("local_kopere_proctoring:fullscreen_ready");
+                    deferred.resolve(true);
                     return;
                 }
 
                 if ((Date.now() - start) > 3000) {
-                    clearInterval(t);
-                    showViolationMessage();
+                    window.clearInterval(timer);
+                    showViolationMessage(ctx);
                     emitLog(ctx, "fullscreen_failed", "");
+                    deferred.resolve(false);
                 }
             }, 100);
+
+            return deferred.promise();
         });
     }
 
@@ -154,10 +169,8 @@ define(["jquery"], function ($) {
                 limit: isNaN(parsedlimit) ? 0 : parsedlimit
             };
 
-            bindFullscreenExit(ctx, cfg, state);
-            gateStart(ctx, cfg, state);
-
-            // Initial UI hint (optional).
+            bindFullscreenExit(ctx, state);
+            registerStartGatekeeper(ctx, state);
             emitLog(ctx, "fullscreen_policy_loaded", "");
         }
     };

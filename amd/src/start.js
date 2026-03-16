@@ -24,41 +24,46 @@
 define(["jquery"], function ($) {
     "use strict";
 
-    function getString(key, fallback) {
-        try {
-            if (window.M && window.M.util && window.M.util.get_string) {
-                return window.M.util.get_string(key, "local_kopere_proctoring");
-            }
-        } catch (e) {
-            // Ignore string loading errors and use fallback.
+    function ensurePopupStyles() {
+        if (document.getElementById("kopere-proctoring-shared-styles")) {
+            return;
         }
 
-        return fallback || "";
-    }
+        let style = document.createElement("style");
+        style.id = "kopere-proctoring-shared-styles";
+        style.textContent = ""
+            + ".kopere-proctoring-popup {"
+            + "    border-radius: .9rem;"
+            + "    box-shadow: 0 .85rem 2rem rgba(0, 0, 0, .16);"
+            + "    border: 1px solid rgba(220, 53, 69, .2);"
+            + "}"
+            + ".kopere-proctoring-popup__title {"
+            + "    font-size: 1rem;"
+            + "    font-weight: 700;"
+            + "    margin-bottom: .5rem;"
+            + "}";
 
-    function escapeHtml(text) {
-        return String(text || "")
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/\"/g, "&quot;")
-            .replace(/'/g, "&#039;");
+        document.head.appendChild(style);
     }
 
     function init(cmid, attemptid, policies) {
 
-        var $container = $("[data-kopere-proctoring=\"container\"]");
+        let $container = $("[data-kopere-proctoring=\"container\"]");
         if ($container.length === 0) {
             return;
         }
 
-        var $messages = $container.find("[data-kopere-proctoring=\"messages\"]");
-        var $startButton = $container.find("[data-kopere-proctoring=\"start-button\"]");
-        var pendingModules = 0;
+        let $description = $container.find("[data-kopere-proctoring=\"description\"]");
+        let $messages = $container.find("[data-kopere-proctoring=\"messages\"]");
+        let $startButton = $container.find("[data-kopere-proctoring=\"start-button\"]");
+        let $startBlock = $container.find("[data-kopere-proctoring=\"start\"]");
+        let $lockedBlock = $container.find("[data-kopere-proctoring=\"locked\"]");
+        let $lockedMessage = $container.find("[data-kopere-proctoring=\"locked-message\"]");
+        let pendingModules = 0;
 
         // Gatekeepers registered by policies (ex: contract).
-        var gatekeepers = [];
-        var requirements = {};
+        let gatekeepers = [];
+        let requirements = {};
 
         function getMissingRequirements() {
             return Object.keys(requirements).map(function (key) {
@@ -69,40 +74,83 @@ define(["jquery"], function ($) {
         }
 
         function renderRequirementsDescription() {
-            if ($messages.length === 0) {
+            if ($description.length === 0) {
                 return;
             }
 
-            var missing = getMissingRequirements();
+            let missing = getMissingRequirements();
             if (missing.length === 0) {
-                $messages.html(
-                    escapeHtml(getString(
-                        "description_ready",
-                        M.util.get_string("description_ready", "local_kopere_proctoring")
-                    ))
+                $description.html(
+                    '<div class="alert alert-success mb-0">' +
+                    M.util.get_string("description_ready", "local_kopere_proctoring") +
+                    "</div>"
                 );
                 return;
             }
 
-            var items = missing.map(function (requirement) {
-                return "<li>" + escapeHtml(requirement.label || "") + "</li>";
+            let items = missing.map(function (requirement) {
+                return "<li>" + (requirement.label || "") + "</li>";
             }).join("");
 
-            $messages.html(
+            $description.html(
+                '<div class="alert alert-warning mb-0">' +
                 "<div class=\"mb-2\"><strong>" +
-                escapeHtml(getString(
-                    "description_pending",
-                    M.util.get_string("description_pending", "local_kopere_proctoring")
-                )) +
+                M.util.get_string("description_pending", "local_kopere_proctoring") +
                 "</strong></div>" +
-                "<ul class=\"mb-0 pl-3\">" + items + "</ul>"
+                "<ul class=\"mb-0 pl-3\">" + items + "</ul>" +
+                "</div>"
             );
         }
 
         function refreshStartState() {
-            var ready = getMissingRequirements().length === 0;
+            let ready = getMissingRequirements().length === 0;
             $startButton.prop("disabled", !ready);
             renderRequirementsDescription();
+        }
+
+        function showViolationMessage(policyKey, html) {
+            let title = M.util.get_string("locked_title", "local_kopere_proctoring");
+
+            ensurePopupStyles();
+            if ($messages.length === 0) {
+                return;
+            }
+
+            if (!html) {
+                $messages.empty().hide();
+                return;
+            }
+
+            $messages.html(
+                '<div class="alert alert-danger kopere-proctoring-popup mb-0" data-kopere-violation-key="' +
+                (policyKey || "") +
+                '">' +
+                '<div class="kopere-proctoring-popup__title">' + title + "</div>" +
+                '<div class="kopere-proctoring-popup__content">' + html + "</div>" +
+                "</div>"
+            ).show();
+        }
+
+        function hideViolationMessage() {
+            if ($messages.length === 0) {
+                return;
+            }
+
+            $messages.empty().hide();
+        }
+
+        function lockExam(policyKey, html) {
+            showViolationMessage(policyKey, html || "");
+            $startButton.prop("disabled", true);
+
+            if ($lockedMessage.length) {
+                $lockedMessage.html(html || M.util.get_string("locked_default_message", "local_kopere_proctoring"));
+            }
+
+            if ($startBlock.length && $lockedBlock.length) {
+                $startBlock.hide();
+                $lockedBlock.show();
+            }
         }
 
         /**
@@ -116,8 +164,8 @@ define(["jquery"], function ($) {
          * @returns {jQuery.Promise} resolves(true|false)
          */
         function runGatekeepers() {
-            var deferred = $.Deferred();
-            var index = 0;
+            let deferred = $.Deferred();
+            let index = 0;
 
             function next() {
                 if (index >= gatekeepers.length) {
@@ -125,8 +173,8 @@ define(["jquery"], function ($) {
                     return;
                 }
 
-                var fn = gatekeepers[index++];
-                var result = true;
+                let fn = gatekeepers[index++];
+                let result = true;
 
                 try {
                     result = fn(context);
@@ -157,7 +205,7 @@ define(["jquery"], function ($) {
         }
 
         // Shared context passed to all policies.
-        var context = {
+        let context = {
             cmid: cmid,
             attemptid: attemptid
         };
@@ -196,7 +244,23 @@ define(["jquery"], function ($) {
             refreshStartState: refreshStartState,
             isReady: function () {
                 return getMissingRequirements().length === 0;
-            }
+            },
+            showViolationMessage: showViolationMessage,
+            hideViolationMessage: hideViolationMessage,
+            lockExam: lockExam
+        };
+
+        context.sendEvent = function (eventKey, payload) {
+            $(document).trigger("local_kopere_proctoring:server_event", [{
+                eventkey: eventKey,
+                cmid: cmid,
+                attemptid: attemptid,
+                payload: payload || {}
+            }]);
+        };
+
+        context.lock = function (policyKey, html) {
+            lockExam(policyKey, html || "");
         };
 
         $startButton.on("click", function (e) {
@@ -210,6 +274,8 @@ define(["jquery"], function ($) {
             runGatekeepers().done(function (ok) {
                 if (ok === false) {
                     refreshStartState();
+                } else {
+                    hideViolationMessage();
                 }
             });
         });
@@ -229,6 +295,13 @@ define(["jquery"], function ($) {
         pendingModules = policies.length;
 
         policies.forEach(function (p) {
+            if (p && p.config && p.config.requirementlabel) {
+                context.api.registerRequirement(p.key, {
+                    label: p.config.requirementlabel,
+                    satisfied: false
+                });
+            }
+
             if (!p.amd) {
                 markModuleLoaded();
                 return;

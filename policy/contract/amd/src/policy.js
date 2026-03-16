@@ -29,37 +29,69 @@ define(["jquery"], function ($) {
             return;
         }
 
-        var style = document.createElement("style");
+        let style = document.createElement("style");
         style.id = "kopere-proctoring-contract-styles";
         style.textContent = ""
-            + ".kopere-proctoring-contract-footer {"
-            + "    border-radius: .75rem;"
+            + ".kopere-proctoring-footer {"
+            + "    border-radius: .95rem;"
             + "    transition: border-color .2s ease, background-color .2s ease, box-shadow .2s ease;"
             + "}"
-            + ".kopere-proctoring-contract-footer.is-pending {"
-            + "    border: 1px solid rgba(176, 42, 55, .22);"
-            + "    background: rgba(176, 42, 55, .04);"
-            + "    box-shadow: 0 0 0 .25rem rgba(176, 42, 55, .08);"
+            + ".kopere-proctoring-footer.is-pending {"
+            + "    border: 1px solid rgba(176, 42, 55, .28);"
+            + "    background: rgba(176, 42, 55, .05);"
+            + "    box-shadow: 0 0 0 .35rem rgba(176, 42, 55, .08);"
             + "    padding: 1rem;"
             + "}"
-            + ".kopere-proctoring-contract-accept {"
-            + "    display: flex;"
+            + ".kopere-proctoring-accept {"
+            + "    display: inline-flex;"
             + "    align-items: center;"
-            + "    gap: .75rem;"
+            + "    gap: .85rem;"
             + "    margin: 0;"
+            + "    padding: .7rem .95rem;"
+            + "    border-radius: .85rem;"
+            + "    border: 1px solid rgba(108, 117, 125, .2);"
+            + "    background: #fff;"
+            + "    cursor: pointer;"
             + "}"
-            + ".kopere-proctoring-contract-footer.is-pending [data-role=\"contract-accept\"] {"
-            + "    border-radius: .3rem;"
-            + "    animation: kopereProctoringContractPulse 1.3s infinite;"
+            + ".kopere-proctoring-accept input[data-role=\"contract-accept\"] {"
+            + "    appearance: none;"
+            + "    -webkit-appearance: none;"
+            + "    width: 1.35rem;"
+            + "    height: 1.35rem;"
+            + "    margin: 0;"
+            + "    border: 2px solid #dc3545;"
+            + "    border-radius: .35rem;"
+            + "    background: #fff;"
+            + "    position: relative;"
+            + "    transition: transform .2s ease, box-shadow .2s ease, background-color .2s ease;"
             + "}"
-            + ".kopere-proctoring-contract-footer.is-pending .kopere-proctoring-contract-accept span {"
-            + "    font-weight: 600;"
+            + ".kopere-proctoring-accept input[data-role=\"contract-accept\"]:checked {"
+            + "    background: #198754;"
+            + "    border-color: #198754;"
+            + "}"
+            + ".kopere-proctoring-accept input[data-role=\"contract-accept\"]:checked::after {"
+            + "    content: '';"
+            + "    position: absolute;"
+            + "    left: .30rem;"
+            + "    top: .05rem;"
+            + "    width: .35rem;"
+            + "    height: .7rem;"
+            + "    border: solid #fff;"
+            + "    border-width: 0 .16rem .16rem 0;"
+            + "    transform: rotate(45deg);"
+            + "}"
+            + ".kopere-proctoring-footer.is-pending input[data-role=\"contract-accept\"] {"
+            + "    animation: kopereProctoringContractPulse 1.25s infinite;"
+            + "    box-shadow: 0 0 0 .12rem rgba(220, 53, 69, .12);"
+            + "}"
+            + ".kopere-proctoring-footer.is-pending .kopere-proctoring-accept span {"
+            + "    font-weight: 700;"
             + "    color: #842029;"
             + "}"
             + "@keyframes kopereProctoringContractPulse {"
-            + "    0% { box-shadow: 0 0 0 0 rgba(176, 42, 55, .35); }"
-            + "    70% { box-shadow: 0 0 0 .5rem rgba(176, 42, 55, 0); }"
-            + "    100% { box-shadow: 0 0 0 0 rgba(176, 42, 55, 0); }"
+            + "    0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, .38); transform: scale(1); }"
+            + "    70% { box-shadow: 0 0 0 .55rem rgba(220, 53, 69, 0); transform: scale(1.02); }"
+            + "    100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); transform: scale(1); }"
             + "}";
 
         document.head.appendChild(style);
@@ -83,17 +115,17 @@ define(["jquery"], function ($) {
                 return;
             }
 
-            var $container = $("#kopere-proctoring-contract-overlay");
+            let $container = $("#kopere-proctoring-overlay");
             if ($container.length === 0) {
                 return;
             }
 
             ensureStyles();
 
-            var $footer = $container.find(".kopere-proctoring-contract-footer");
-            var $checkbox = $container.find("[data-role=\"contract-accept\"]");
-            var $error = $container.find("[data-role=\"contract-error\"]");
-            var accepted = $checkbox.is(":checked");
+            let $footer = $container.find(".kopere-proctoring-footer");
+            let $checkbox = $container.find("[data-role=\"contract-accept\"]");
+            let $error = $container.find("[data-role=\"contract-error\"]");
+            let accepted = $checkbox.is(":checked");
 
             ctx.api.registerRequirement("contract", {
                 label: cfg.requirementlabel || "Read and accept the proctoring terms",

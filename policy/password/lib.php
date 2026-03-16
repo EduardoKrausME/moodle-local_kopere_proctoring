@@ -34,8 +34,6 @@ use proctoringpolicy_password\password_service;
  * @throws Exception
  */
 function proctoringpolicy_password_extend_settings_navigation(navigation_node $navigationnode, $context) {
-    die("aaaa 1 aaaa");
-
     $keys = $navigationnode->get_children_key_list();
     $beforekey = null;
     $i = array_search('modedit', $keys);

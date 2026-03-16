@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 $plugin->component = "proctoringpolicy_password";
-$plugin->version = 2026011601;
+$plugin->version = 2026011600;
 $plugin->requires = 2022041900;
 $plugin->maturity = MATURITY_STABLE;
 $plugin->release = "1.0.1";

@@ -21,19 +21,11 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(["jquery"], function($) {
+define(["jquery"], function ($) {
     "use strict";
 
-    function getString(key, fallback) {
-        var component = "proctoringpolicy_password";
-        try {
-            if (window.M && window.M.util && window.M.util.get_string) {
-                return window.M.util.get_string(key, component);
-            }
-        } catch (e) {
-            // Ignore and use fallback.
-        }
-        return fallback || "";
+    function getString(key) {
+        return M.util.get_string(key, "proctoringpolicy_password");
     }
 
     function postAjax(url, data) {
@@ -50,19 +42,20 @@ define(["jquery"], function($) {
             return;
         }
 
-        var cmid = Number(ctx.cmid || 0);
-        var attemptid = Number(ctx.attemptid || 0);
+        let cmid = Number(ctx.cmid || 0);
+        let attemptid = Number(ctx.attemptid || 0);
+        let ajaxurl = M.cfg.wwwroot + "/local/kopere_proctoring/policy/password/ajax.php";
 
-        var $container = $("[data-kppass=\"container\"]");
+        let $container = $("[data-kppass=\"container\"]");
         if ($container.length === 0) {
             return;
         }
 
-        var $status = $container.find("[data-kppass=\"status\"]");
-        var $inputPassword = $container.find("[data-kppass=\"password\"]");
-        var $btnSubmit = $container.find("[data-kppass=\"submit\"]");
+        let $status = $container.find("[data-kppass=\"status\"]");
+        let $inputPassword = $container.find("[data-kppass=\"password\"]");
+        let $btnSubmit = $container.find("[data-kppass=\"submit\"]");
 
-        var polling = null;
+        let polling = null;
 
         if (ctx.api && typeof ctx.api.registerRequirement === "function") {
             ctx.api.registerRequirement("password", {
@@ -79,48 +72,74 @@ define(["jquery"], function($) {
             }
         }
 
-        function setStatus(text) {
-            $status.text(text || "");
-        }
-
-        function handleStatusResponse(resp) {
-            if (!resp || !resp.status) {
+        function setStatus(kind, text) {
+            if (!text) {
+                $status.empty().hide();
                 return;
             }
 
-            if (resp.status === "pending") {
+            let classname = "alert-info";
+            if (kind === "success") {
+                classname = "alert-success";
+            } else if (kind === "warning") {
+                classname = "alert-warning";
+            } else if (kind === "danger") {
+                classname = "alert-danger";
+            }
+
+            $status.html('<div class="alert ' + classname + ' mb-2">' + text + '</div>').show();
+        }
+
+        function stopPolling() {
+            if (polling) {
+                window.clearInterval(polling);
+                polling = null;
+            }
+        }
+
+        function handleStatusResponse(resp) {
+            if (!resp) {
                 setRequirementSatisfied(false);
-                setStatus(getString("js_status_pending", "Request sent. Waiting approval."));
-            } else if (resp.status === "approved") {
+                setStatus("warning", getString("js_status_pending"));
+                return;
+            }
+
+            if (resp.error === "blocked" || resp.status === "blocked") {
+                setRequirementSatisfied(false);
+                setStatus("danger", getString("js_status_blocked"));
+                stopPolling();
+                return;
+            }
+
+            if (resp.status === "approved") {
                 setRequirementSatisfied(true);
-                setStatus(getString("js_status_approved", "Approved. You can start the exam."));
+                setStatus("success", getString("js_status_approved"));
+                $inputPassword.prop("disabled", true);
+                $(".kopere-password-policy .kopere-proctoring-footer").hide(300);
+                $btnSubmit.prop("disabled", true);
                 window.dispatchEvent(new CustomEvent("kopere_proctoring_password_authorized", {
                     detail: {
                         cmid: cmid,
                         attemptid: attemptid
                     }
                 }));
-                if (polling) {
-                    window.clearInterval(polling);
-                    polling = null;
-                }
-            } else if (resp.status === "blocked") {
-                setRequirementSatisfied(false);
-                setStatus(getString("js_status_blocked", "You are temporarily blocked."));
-                if (polling) {
-                    window.clearInterval(polling);
-                    polling = null;
-                }
+                stopPolling();
+                return;
             }
+
+            setRequirementSatisfied(false);
+            setStatus("warning", getString("js_status_pending"));
         }
 
         function checkStatus() {
-            return postAjax(M.cfg.wwwroot + "/local/kopere_proctoring/policy/password/ajax.php", {
+            return postAjax(ajaxurl, {
                 action: "check",
                 cmid: cmid,
                 attemptid: attemptid
-            }).done(function(response) {
+            }).done(function (response) {
                 handleStatusResponse(response);
+            }).fail(function () {
+                setRequirementSatisfied(false);
             });
         }
 
@@ -133,33 +152,47 @@ define(["jquery"], function($) {
             polling = window.setInterval(checkStatus, 3000);
         }
 
-        startPolling();
+        function ensureRequestExists() {
+            return postAjax(ajaxurl, {
+                action: "request",
+                cmid: cmid,
+                attemptid: attemptid,
+                browserinfo: window.navigator.userAgent || ""
+            }).done(function (response) {
+                handleStatusResponse(response);
+            }).always(function () {
+                startPolling();
+            });
+        }
 
-        $btnSubmit.on("click", function() {
-            var code = ($inputPassword.val() || "").replace(/\D/g, "");
+        ensureRequestExists();
+
+        $btnSubmit.on("click", function () {
+            let code = ($inputPassword.val() || "").replace(/\D/g, "");
             if (code.length !== 8) {
                 setRequirementSatisfied(false);
-                setStatus(getString("js_wrong_password", "Invalid password."));
+                setStatus("danger", getString("js_wrong_password"));
                 return;
             }
 
-            postAjax(M.cfg.wwwroot + "/local/kopere_proctoring/policy/password/ajax.php", {
+            postAjax(ajaxurl, {
                 action: "submitcode",
                 cmid: cmid,
                 attemptid: attemptid,
                 code: code
-            }).done(function(resp) {
+            }).done(function (resp) {
                 if (!resp) {
                     return;
                 }
                 if (resp.error === "blocked") {
                     setRequirementSatisfied(false);
-                    setStatus(getString("js_toomany_errors", "Too many wrong attempts. Please wait 10 minutes."));
+                    setStatus("danger", getString("js_toomany_errors"));
+                    stopPolling();
                     return;
                 }
                 if (resp.error === "wrong") {
                     setRequirementSatisfied(false);
-                    setStatus(getString("js_wrong_password", "Invalid password."));
+                    setStatus("danger", getString("js_wrong_password"));
                     return;
                 }
                 if (resp.status === "approved") {

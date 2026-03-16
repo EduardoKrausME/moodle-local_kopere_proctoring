@@ -25,7 +25,7 @@ define(['jquery'], function($) {
     'use strict';
 
     function getString(key, fallback) {
-        var component = 'proctoringpolicy_password';
+        let component = 'proctoringpolicy_password';
         try {
             if (window.M && window.M.util && window.M.util.get_string) {
                 return window.M.util.get_string(key, component);
@@ -41,16 +41,16 @@ define(['jquery'], function($) {
             return;
         }
 
-        var $container = $('[data-region="password-admin-content"]');
-        var $meta = $('[data-region="password-admin-meta"]');
+        let $container = $('[data-region="password-admin-content"]');
+        let $meta = $('[data-region="password-admin-meta"]');
 
         if ($container.length === 0) {
             return;
         }
 
-        var loading = false;
+        let loading = false;
 
-        var refresh = function() {
+        let refresh = function() {
             if (loading) {
                 return;
             }

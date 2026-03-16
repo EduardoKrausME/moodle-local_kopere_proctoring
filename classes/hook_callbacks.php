@@ -109,6 +109,8 @@ class hook_callbacks {
         $PAGE->requires->strings_for_js([
             "description_pending",
             "description_ready",
+            "locked_title",
+            "locked_default_message",
         ], "local_kopere_proctoring");
 
         // Require assets in the normal render flow.

@@ -22,6 +22,22 @@
  */
 
 define(["jquery"], function ($) {
+    "use strict";
+
+    function getViolationHtml() {
+        return $.trim($("#proctoringpolicy_copy-message").html() || "");
+    }
+
+    function showWarning(context) {
+        let html = getViolationHtml();
+        if (!html) {
+            return;
+        }
+
+        if (context.api && typeof context.api.showViolationMessage === "function") {
+            context.api.showViolationMessage("copy", html);
+        }
+    }
 
     /**
      * Attach handlers to block copy, paste, cut and context menu.
@@ -30,7 +46,6 @@ define(["jquery"], function ($) {
      * @param {Object} cfg Policy config {limit, message}.
      */
     function initCopyPolicy(context, cfg) {
-        let message = $("#proctoringpolicy_copy-message");
         let limit = cfg && cfg.limit ? parseInt(cfg.limit, 10) : 0;
         if (isNaN(limit)) {
             limit = 0;
@@ -38,16 +53,13 @@ define(["jquery"], function ($) {
 
         let warningsCount = 0;
 
-        function showWarning() {
-            if (!message.length || !$.trim(message.html())) {
-                return;
-            }
-
+        function registerWarning() {
             if (limit > 0 && warningsCount >= limit) {
                 return;
             }
 
             warningsCount++;
+            showWarning(context);
         }
 
         function isBlockedKeyEvent(e) {
@@ -69,20 +81,20 @@ define(["jquery"], function ($) {
             if (isBlockedKeyEvent(e)) {
                 e.preventDefault();
                 e.stopPropagation();
-                showWarning();
+                registerWarning();
             }
         }
 
         function handleClipboardEvent(e) {
             e.preventDefault();
             e.stopPropagation();
-            showWarning();
+            registerWarning();
         }
 
         function handleContextmenu(e) {
             e.preventDefault();
             e.stopPropagation();
-            showWarning();
+            registerWarning();
         }
 
         $(document).on("keydown.local_kopere_proctoring_copy", handleKeydown);

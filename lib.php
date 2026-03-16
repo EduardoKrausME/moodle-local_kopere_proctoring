@@ -109,4 +109,15 @@ function local_kopere_proctoring_extend_settings_navigation(navigation_node $nav
         $navigationnode->add_node($node, $beforekey);
     }
 
+    $libs = glob(__DIR__ . "/policy/*/lib.php");
+    foreach ($libs as $lib) {
+        require_once($lib);
+
+        $folder = basename(dirname($lib));
+        $function = "proctoringpolicy_{$folder}_extend_settings_navigation";
+
+        if (function_exists($function)) {
+            $function($navigationnode, $context);
+        }
+    }
 }
