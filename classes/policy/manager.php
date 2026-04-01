@@ -262,11 +262,13 @@ class manager {
     public static function save_module_form(stdClass $data): void {
         $cmid = $data->coursemodule;
 
-        set_config("kopere_proctoring_enabled_{$cmid}", $data->kopere_proctoring_enabled, "local_kopere_proctoring");
+        if(isset($data->kopere_proctoring_enabled)) {
+            set_config("kopere_proctoring_enabled_{$cmid}", $data->kopere_proctoring_enabled, "local_kopere_proctoring");
 
-        /** @var policy_interface $classname */
-        foreach (self::get_policy_classes(true) as $classname) {
-            $classname::save_module_form($data, $cmid);
+            /** @var policy_interface $classname */
+            foreach (self::get_policy_classes(true) as $classname) {
+                $classname::save_module_form($data, $cmid);
+            }
         }
     }
 
