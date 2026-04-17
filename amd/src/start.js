@@ -46,7 +46,12 @@ define(["jquery"], function ($) {
         document.head.appendChild(style);
     }
 
-    function init(cmid, attemptid, policies) {
+    function init(payload) {
+        payload = payload || {};
+
+        let cmid = Number(payload.cmid || 0);
+        let attemptid = Number(payload.attemptid || 0);
+        let policies = Array.isArray(payload.policies) ? payload.policies : [];
 
         let $container = $("[data-kopere-proctoring=\"container\"]");
         if ($container.length === 0) {

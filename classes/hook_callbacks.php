@@ -115,10 +115,7 @@ class hook_callbacks {
 
         // Require assets in the normal render flow.
         $payload = manager::get_js_payload($cmid, $attemptid);
-        //echo '<pre>';
-        //print_r($payload);
-        //echo '</pre>';die;
-        $PAGE->requires->js_call_amd('local_kopere_proctoring/start', 'init', $payload);
+        $PAGE->requires->js_call_amd("local_kopere_proctoring/start", "init", [$payload]);
 
         // Inject HTML via hook.
         // echo $OUTPUT->render_from_template('local_kopere_proctoring/start', $mustachedata);
