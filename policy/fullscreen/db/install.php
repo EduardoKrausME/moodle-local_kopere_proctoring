@@ -31,7 +31,10 @@
 function xmldb_proctoringpolicy_fullscreen_install() {
     set_config("sortorder", 20, "proctoringpolicy_fullscreen");
     set_config("limit_default", 2, "proctoringpolicy_fullscreen");
-    set_config("start_message_default", get_string("start_message_default_text", "proctoringpolicy_fullscreen"),"proctoringpolicy_fullscreen");
+    set_config(
+        "start_message_default",
+        get_string("start_message_default_text", "proctoringpolicy_fullscreen"), "proctoringpolicy_fullscreen"
+    );
     set_config("message_default", get_string("message_default_text", "proctoringpolicy_fullscreen"), "proctoringpolicy_fullscreen");
 
     return true;

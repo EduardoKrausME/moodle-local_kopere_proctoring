@@ -122,7 +122,8 @@ $pdf->Cell(0, 5.5, fullname($user), 0, 1, 'L');
 $pdf->SetFont('helvetica', 'B', 10.6);
 $pdf->Cell(23, 5.5, get_string('pdf_username', 'proctoringpolicy_contract'), 0, 0, 'L');
 $pdf->SetFont('helvetica', '', 10.6);
-$pdf->Cell(0, 5.5, $user->username . ($maskedidnumber ? ' | ' . get_string('pdf_cpf', 'proctoringpolicy_contract') . ' ' . $maskedidnumber : ''), 0, 1, 'L');
+$pdf->Cell(0, 5.5, $user->username . ($maskedidnumber ? ' | ' .
+        get_string('pdf_cpf', 'proctoringpolicy_contract') . ' ' . $maskedidnumber : ''), 0, 1, 'L');
 
 $pdf->SetFont('helvetica', 'B', 10.6);
 $pdf->Cell(18, 5.5, get_string('pdf_email', 'proctoringpolicy_contract'), 0, 0, 'L');

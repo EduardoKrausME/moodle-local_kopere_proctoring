@@ -24,6 +24,10 @@
 
 require_once(__DIR__ . '/../../../../../config.php');
 
+if (false) {
+    require_login();
+}
+
 use proctoringpolicy_contract\contract_service;
 
 $code = required_param('code', PARAM_TEXT);
@@ -47,8 +51,10 @@ echo html_writer::tag('p', get_string('verification_page_intro', 'proctoringpoli
 
 if (!$valid) {
     echo html_writer::div(
-        html_writer::tag('h4', get_string('verification_invalid_title', 'proctoringpolicy_contract'), ['class' => 'mb-2']) .
-        html_writer::tag('p', get_string('verification_invalid_desc', 'proctoringpolicy_contract', $documentcode), ['class' => 'mb-0']),
+        html_writer::tag('h4',
+            get_string('verification_invalid_title', 'proctoringpolicy_contract'), ['class' => 'mb-2']) .
+        html_writer::tag('p',
+            get_string('verification_invalid_desc', 'proctoringpolicy_contract', $documentcode), ['class' => 'mb-0']),
         'alert alert-danger'
     );
     echo html_writer::end_div();
@@ -71,7 +77,8 @@ $verifycard[] = html_writer::tag('dd', contract_service::get_document_code($att)
 $verifycard[] = html_writer::tag('dt', get_string('pdf_full_name', 'proctoringpolicy_contract'), ['class' => 'col-sm-3']);
 $verifycard[] = html_writer::tag('dd', fullname($user), ['class' => 'col-sm-9']);
 $verifycard[] = html_writer::tag('dt', get_string('pdf_username', 'proctoringpolicy_contract'), ['class' => 'col-sm-3']);
-$verifycard[] = html_writer::tag('dd', s($user->username) . ($maskedidnumber ? ' | ' . get_string('pdf_cpf', 'proctoringpolicy_contract') . ' ' . s($maskedidnumber) : ''), ['class' => 'col-sm-9']);
+$verifycard[] = html_writer::tag('dd', s($user->username) . ($maskedidnumber ? ' | ' .
+        get_string('pdf_cpf', 'proctoringpolicy_contract') . ' ' . s($maskedidnumber) : ''), ['class' => 'col-sm-9']);
 $verifycard[] = html_writer::tag('dt', get_string('pdf_email', 'proctoringpolicy_contract'), ['class' => 'col-sm-3']);
 $verifycard[] = html_writer::tag('dd', s($user->email), ['class' => 'col-sm-9']);
 $verifycard[] = html_writer::tag('dt', get_string('pdf_acceptance_date', 'proctoringpolicy_contract'), ['class' => 'col-sm-3']);

@@ -82,7 +82,7 @@ class password_service {
             $kppassword->cmid = $cmid;
             $kppassword->attemptid = $attemptid;
             $kppassword->userid = $userid;
-            $kppassword->status = "pending"; // pending, approved, blocked
+            $kppassword->status = "pending"; // Accept pending, approved, blocked.
             $kppassword->password = self::generate_password();
             $kppassword->timecreated = $kppassword->timemodified = time();
             $kppassword->ip = $ip;

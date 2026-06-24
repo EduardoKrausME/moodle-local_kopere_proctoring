@@ -62,7 +62,7 @@ function proctoringpolicy_password_extend_settings_navigation(navigation_node $n
 
     $node = navigation_node::create(
         get_string('adminpage', 'proctoringpolicy_password'),
-        new moodle_url('/local/kopere_proctoring/policy/password/admin.php', ["courseid"=>$cm->course]),
+        new moodle_url('/local/kopere_proctoring/policy/password/admin.php', ["courseid" => $cm->course]),
         navigation_node::TYPE_SETTING,
         null,
         'kopere_proctoring_password_admin',

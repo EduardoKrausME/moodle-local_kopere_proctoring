@@ -75,7 +75,6 @@ class evidence_manager {
 
         $context = context_module::instance($cmid);
 
-        /** @var stored_file[] $files */
         $fs = get_file_storage();
         $files = $fs->get_area_files(
             $context->id,

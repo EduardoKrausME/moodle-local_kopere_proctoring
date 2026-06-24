@@ -22,8 +22,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// local/kopere_proctoring/classes/hook_callbacks.php
-
 namespace local_kopere_proctoring;
 
 use core\hook\output\before_footer_html_generation;
@@ -101,10 +99,6 @@ class hook_callbacks {
         $mustachedata = [
             "policies" => manager::get_start_policy_html($cmid, $attemptid),
         ];
-
-        //echo '<pre>';
-        //print_r($mustachedata);
-        //echo '</pre>';die;
 
         $PAGE->requires->strings_for_js([
             "description_pending",

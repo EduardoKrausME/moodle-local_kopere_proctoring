@@ -21,11 +21,14 @@
  * @copyright 2026 Eduardo Kraus {@link https://eduardokraus.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-$plugin->component = "proctoringpolicy_focus";
-$plugin->version = 2026031500;
+
+defined('MOODLE_INTERNAL') || die;
+
+$plugin->version = 2026062400;
+$plugin->release = "0.1.0";
 $plugin->requires = 2022041900;
 $plugin->maturity = MATURITY_STABLE;
-$plugin->release = "0.1.0";
+$plugin->component = "proctoringpolicy_focus";
 
 $plugin->dependencies = [
     "local_kopere_proctoring" => 2026011500,

@@ -46,7 +46,6 @@ class notification_manager {
     public static function send_for_event(int $cmid, int $attemptid, string $eventkey, array $payload): void {
         global $DB;
 
-
         // Find CM and context information.
         $cm = get_coursemodule_from_id("quiz", $cmid, 0, false, MUST_EXIST);
         $course = $DB->get_record("course", ["id" => $cm->course], "*", MUST_EXIST);

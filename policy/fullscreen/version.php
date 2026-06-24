@@ -21,13 +21,14 @@
  * @copyright 2026 Eduardo Kraus {@link https://eduardokraus.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->component = "proctoringpolicy_fullscreen";
-$plugin->version = 2026031500;
-$plugin->requires = 2022041900; // Moodle 4.0+
-$plugin->maturity = MATURITY_STABLE;
+$plugin->version = 2026062400;
 $plugin->release = "0.1.0";
+$plugin->requires = 2022041900;
+$plugin->maturity = MATURITY_STABLE;
+$plugin->component = "proctoringpolicy_fullscreen";
 
 $plugin->dependencies = [
     "local_kopere_proctoring" => 2026011500,

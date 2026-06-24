@@ -103,7 +103,7 @@ class user_data_repository {
         $grouped = [];
         $records = $DB->get_records_sql($sql, ['userid' => $userid]);
         foreach ($records as $record) {
-            $attemptid = (int)$record->attemptid;
+            $attemptid = (int) $record->attemptid;
             if (!array_key_exists($attemptid, $grouped)) {
                 $grouped[$attemptid] = [];
             }
@@ -120,7 +120,7 @@ class user_data_repository {
      * @return moodle_url
      */
     public static function get_quiz_url(object $attempt): moodle_url {
-        return new moodle_url('/mod/quiz/view.php', ['id' => (int)$attempt->cmid]);
+        return new moodle_url('/mod/quiz/view.php', ['id' => (int) $attempt->cmid]);
     }
 
     /**

@@ -89,12 +89,14 @@ class proctoringpolicy extends base {
         $page = new admin_settingpage($section, $this->displayname, "moodle/site:config");
 
         $component = "proctoringpolicy_" . $this->name;
-        $page->add(new admin_setting_configcheckbox(
-              "{$component}/enabled",
-            get_string("pluginname", $component),     // Subplugin's own display name.
-            get_string("enableplugin", "admin"),      // Core admin string.
-            1
-        ));
+        $page->add(
+            new admin_setting_configcheckbox(
+                "{$component}/enabled",
+                get_string("pluginname", $component),     // Subplugin's own display name.
+                get_string("enableplugin", "admin"),      // Core admin string.
+                1
+            )
+        );
 
         $adminroot->add($parentnodename, $page);
     }
@@ -125,21 +127,22 @@ class proctoringpolicy extends base {
 
             [$insql, $inparams] = $DB->get_in_or_equal(array_keys($items));
             $DB->delete_records_select("local_kopere_proctoring_item", "id " . $insql, $inparams);
-            $progress->output("Removed ".count($items)." trail items for component {$component}", 1);
+            $progress->output("Removed " . count($items) . " trail items for component {$component}", 1);
         }
 
         // Clear all component config (including 'enabled').
         unset_all_config_for_plugin($component);
-        $progress->output("Cleared config for ".$component, 1);
+        $progress->output("Cleared config for " . $component, 1);
 
         return true;
     }
 
     /**
      * Return URL used for management of plugins of this type.
+     *
      * @return moodle_url
      */
     public static function get_manage_url() {
-        return new moodle_url("/admin/settings.php", ["section"=>"local_kopere_proctoring"]);
+        return new moodle_url("/admin/settings.php", ["section" => "local_kopere_proctoring"]);
     }
 }
