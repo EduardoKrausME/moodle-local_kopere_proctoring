@@ -68,15 +68,20 @@ class provider implements policy_interface {
      */
     public static function add_admin_settings(admin_settingpage $settings): void {
 
-        $settings->add(
+        $page = new admin_settingpage(
+            "proctoringpolicy_evidence",
+            get_string("heading", "proctoringpolicy_evidence")
+        );
+
+        $page->add(
             new admin_setting_heading(
                 "proctoringpolicy_evidence/heading",
-                get_string("heading", "proctoringpolicy_evidence"),
+                "",
                 get_string("heading_info", "proctoringpolicy_evidence")
             )
         );
 
-        $settings->add(
+        $page->add(
             new admin_setting_configtext(
                 "proctoringpolicy_evidence/retention_default",
                 get_string("retention_default", "proctoringpolicy_evidence"),
@@ -86,7 +91,7 @@ class provider implements policy_interface {
             )
         );
 
-        $settings->add(
+        $page->add(
             new admin_setting_configtext(
                 "proctoringpolicy_evidence/maxfiles_default",
                 get_string("maxfiles_default", "proctoringpolicy_evidence"),
@@ -96,7 +101,7 @@ class provider implements policy_interface {
             )
         );
 
-        $settings->add(
+        $page->add(
             new admin_setting_configcheckbox(
                 "proctoringpolicy_evidence/allowdownload_default",
                 get_string("allowdownload_default", "proctoringpolicy_evidence"),
@@ -104,6 +109,8 @@ class provider implements policy_interface {
                 0
             )
         );
+
+        $settings->add($page);
     }
 
     /**
@@ -131,7 +138,7 @@ class provider implements policy_interface {
             $allowdownloaddefault = cm_config::get("evidence", "allowdownload", $cmid, $globalallowdownload);
         }
 
-        $legend = get_string("legend", "proctoringpolicy_evidence");
+        $legend = get_string("heading", "proctoringpolicy_evidence");
         $info = get_string("teacher_info", "proctoringpolicy_evidence");
         $mform->addElement("html", "<fieldset class='proctoring-block'><legend>{$legend}</legend><h5 class='mb-4'>{$info}</h5>");
 

@@ -68,10 +68,15 @@ class provider implements policy_interface {
      */
     public static function add_admin_settings(admin_settingpage $settings): void {
 
-        $settings->add(
+        $page = new admin_settingpage(
+            "proctoringpolicy_notifications",
+            get_string("heading", "proctoringpolicy_notifications")
+        );
+
+        $page->add(
             new admin_setting_heading(
                 "proctoringpolicy_notifications/heading",
-                get_string("heading", "proctoringpolicy_notifications"),
+                "",
                 get_string("heading_info", "proctoringpolicy_notifications")
             )
         );
@@ -82,7 +87,7 @@ class provider implements policy_interface {
             "examlocked" => get_string("moment_default_examlocked", "proctoringpolicy_notifications"),
             "attemptfinished" => get_string("moment_default_attemptfinished", "proctoringpolicy_notifications"),
         ];
-        $settings->add(
+        $page->add(
             new admin_setting_configselect(
                 "proctoringpolicy_notifications/moment_default",
                 get_string("moment_default", "proctoringpolicy_notifications"),
@@ -92,7 +97,7 @@ class provider implements policy_interface {
             )
         );
 
-        $settings->add(
+        $page->add(
             new admin_setting_configtext(
                 "proctoringpolicy_notifications/recipients_default",
                 get_string("recipients_default", "proctoringpolicy_notifications"),
@@ -102,7 +107,7 @@ class provider implements policy_interface {
             )
         );
 
-        $settings->add(
+        $page->add(
             new admin_setting_configtext(
                 "proctoringpolicy_notifications/subject_default",
                 get_string("subject_default", "proctoringpolicy_notifications"),
@@ -112,7 +117,7 @@ class provider implements policy_interface {
             )
         );
 
-        $settings->add(
+        $page->add(
             new admin_setting_confightmleditor(
                 "proctoringpolicy_notifications/body_default",
                 get_string("body_default", "proctoringpolicy_notifications"),
@@ -120,6 +125,8 @@ class provider implements policy_interface {
                 ""
             )
         );
+
+        $settings->add($page);
     }
 
     /**
@@ -151,7 +158,7 @@ class provider implements policy_interface {
             $bodydefault = cm_config::get("notifications", "body", $cmid, $globalbody);
         }
 
-        $legend = get_string("legend", "proctoringpolicy_notifications");
+        $legend = get_string("heading", "proctoringpolicy_notifications");
         $info = get_string("teacher_info", "proctoringpolicy_notifications");
         $mform->addElement("html", "<fieldset class='proctoring-block'><legend>{$legend}</legend><h5 class='mb-4'>{$info}</h5>");
 

@@ -67,15 +67,20 @@ class provider implements policy_interface {
      */
     public static function add_admin_settings(admin_settingpage $settings): void {
 
-        $settings->add(
+        $page = new admin_settingpage(
+            "proctoringpolicy_contract",
+            get_string("heading", "proctoringpolicy_contract")
+        );
+
+        $page->add(
             new admin_setting_heading(
                 "proctoringpolicy_contract/heading",
-                get_string("heading", "proctoringpolicy_contract"),
+                "",
                 get_string("heading_info", "proctoringpolicy_contract")
             )
         );
 
-        $settings->add(
+        $page->add(
             new admin_setting_confightmleditor(
                 "proctoringpolicy_contract/message_default",
                 get_string("message_default", "proctoringpolicy_contract"),
@@ -83,6 +88,8 @@ class provider implements policy_interface {
                 ""
             )
         );
+
+        $settings->add($page);
     }
 
     /**
@@ -104,7 +111,7 @@ class provider implements policy_interface {
             $messagedefault = $cmmsg;
         }
 
-        $legend = get_string("legend", "proctoringpolicy_contract");
+        $legend = get_string("heading", "proctoringpolicy_contract");
         $info = get_string("teacher_info", "proctoringpolicy_contract");
         $mform->addElement("html", "<fieldset class='proctoring-block'><legend>{$legend}</legend><h5 class='mb-4'>{$info}</h5>");
 

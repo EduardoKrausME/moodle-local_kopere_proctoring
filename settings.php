@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once("{$CFG->dirroot}/local/kopere_proctoring/classes/policy/manager.php");
 
-$settings = new admin_settingpage('local_kopere_proctoring', get_string('pluginname', 'local_kopere_proctoring'));
+$settings = new theme_boost_admin_settingspage_tabs('local_kopere_proctoring', get_string('pluginname', 'local_kopere_proctoring'));
 $ADMIN->add('localplugins', $settings);
 
 if ($ADMIN->fulltree) {

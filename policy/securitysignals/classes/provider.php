@@ -66,15 +66,20 @@ class provider implements policy_interface {
      * @throws coding_exception
      */
     public static function add_admin_settings(admin_settingpage $settings): void {
-        $settings->add(
+        $page = new admin_settingpage(
+            "proctoringpolicy_securitysignals",
+            get_string("heading", "proctoringpolicy_securitysignals")
+        );
+
+        $page->add(
             new admin_setting_heading(
                 "proctoringpolicy_securitysignals/heading",
-                get_string("heading", "proctoringpolicy_securitysignals"),
+                "",
                 get_string("heading_info", "proctoringpolicy_securitysignals")
             )
         );
 
-        $settings->add(
+        $page->add(
             new admin_setting_configtext(
                 "proctoringpolicy_securitysignals/pulsems_default",
                 get_string("pulsems_default", "proctoringpolicy_securitysignals"),
@@ -83,6 +88,8 @@ class provider implements policy_interface {
                 PARAM_INT
             )
         );
+
+        $settings->add($page);
     }
 
     /**
@@ -102,7 +109,7 @@ class provider implements policy_interface {
             $pulsems = cm_config::get("securitysignals", "pulsems", $cmid, $pulsems);
         }
 
-        $legend = get_string("legend", "proctoringpolicy_securitysignals");
+        $legend = get_string("heading", "proctoringpolicy_securitysignals");
         $info = get_string("teacher_info", "proctoringpolicy_securitysignals");
         $mform->addElement("html", "<fieldset class='proctoring-block'><legend>{$legend}</legend><h5 class='mb-4'>{$info}</h5>");
 

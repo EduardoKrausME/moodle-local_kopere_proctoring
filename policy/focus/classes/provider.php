@@ -70,15 +70,21 @@ class provider implements policy_interface {
      * @throws coding_exception
      */
     public static function add_admin_settings(admin_settingpage $settings): void {
-        $settings->add(
+
+        $page = new admin_settingpage(
+            "proctoringpolicy_focus",
+            get_string("heading", "proctoringpolicy_focus")
+        );
+
+        $page->add(
             new admin_setting_heading(
                 "proctoringpolicy_focus/heading",
-                get_string("heading", "proctoringpolicy_focus"),
+                "",
                 get_string("heading_info", "proctoringpolicy_focus")
             )
         );
 
-        $settings->add(
+        $page->add(
             new admin_setting_configtext(
                 "proctoringpolicy_focus/limit_default",
                 get_string("limit_default", "proctoringpolicy_focus"),
@@ -88,7 +94,7 @@ class provider implements policy_interface {
             )
         );
 
-        $settings->add(
+        $page->add(
             new admin_setting_confightmleditor(
                 "proctoringpolicy_focus/start_message_default",
                 get_string("start_message_default", "proctoringpolicy_focus"),
@@ -97,7 +103,7 @@ class provider implements policy_interface {
             )
         );
 
-        $settings->add(
+        $page->add(
             new admin_setting_confightmleditor(
                 "proctoringpolicy_focus/message_default",
                 get_string("message_default", "proctoringpolicy_focus"),
@@ -105,6 +111,8 @@ class provider implements policy_interface {
                 ""
             )
         );
+
+        $settings->add($page);
     }
 
     /**
@@ -128,7 +136,7 @@ class provider implements policy_interface {
             $messagecm = cm_config::get("focus", "message", $cmid, $messagecm);
         }
 
-        $legend = get_string("legend", "proctoringpolicy_focus");
+        $legend = get_string("heading", "proctoringpolicy_focus");
         $info = get_string("teacher_info", "proctoringpolicy_focus");
         $mform->addElement("html", "<fieldset class='proctoring-block'><legend>{$legend}</legend><h5 class='mb-4'>{$info}</h5>");
 

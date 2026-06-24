@@ -247,14 +247,20 @@ class manager {
     public static function add_admin_settings(admin_settingpage $settings): void {
         global $OUTPUT;
 
+         $page = new admin_settingpage(
+            "local_kopere_proctoringa_dmin_plugins",
+            "Plugins"
+        );
+
         $mustachedata = self::get_mustachedata("/admin/settings.php", ["section" => "local_kopere_proctoring"]);
-        $settings->add(
+        $page->add(
             new admin_setting_heading(
                 "local_kopere_proctoring/admin_plugins",
                 get_string("managekopere_proctoringplugins", "local_kopere_proctoring"),
                 $OUTPUT->render_from_template('local_kopere_proctoring/admin_plugins', $mustachedata)
             )
         );
+        $settings->add($page);
 
         /** @var policy_interface $classname */
         foreach (self::get_policy_classes(true) as $classname) {

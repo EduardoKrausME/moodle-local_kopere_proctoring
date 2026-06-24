@@ -67,15 +67,21 @@ class provider implements policy_interface {
      * @throws coding_exception
      */
     public static function add_admin_settings(admin_settingpage $settings): void {
-        $settings->add(
+
+        $page = new admin_settingpage(
+            "proctoringpolicy_fullscreen",
+            get_string("heading", "proctoringpolicy_fullscreen")
+        );
+
+        $page->add(
             new admin_setting_heading(
                 "proctoringpolicy_fullscreen/heading",
-                get_string("heading", "proctoringpolicy_fullscreen"),
+                "",
                 get_string("heading_info", "proctoringpolicy_fullscreen")
             )
         );
 
-        $settings->add(
+        $page->add(
             new admin_setting_configtext(
                 "proctoringpolicy_fullscreen/limit_default",
                 get_string("limit_default", "proctoringpolicy_fullscreen"),
@@ -85,7 +91,7 @@ class provider implements policy_interface {
             )
         );
 
-        $settings->add(
+        $page->add(
             new admin_setting_confightmleditor(
                 "proctoringpolicy_fullscreen/start_message_default",
                 get_string("start_message_default", "proctoringpolicy_fullscreen"),
@@ -94,7 +100,7 @@ class provider implements policy_interface {
             )
         );
 
-        $settings->add(
+        $page->add(
             new admin_setting_confightmleditor(
                 "proctoringpolicy_fullscreen/message_default",
                 get_string("message_default", "proctoringpolicy_fullscreen"),
@@ -102,6 +108,8 @@ class provider implements policy_interface {
                 ""
             )
         );
+
+        $settings->add($page);
     }
 
     /**
@@ -125,7 +133,7 @@ class provider implements policy_interface {
             $defaultmessage = cm_config::get("fullscreen", "message", $cmid, $defaultmessage);
         }
 
-        $legend = get_string("legend", "proctoringpolicy_fullscreen");
+        $legend = get_string("heading", "proctoringpolicy_fullscreen");
         $info = get_string("teacher_info", "proctoringpolicy_fullscreen");
         $mform->addElement("html", "<fieldset class='proctoring-block'><legend>{$legend}</legend><h5 class='mb-4'>{$info}</h5>");
 
