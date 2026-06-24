@@ -26,9 +26,9 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$string['enabled'] = 'Enable Proctoring';
 $string['description_pending'] = 'Complete or wait for the following required items before the exam can start:';
 $string['description_ready'] = 'All required items have been approved. You can now start the exam.';
+$string['enabled'] = 'Enable Proctoring';
 $string['locked_default_message'] = 'The exam is temporarily locked due to proctoring rules.';
 $string['locked_title'] = 'Exam locked';
 $string['managekopere_proctoringplugins'] = 'Manage Proctoring policies plugins';
@@ -46,9 +46,8 @@ $string['return_button'] = 'I understand, return to Exam';
 $string['start_button'] = 'Start exam';
 $string['start_title'] = 'Exam access';
 $string['status'] = 'Status';
+$string['subplugintype_proctoringpolicy'] = 'Proctoring Polices';
 $string['subplugintype_proctoringpolicy_plural'] = 'Proctoring policies';
-
-
 $string['userdata_activity'] = 'Activity ID';
 $string['userdata_attempt_details'] = 'Attempt details';
 $string['userdata_attempt_label'] = 'Attempt';
@@ -64,8 +63,8 @@ $string['userdata_ip'] = 'IP';
 $string['userdata_log_action'] = 'Action';
 $string['userdata_logs'] = 'Logs';
 $string['userdata_nav'] = 'User data';
-$string['userdata_nologs'] = 'No logs found for this attempt.';
 $string['userdata_noattempts'] = 'No proctoring data was found for this user.';
+$string['userdata_nologs'] = 'No logs found for this attempt.';
 $string['userdata_screenresolution'] = 'Screen resolution';
 $string['userdata_started'] = 'Started at';
 $string['userdata_time'] = 'Time';
@@ -74,4 +73,3 @@ $string['userdata_total_attempts'] = 'Attempts';
 $string['userdata_total_contracts'] = 'Accepted contracts';
 $string['userdata_total_logs'] = 'Logs';
 $string['userdata_useragent'] = 'User agent';
-$string['subplugintype_proctoringpolicy'] = 'Proctoring Polices';
