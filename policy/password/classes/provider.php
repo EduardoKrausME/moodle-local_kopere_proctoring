@@ -52,6 +52,15 @@ class provider implements policy_interface {
     }
 
     /**
+     * This policy can be reordered in the admin list.
+     *
+     * @return bool
+     */
+    public static function is_sortable(): bool {
+        return true;
+    }
+
+    /**
      * add_admin_settings
      *
      * @param admin_settingpage $settings

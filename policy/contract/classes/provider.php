@@ -50,6 +50,15 @@ class provider implements policy_interface {
     }
 
     /**
+     * This policy can be reordered in the admin list.
+     *
+     * @return bool
+     */
+    public static function is_sortable(): bool {
+        return true;
+    }
+
+    /**
      * Global admin settings.
      *
      * @param admin_settingpage $settings
@@ -219,7 +228,7 @@ class provider implements policy_interface {
         );
 
         $context = [
-            "wwwroot"=>$CFG->wwwroot,
+            "wwwroot" => $CFG->wwwroot,
             "contract_html" => $message,
         ];
 

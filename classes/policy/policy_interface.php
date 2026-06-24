@@ -41,6 +41,15 @@ interface policy_interface {
     public static function get_key(): string;
 
     /**
+     * Whether this policy can be reordered in the admin plugin list.
+     *
+     * Policies that are not shown as visible student steps should stay fixed at the end.
+     *
+     * @return bool
+     */
+    public static function is_sortable(): bool;
+
+    /**
      * Add admin settings for this policy (global defaults & enable/disable).
      *
      * @param admin_settingpage $settings

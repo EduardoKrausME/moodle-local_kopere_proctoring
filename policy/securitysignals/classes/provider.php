@@ -50,6 +50,15 @@ class provider implements policy_interface {
     }
 
     /**
+     * This policy must stay fixed at the end of the admin list.
+     *
+     * @return bool
+     */
+    public static function is_sortable(): bool {
+        return false;
+    }
+
+    /**
      * Function add_admin_settings
      *
      * @param admin_settingpage $settings
