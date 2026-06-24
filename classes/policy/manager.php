@@ -103,6 +103,70 @@ class manager {
     }
 
     /**
+     * Returns whether one policy can be reordered manually.
+     *
+     * @param string $policyname
+     * @return bool
+     */
+    public static function is_policy_sortable(string $policyname): bool {
+        $classname = "\\proctoringpolicy_{$policyname}\\provider";
+        if (class_exists($classname) && is_subclass_of($classname, policy_interface::class)) {
+            return $classname::is_sortable();
+        }
+
+        return true;
+    }
+
+    /**
+     * Returns the default sort order for one policy.
+     *
+     * @param string $policyname
+     * @return int
+     */
+    public static function get_policy_default_sort_order(string $policyname): int {
+        $defaults = self::get_default_policy_orders();
+        if (array_key_exists($policyname, $defaults)) {
+            return $defaults[$policyname];
+        }
+
+        return 9999;
+    }
+
+    /**
+     * Compare two policy keys using the global ordering rules.
+     *
+     * Sortable policies are shown first and can be manually reordered.
+     * Non-sortable policies are always kept at the end using the default fixed order.
+     *
+     * @param string $a
+     * @param string $b
+     * @return int
+     * @throws dml_exception
+     */
+    public static function compare_policy_names(string $a, string $b): int {
+        $asortable = self::is_policy_sortable($a);
+        $bsortable = self::is_policy_sortable($b);
+
+        if ($asortable !== $bsortable) {
+            return $asortable ? -1 : 1;
+        }
+
+        if (!$asortable) {
+            $aorder = self::get_policy_default_sort_order($a);
+            $border = self::get_policy_default_sort_order($b);
+        } else {
+            $aorder = self::get_policy_sort_order($a);
+            $border = self::get_policy_sort_order($b);
+        }
+
+        if ($aorder !== $border) {
+            return $aorder <=> $border;
+        }
+
+        return strnatcasecmp($a, $b);
+    }
+
+    /**
      * Returns the policy names ordered by sort order.
      *
      * @return array
@@ -112,14 +176,7 @@ class manager {
         $policies = array_keys(core_component::get_plugin_list("proctoringpolicy"));
 
         usort($policies, static function(string $a, string $b): int {
-            $aorder = self::get_policy_sort_order($a);
-            $border = self::get_policy_sort_order($b);
-
-            if ($aorder !== $border) {
-                return $aorder <=> $border;
-            }
-
-            return strnatcasecmp($a, $b);
+            return self::compare_policy_names($a, $b);
         });
 
         return $policies;
@@ -134,14 +191,7 @@ class manager {
      */
     public static function sort_policy_list(array $policies): array {
         uksort($policies, static function(string $a, string $b): int {
-            $aorder = self::get_policy_sort_order($a);
-            $border = self::get_policy_sort_order($b);
-
-            if ($aorder !== $border) {
-                return $aorder <=> $border;
-            }
-
-            return strnatcasecmp($a, $b);
+            return self::compare_policy_names($a, $b);
         });
 
         return $policies;
@@ -197,7 +247,7 @@ class manager {
     public static function add_admin_settings(admin_settingpage $settings): void {
         global $OUTPUT;
 
-        $mustachedata = manager::get_mustachedata("/admin/settings.php", ["section" => "local_kopere_proctoring"]);
+        $mustachedata = self::get_mustachedata("/admin/settings.php", ["section" => "local_kopere_proctoring"]);
         $settings->add(
             new admin_setting_heading(
                 "local_kopere_proctoring/admin_plugins",
@@ -244,7 +294,7 @@ class manager {
 
         /** @var policy_interface $classname */
         foreach (self::get_policy_classes(true) as $classname) {
-            $classname::add_module_form($formwrapper, $mform, (int)$cmid);
+            $classname::add_module_form($formwrapper, $mform, (int) $cmid);
         }
 
         $formwrapper->set_data([
@@ -262,7 +312,7 @@ class manager {
     public static function save_module_form(stdClass $data): void {
         $cmid = $data->coursemodule;
 
-        if(isset($data->kopere_proctoring_enabled)) {
+        if (isset($data->kopere_proctoring_enabled)) {
             set_config("kopere_proctoring_enabled_{$cmid}", $data->kopere_proctoring_enabled, "local_kopere_proctoring");
 
             /** @var policy_interface $classname */
@@ -341,11 +391,9 @@ class manager {
         foreach (self::get_policy_classes(true) as $classname) {
 
             $html = trim($classname::render_start_html($cmid, $attemptid));
-            //echo "<h1>{$classname}</h1>";
-            //echo htmlentities($html);
             if (isset($html[3])) {
                 $items[] = [
-                    "text"=>$html
+                    "text" => $html,
                 ];
             }
         }
@@ -366,34 +414,41 @@ class manager {
         $pluginaction = optional_param("pluginaction", "", PARAM_ALPHA);
         $pluginname = optional_param("plugin", "", PARAM_PLUGIN);
         if ($pluginaction !== "" && $pluginname !== "" && confirm_sesskey()) {
-            $pluginsordered = manager::get_sorted_policy_names();
-            $currentindex = array_search($pluginname, $pluginsordered, true);
-
             if ($pluginaction == "toggle") {
-                $sortorder = manager::get_policy_active($pluginname);
+                $sortorder = self::get_policy_active($pluginname);
                 set_config("active", $sortorder ? 0 : 1, "proctoringpolicy_{$pluginname}");
                 redirect(new moodle_url($urlbase, $paramsbase));
             }
 
-            if ($currentindex !== false) {
-                if ($pluginaction === "moveup") {
-                    if ($currentindex > 0) {
-                        $previousplugin = $pluginsordered[$currentindex - 1];
-                        $pluginsordered[$currentindex - 1] = $pluginsordered[$currentindex];
-                        $pluginsordered[$currentindex] = $previousplugin;
+            if (($pluginaction === "moveup" || $pluginaction === "movedown") && self::is_policy_sortable($pluginname)) {
+                $pluginsordered = array_values(array_filter(
+                    self::get_sorted_policy_names(),
+                    static function(string $policyname): bool {
+                        return self::is_policy_sortable($policyname);
                     }
-                } else if ($pluginaction === "movedown") {
-                    if ($currentindex < count($pluginsordered) - 1) {
-                        $nextplugin = $pluginsordered[$currentindex + 1];
-                        $pluginsordered[$currentindex + 1] = $pluginsordered[$currentindex];
-                        $pluginsordered[$currentindex] = $nextplugin;
-                    }
-                }
+                ));
+                $currentindex = array_search($pluginname, $pluginsordered, true);
 
-                $sortorder = 10;
-                foreach ($pluginsordered as $pluginname) {
-                    set_config("sortorder", $sortorder, "proctoringpolicy_{$pluginname}");
-                    $sortorder += 10;
+                if ($currentindex !== false) {
+                    if ($pluginaction === "moveup") {
+                        if ($currentindex > 0) {
+                            $previousplugin = $pluginsordered[$currentindex - 1];
+                            $pluginsordered[$currentindex - 1] = $pluginsordered[$currentindex];
+                            $pluginsordered[$currentindex] = $previousplugin;
+                        }
+                    } else if ($pluginaction === "movedown") {
+                        if ($currentindex < count($pluginsordered) - 1) {
+                            $nextplugin = $pluginsordered[$currentindex + 1];
+                            $pluginsordered[$currentindex + 1] = $pluginsordered[$currentindex];
+                            $pluginsordered[$currentindex] = $nextplugin;
+                        }
+                    }
+
+                    $sortorder = 10;
+                    foreach ($pluginsordered as $policyname) {
+                        set_config("sortorder", $sortorder, "proctoringpolicy_{$policyname}");
+                        $sortorder += 10;
+                    }
                 }
             }
 
@@ -421,20 +476,23 @@ class manager {
 
             $plugins[$plugin] = [
                 "name" => $strpluginname,
-                "sortorder" => manager::get_policy_sort_order($plugin),
-                "enabled" => manager::get_policy_active($plugin),
+                "sortorder" => self::get_policy_sort_order($plugin),
+                "enabled" => self::get_policy_active($plugin),
+                "sortable" => self::is_policy_sortable($plugin),
             ];
         }
 
-        uasort($plugins, static function(array $a, array $b): int {
-            if ($a["sortorder"] !== $b["sortorder"]) {
-                return $a["sortorder"] <=> $b["sortorder"];
-            }
-
-            return strnatcasecmp($a["name"], $b["name"]);
+        uksort($plugins, static function(string $a, string $b): int {
+            return self::compare_policy_names($a, $b);
         });
 
-        $numplugins = count($plugins) - 1;
+        $sortableplugins = array_values(array_filter(
+            array_keys($plugins),
+            static function(string $policyname): bool {
+                return self::is_policy_sortable($policyname);
+            }
+        ));
+        $lastsortableindex = count($sortableplugins) - 1;
         $index = 0;
         foreach ($plugins as $plugin => $plugindata) {
             $name = $plugindata["name"];
@@ -453,33 +511,36 @@ class manager {
             }
 
             $pluginactions = [];
-            if ($index != 0) {
-                $moveupurl = new moodle_url(
-                    $urlbase, $paramsbase + [
-                        "pluginaction" => "moveup",
-                        "plugin" => $plugin,
-                        "sesskey" => sesskey(),
-                    ]
-                );
-                $pluginactions[] = html_writer::link($moveupurl, "↑", [
-                    "class" => "btn btn-sm btn-outline-secondary mr-2",
-                    "title" => get_string("moveupplugin", "local_kopere_proctoring"),
-                    "aria-label" => get_string("moveupplugin", "local_kopere_proctoring"),
-                ]);
-            }
-            if ($index != $numplugins) {
-                $movedownurl = new moodle_url(
-                    $urlbase, $paramsbase + [
-                        "pluginaction" => "movedown",
-                        "plugin" => $plugin,
-                        "sesskey" => sesskey(),
-                    ]
-                );
-                $pluginactions[] = html_writer::link($movedownurl, "↓", [
-                    "class" => "btn btn-sm btn-outline-secondary",
-                    "title" => get_string("movedownplugin", "local_kopere_proctoring"),
-                    "aria-label" => get_string("movedownplugin", "local_kopere_proctoring"),
-                ]);
+            $sortableindex = array_search($plugin, $sortableplugins, true);
+            if ($plugindata["sortable"] && $sortableindex !== false) {
+                if ($sortableindex > 0) {
+                    $moveupurl = new moodle_url(
+                        $urlbase, $paramsbase + [
+                            "pluginaction" => "moveup",
+                            "plugin" => $plugin,
+                            "sesskey" => sesskey(),
+                        ]
+                    );
+                    $pluginactions[] = html_writer::link($moveupurl, "↑", [
+                        "class" => "btn btn-sm btn-outline-secondary mr-2",
+                        "title" => get_string("moveupplugin", "local_kopere_proctoring"),
+                        "aria-label" => get_string("moveupplugin", "local_kopere_proctoring"),
+                    ]);
+                }
+                if ($sortableindex < $lastsortableindex) {
+                    $movedownurl = new moodle_url(
+                        $urlbase, $paramsbase + [
+                            "pluginaction" => "movedown",
+                            "plugin" => $plugin,
+                            "sesskey" => sesskey(),
+                        ]
+                    );
+                    $pluginactions[] = html_writer::link($movedownurl, "↓", [
+                        "class" => "btn btn-sm btn-outline-secondary",
+                        "title" => get_string("movedownplugin", "local_kopere_proctoring"),
+                        "aria-label" => get_string("movedownplugin", "local_kopere_proctoring"),
+                    ]);
+                }
             }
 
             $toggleurl = new moodle_url(
