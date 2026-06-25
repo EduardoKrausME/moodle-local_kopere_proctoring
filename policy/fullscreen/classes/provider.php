@@ -70,44 +70,40 @@ class provider implements policy_interface {
 
         $page = new admin_settingpage(
             "proctoringpolicy_fullscreen",
-            get_string("heading", "proctoringpolicy_fullscreen")
+            get_string("pluginname", "proctoringpolicy_fullscreen")
         );
 
-        $page->add(
-            new admin_setting_heading(
-                "proctoringpolicy_fullscreen/heading",
-                "",
-                get_string("heading_info", "proctoringpolicy_fullscreen")
-            )
+        $setting = new admin_setting_heading(
+            "proctoringpolicy_fullscreen/heading",
+            "",
+            get_string("heading_info", "proctoringpolicy_fullscreen")
         );
+        $page->add($setting);
 
-        $page->add(
-            new admin_setting_configtext(
-                "proctoringpolicy_fullscreen/limit_default",
-                get_string("limit_default", "proctoringpolicy_fullscreen"),
-                get_string("limit_default_desc", "proctoringpolicy_fullscreen"),
-                2,
-                PARAM_INT
-            )
+        $setting = new admin_setting_configtext(
+            "proctoringpolicy_fullscreen/limit_default",
+            get_string("limit_default", "proctoringpolicy_fullscreen"),
+            get_string("limit_default_desc", "proctoringpolicy_fullscreen"),
+            2,
+            PARAM_INT
         );
+        $page->add($setting);
 
-        $page->add(
-            new admin_setting_confightmleditor(
-                "proctoringpolicy_fullscreen/start_message_default",
-                get_string("start_message_default", "proctoringpolicy_fullscreen"),
-                get_string("start_message_default_desc", "proctoringpolicy_fullscreen"),
-                ""
-            )
+        $setting = new admin_setting_confightmleditor(
+            "proctoringpolicy_fullscreen/start_message_default",
+            get_string("start_message_default", "proctoringpolicy_fullscreen"),
+            get_string("start_message_default_desc", "proctoringpolicy_fullscreen"),
+            "", PARAM_RAW, '60', '10'
         );
+        $page->add($setting);
 
-        $page->add(
-            new admin_setting_confightmleditor(
-                "proctoringpolicy_fullscreen/message_default",
-                get_string("message_default", "proctoringpolicy_fullscreen"),
-                get_string("message_default_desc", "proctoringpolicy_fullscreen"),
-                ""
-            )
+        $setting = new admin_setting_confightmleditor(
+            "proctoringpolicy_fullscreen/message_default",
+            get_string("message_default", "proctoringpolicy_fullscreen"),
+            get_string("message_default_desc", "proctoringpolicy_fullscreen"),
+            "", PARAM_RAW, '60', '10'
         );
+        $page->add($setting);
 
         $settings->add($page);
     }
@@ -133,7 +129,7 @@ class provider implements policy_interface {
             $defaultmessage = cm_config::get("fullscreen", "message", $cmid, $defaultmessage);
         }
 
-        $legend = get_string("heading", "proctoringpolicy_fullscreen");
+        $legend = get_string("pluginname", "proctoringpolicy_fullscreen");
         $info = get_string("teacher_info", "proctoringpolicy_fullscreen");
         $mform->addElement("html", "<fieldset class='proctoring-block'><legend>{$legend}</legend><h5 class='mb-4'>{$info}</h5>");
 

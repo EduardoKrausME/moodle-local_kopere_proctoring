@@ -73,44 +73,40 @@ class provider implements policy_interface {
 
         $page = new admin_settingpage(
             "proctoringpolicy_focus",
-            get_string("heading", "proctoringpolicy_focus")
+            get_string("pluginname", "proctoringpolicy_focus")
         );
 
-        $page->add(
-            new admin_setting_heading(
-                "proctoringpolicy_focus/heading",
-                "",
-                get_string("heading_info", "proctoringpolicy_focus")
-            )
+        $setting = new admin_setting_heading(
+            "proctoringpolicy_focus/heading",
+            "",
+            get_string("heading_info", "proctoringpolicy_focus")
         );
+        $page->add($setting);
 
-        $page->add(
-            new admin_setting_configtext(
-                "proctoringpolicy_focus/limit_default",
-                get_string("limit_default", "proctoringpolicy_focus"),
-                get_string("limit_default_desc", "proctoringpolicy_focus"),
-                3,
-                PARAM_INT
-            )
+        $setting = new admin_setting_configtext(
+            "proctoringpolicy_focus/limit_default",
+            get_string("limit_default", "proctoringpolicy_focus"),
+            get_string("limit_default_desc", "proctoringpolicy_focus"),
+            3,
+            PARAM_INT
         );
+        $page->add($setting);
 
-        $page->add(
-            new admin_setting_confightmleditor(
-                "proctoringpolicy_focus/start_message_default",
-                get_string("start_message_default", "proctoringpolicy_focus"),
-                get_string("start_message_default_desc", "proctoringpolicy_focus"),
-                ""
-            )
+        $setting = new admin_setting_confightmleditor(
+            "proctoringpolicy_focus/start_message_default",
+            get_string("start_message_default", "proctoringpolicy_focus"),
+            get_string("start_message_default_desc", "proctoringpolicy_focus"),
+            "", PARAM_RAW, '60', '10'
         );
+        $page->add($setting);
 
-        $page->add(
-            new admin_setting_confightmleditor(
-                "proctoringpolicy_focus/message_default",
-                get_string("message_default", "proctoringpolicy_focus"),
-                get_string("message_default_desc", "proctoringpolicy_focus"),
-                ""
-            )
+        $setting = new admin_setting_confightmleditor(
+            "proctoringpolicy_focus/message_default",
+            get_string("message_default", "proctoringpolicy_focus"),
+            get_string("message_default_desc", "proctoringpolicy_focus"),
+            "", PARAM_RAW, '60', '10'
         );
+        $page->add($setting);
 
         $settings->add($page);
     }
@@ -136,18 +132,20 @@ class provider implements policy_interface {
             $messagecm = cm_config::get("focus", "message", $cmid, $messagecm);
         }
 
-        $legend = get_string("heading", "proctoringpolicy_focus");
+        $legend = get_string("pluginname", "proctoringpolicy_focus");
         $info = get_string("teacher_info", "proctoringpolicy_focus");
         $mform->addElement("html", "<fieldset class='proctoring-block'><legend>{$legend}</legend><h5 class='mb-4'>{$info}</h5>");
 
-        $mform->addElement("selectyesno", "kopere_policy_focus_enabled",
+        $mform->addElement(
+            "selectyesno", "kopere_policy_focus_enabled",
             get_string("form_enabled_label", "proctoringpolicy_focus")
         );
         $mform->setType("kopere_policy_focus_enabled", PARAM_INT);
         $mform->setDefault("kopere_policy_focus_enabled", 1);
         $mform->hideIf("kopere_policy_focus_enabled", "kopere_proctoring_enabled", "eq", 0);
 
-        $mform->addElement("text", "kopere_policy_focus_limit",
+        $mform->addElement(
+            "text", "kopere_policy_focus_limit",
             get_string("form_limit_label", "proctoringpolicy_focus"),
             ["size" => 5]
         );

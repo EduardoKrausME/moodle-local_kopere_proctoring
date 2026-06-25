@@ -73,16 +73,15 @@ class provider implements policy_interface {
 
         $page = new admin_settingpage(
             "proctoringpolicy_password",
-            get_string("heading", "proctoringpolicy_password")
+            get_string("pluginname", "proctoringpolicy_password")
         );
 
-        $page->add(
-            new admin_setting_heading(
-                "proctoringpolicy_password/heading",
-                "",
-                get_string("heading_info", "proctoringpolicy_password")
-            )
+        $setting = new admin_setting_heading(
+            "proctoringpolicy_password/heading",
+            "",
+            get_string("heading_info", "proctoringpolicy_password")
         );
+        $page->add($setting);
 
         // Roles allowed.
         $roles = $DB->get_records("role", null, "sortorder ASC");
@@ -100,25 +99,23 @@ class provider implements policy_interface {
             $roleoptions[$role->id] = role_get_name($role);
         }
 
-        $page->add(
-            new admin_setting_configmultiselect(
-                "proctoringpolicy_password/rolesallowed",
-                get_string("rolesallowed", "proctoringpolicy_password"),
-                get_string("rolesallowed_desc", "proctoringpolicy_password"),
-                [1, 2, 3],
-                $roleoptions
-            )
+        $setting = new admin_setting_configmultiselect(
+            "proctoringpolicy_password/rolesallowed",
+            get_string("rolesallowed", "proctoringpolicy_password"),
+            get_string("rolesallowed_desc", "proctoringpolicy_password"),
+            [1, 2, 3],
+            $roleoptions
         );
+        $page->add($setting);
 
-        $page->add(
-            new admin_setting_configtext(
-                "proctoringpolicy_password/maxerrors",
-                get_string("maxerrors", "proctoringpolicy_password"),
-                get_string("maxerrors_desc", "proctoringpolicy_password"),
-                3,
-                PARAM_INT
-            )
+        $setting = new admin_setting_configtext(
+            "proctoringpolicy_password/maxerrors",
+            get_string("maxerrors", "proctoringpolicy_password"),
+            get_string("maxerrors_desc", "proctoringpolicy_password"),
+            3,
+            PARAM_INT
         );
+        $page->add($setting);
 
         $settings->add($page);
     }
@@ -134,7 +131,7 @@ class provider implements policy_interface {
      * @throws dml_exception
      */
     public static function add_module_form(moodleform_mod $formwrapper, MoodleQuickForm $mform, int $cmid): void {
-        $legend = get_string("heading", "proctoringpolicy_password");
+        $legend = get_string("pluginname", "proctoringpolicy_password");
         $info = get_string("teacher_info", "proctoringpolicy_password");
         $mform->addElement("html", "<fieldset class='proctoring-block'><legend>{$legend}</legend><h5 class='mb-4'>{$info}</h5>");
 

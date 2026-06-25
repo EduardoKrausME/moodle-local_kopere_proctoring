@@ -68,26 +68,24 @@ class provider implements policy_interface {
     public static function add_admin_settings(admin_settingpage $settings): void {
         $page = new admin_settingpage(
             "proctoringpolicy_securitysignals",
-            get_string("heading", "proctoringpolicy_securitysignals")
+            get_string("pluginname", "proctoringpolicy_securitysignals")
         );
 
-        $page->add(
-            new admin_setting_heading(
-                "proctoringpolicy_securitysignals/heading",
-                "",
-                get_string("heading_info", "proctoringpolicy_securitysignals")
-            )
+        $setting = new admin_setting_heading(
+            "proctoringpolicy_securitysignals/heading",
+            "",
+            get_string("heading_info", "proctoringpolicy_securitysignals")
         );
+        $page->add($setting);
 
-        $page->add(
-            new admin_setting_configtext(
-                "proctoringpolicy_securitysignals/pulsems_default",
-                get_string("pulsems_default", "proctoringpolicy_securitysignals"),
-                get_string("pulsems_default_desc", "proctoringpolicy_securitysignals"),
-                8,
-                PARAM_INT
-            )
+        $setting = new admin_setting_configtext(
+            "proctoringpolicy_securitysignals/pulsems_default",
+            get_string("pulsems_default", "proctoringpolicy_securitysignals"),
+            get_string("pulsems_default_desc", "proctoringpolicy_securitysignals"),
+            8,
+            PARAM_INT
         );
+        $page->add($setting);
 
         $settings->add($page);
     }
@@ -109,7 +107,7 @@ class provider implements policy_interface {
             $pulsems = cm_config::get("securitysignals", "pulsems", $cmid, $pulsems);
         }
 
-        $legend = get_string("heading", "proctoringpolicy_securitysignals");
+        $legend = get_string("pluginname", "proctoringpolicy_securitysignals");
         $info = get_string("teacher_info", "proctoringpolicy_securitysignals");
         $mform->addElement("html", "<fieldset class='proctoring-block'><legend>{$legend}</legend><h5 class='mb-4'>{$info}</h5>");
 

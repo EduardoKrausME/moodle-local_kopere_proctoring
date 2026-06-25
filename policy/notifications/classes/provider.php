@@ -70,16 +70,15 @@ class provider implements policy_interface {
 
         $page = new admin_settingpage(
             "proctoringpolicy_notifications",
-            get_string("heading", "proctoringpolicy_notifications")
+            get_string("pluginname", "proctoringpolicy_notifications")
         );
 
-        $page->add(
-            new admin_setting_heading(
-                "proctoringpolicy_notifications/heading",
-                "",
-                get_string("heading_info", "proctoringpolicy_notifications")
-            )
+        $setting = new admin_setting_heading(
+            "proctoringpolicy_notifications/heading",
+            "",
+            get_string("heading_info", "proctoringpolicy_notifications")
         );
+        $page->add($setting);
 
         $choices = [
             "none" => get_string("moment_default_none", "proctoringpolicy_notifications"),
@@ -87,44 +86,40 @@ class provider implements policy_interface {
             "examlocked" => get_string("moment_default_examlocked", "proctoringpolicy_notifications"),
             "attemptfinished" => get_string("moment_default_attemptfinished", "proctoringpolicy_notifications"),
         ];
-        $page->add(
-            new admin_setting_configselect(
-                "proctoringpolicy_notifications/moment_default",
-                get_string("moment_default", "proctoringpolicy_notifications"),
-                get_string("moment_default_desc", "proctoringpolicy_notifications"),
-                "none",
-                $choices
-            )
+        $setting = new admin_setting_configselect(
+            "proctoringpolicy_notifications/moment_default",
+            get_string("moment_default", "proctoringpolicy_notifications"),
+            get_string("moment_default_desc", "proctoringpolicy_notifications"),
+            "none",
+            $choices
         );
+        $page->add($setting);
 
-        $page->add(
-            new admin_setting_configtext(
-                "proctoringpolicy_notifications/recipients_default",
-                get_string("recipients_default", "proctoringpolicy_notifications"),
-                get_string("recipients_default_desc", "proctoringpolicy_notifications"),
-                "",
-                PARAM_RAW_TRIMMED
-            )
+        $setting = new admin_setting_configtext(
+            "proctoringpolicy_notifications/recipients_default",
+            get_string("recipients_default", "proctoringpolicy_notifications"),
+            get_string("recipients_default_desc", "proctoringpolicy_notifications"),
+            "",
+            PARAM_RAW_TRIMMED
         );
+        $page->add($setting);
 
-        $page->add(
-            new admin_setting_configtext(
-                "proctoringpolicy_notifications/subject_default",
-                get_string("subject_default", "proctoringpolicy_notifications"),
-                get_string("subject_default_desc", "proctoringpolicy_notifications"),
-                "[{coursename}] {event}",
-                PARAM_RAW_TRIMMED
-            )
+        $setting = new admin_setting_configtext(
+            "proctoringpolicy_notifications/subject_default",
+            get_string("subject_default", "proctoringpolicy_notifications"),
+            get_string("subject_default_desc", "proctoringpolicy_notifications"),
+            "[{coursename}] {event}",
+            PARAM_RAW_TRIMMED
         );
+        $page->add($setting);
 
-        $page->add(
-            new admin_setting_confightmleditor(
-                "proctoringpolicy_notifications/body_default",
-                get_string("body_default", "proctoringpolicy_notifications"),
-                get_string("body_default_desc", "proctoringpolicy_notifications"),
-                ""
-            )
+        $setting = new admin_setting_confightmleditor(
+            "proctoringpolicy_notifications/body_default",
+            get_string("body_default", "proctoringpolicy_notifications"),
+            get_string("body_default_desc", "proctoringpolicy_notifications"),
+            "", PARAM_RAW, '60', '10'
         );
+        $page->add($setting);
 
         $settings->add($page);
     }
@@ -158,7 +153,7 @@ class provider implements policy_interface {
             $bodydefault = cm_config::get("notifications", "body", $cmid, $globalbody);
         }
 
-        $legend = get_string("heading", "proctoringpolicy_notifications");
+        $legend = get_string("pluginname", "proctoringpolicy_notifications");
         $info = get_string("teacher_info", "proctoringpolicy_notifications");
         $mform->addElement("html", "<fieldset class='proctoring-block'><legend>{$legend}</legend><h5 class='mb-4'>{$info}</h5>");
 
