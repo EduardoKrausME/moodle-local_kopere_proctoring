@@ -148,10 +148,9 @@ class provider implements policy_interface {
         $mform->hideIf("kopere_policy_copy_limit", "kopere_proctoring_enabled", "eq", 0);
 
         $mform->addElement(
-            "editor",
-            "kopere_policy_copy_start_message",
+            "editor", "kopere_policy_copy_start_message",
             get_string("start_message_cm", "proctoringpolicy_copy"),
-            ['rows' => 4]
+            ["rows" => 4]
         );
         $mform->setType("kopere_policy_copy_start_message", PARAM_CLEANHTML);
         $mform->setDefault("kopere_policy_copy_start_message", [
@@ -161,7 +160,11 @@ class provider implements policy_interface {
         $mform->hideIf("kopere_policy_copy_start_message", "kopere_policy_copy_enabled", "eq", 0);
         $mform->hideIf("kopere_policy_copy_start_message", "kopere_proctoring_enabled", "eq", 0);
 
-        $mform->addElement("editor", "kopere_policy_copy_message", get_string("message_cm", "proctoringpolicy_copy"));
+        $mform->addElement(
+            "editor", "kopere_policy_copy_message",
+            get_string("message_cm", "proctoringpolicy_copy"),
+            ["rows" => 4]
+        );
         $mform->setType("kopere_policy_copy_message", PARAM_CLEANHTML);
         $mform->setDefault("kopere_policy_copy_message", [
             "text" => $messagedefault,

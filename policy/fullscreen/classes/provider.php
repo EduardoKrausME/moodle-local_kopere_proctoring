@@ -165,10 +165,9 @@ class provider implements policy_interface {
         $mform->hideIf("kopere_policy_fullscreen_limit", "local_kopere_proctoring_enable", "eq", 0);
 
         $mform->addElement(
-            "editor",
-            "kopere_policy_fullscreen_start_message",
+            "editor", "kopere_policy_fullscreen_start_message",
             get_string("start_message_cm", "proctoringpolicy_fullscreen"),
-            ['rows' => 4]
+            ["rows" => 4]
         );
         $mform->setType("kopere_policy_fullscreen_start_message", PARAM_CLEANHTML);
         $mform->setDefault("kopere_policy_fullscreen_start_message", [
@@ -189,9 +188,9 @@ class provider implements policy_interface {
         $mform->hideIf("kopere_policy_fullscreen_message_desc", "local_kopere_proctoring_enable", "eq", 0);
 
         $mform->addElement(
-            "editor",
-            "kopere_policy_fullscreen_message",
-            get_string("message_cm", "proctoringpolicy_fullscreen")
+            "editor", "kopere_policy_fullscreen_message",
+            get_string("message_cm", "proctoringpolicy_fullscreen"),
+            ["rows" => 5]
         );
         $mform->setType("kopere_policy_fullscreen_message", PARAM_CLEANHTML);
         $mform->setDefault("kopere_policy_fullscreen_message", [

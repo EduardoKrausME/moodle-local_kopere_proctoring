@@ -118,7 +118,11 @@ class provider implements policy_interface {
         $mform->setDefault("kopere_policy_contract_enabled", 1);
         $mform->hideIf("kopere_policy_contract_enabled", "kopere_proctoring_enabled", "eq", 0);
 
-        $mform->addElement("editor", "kopere_policy_contract_message", get_string("message_cm", "proctoringpolicy_contract"));
+        $mform->addElement(
+            "editor", "kopere_policy_contract_message",
+            get_string("message_cm", "proctoringpolicy_contract"),
+            ["rows" => 10]
+        );
         $mform->setType("kopere_policy_contract_message", PARAM_CLEANHTML);
         $mform->setDefault("kopere_policy_contract_message", [
             "text" => $messagedefault,

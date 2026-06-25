@@ -155,10 +155,9 @@ class provider implements policy_interface {
         $mform->hideIf("kopere_policy_focus_limit", "kopere_proctoring_enabled", "eq", 0);
 
         $mform->addElement(
-            "editor",
-            "kopere_policy_focus_start_message",
+            "editor", "kopere_policy_focus_start_message",
             get_string("form_start_message_label", "proctoringpolicy_focus"),
-            ['rows' => 4]
+            ["rows" => 4]
         );
         $mform->setType("kopere_policy_focus_start_message", PARAM_CLEANHTML);
         $mform->setDefault("kopere_policy_focus_start_message", [
@@ -168,7 +167,11 @@ class provider implements policy_interface {
         $mform->hideIf("kopere_policy_focus_start_message", "kopere_policy_focus_enabled", "eq", 0);
         $mform->hideIf("kopere_policy_focus_start_message", "kopere_proctoring_enabled", "eq", 0);
 
-        $mform->addElement("editor", "kopere_policy_focus_message", get_string("form_message_label", "proctoringpolicy_focus"));
+        $mform->addElement(
+            "editor", "kopere_policy_focus_message",
+            get_string("form_message_label", "proctoringpolicy_focus"),
+            ["rows" => 4]
+        );
         $mform->setType("kopere_policy_focus_message", PARAM_CLEANHTML);
         $mform->setDefault("kopere_policy_focus_message", [
             "text" => $messagecm,
