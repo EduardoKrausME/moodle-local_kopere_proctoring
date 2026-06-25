@@ -101,41 +101,6 @@ class provider implements policy_interface {
      * @throws dml_exception
      */
     public static function add_module_form(moodleform_mod $formwrapper, MoodleQuickForm $mform, int $cmid): void {
-        $pulsems = get_config("proctoringpolicy_securitysignals", "pulsems_default");
-
-        if ($cmid) {
-            $pulsems = cm_config::get("securitysignals", "pulsems", $cmid, $pulsems);
-        }
-
-        $legend = get_string("pluginname", "proctoringpolicy_securitysignals");
-        $info = get_string("teacher_info", "proctoringpolicy_securitysignals");
-        $mform->addElement("html", "<fieldset class='proctoring-block'><legend>{$legend}</legend><h5 class='mb-4'>{$info}</h5>");
-
-        $mform->addElement(
-            "selectyesno", "kopere_policy_securitysignals_enabled",
-            get_string("enabled_cm", "proctoringpolicy_securitysignals")
-        );
-        $mform->setType("kopere_policy_securitysignals_enabled", PARAM_INT);
-        $mform->setDefault("kopere_policy_securitysignals_enabled", 1);
-        $mform->hideIf("kopere_policy_securitysignals_enabled", "kopere_proctoring_enabled", "eq", 0);
-        $mform->hideIf("kopere_policy_securitysignals_enabled", "kopere_proctoring_enabled", "eq", 0);
-
-        $mform->addElement(
-            "text", "kopere_policy_securitysignals_pulsems",
-            get_string("pulsems_cm", "proctoringpolicy_securitysignals"),
-            ["size" => 10]
-        );
-        $mform->setType("kopere_policy_securitysignals_pulsems", PARAM_INT);
-        $mform->setDefault("kopere_policy_securitysignals_pulsems", $pulsems);
-        $mform->hideIf("kopere_policy_securitysignals_pulsems", "kopere_policy_securitysignals_enabled", "eq", 0);
-        $mform->hideIf("kopere_policy_securitysignals_pulsems", "kopere_proctoring_enabled", "eq", 0);
-
-        $mform->addElement("html", "</fieldset>");
-
-        $formwrapper->set_data([
-            cm_config::key("securitysignals", "enabled") => cm_config::get("securitysignals", "enabled", $cmid),
-            cm_config::key("securitysignals", "pulsems") => cm_config::get("securitysignals", "pulsems", $cmid),
-        ]);
     }
 
     /**
