@@ -50,7 +50,7 @@ class attempt {
         }
 
         $attemptid = (int) $event->get_data()["objectid"];
-        $userid = (int) ($event->userid ?? 0);
+        $userid = $event->userid ?? 0;
 
         if (!$attemptid || !$userid) {
             return;

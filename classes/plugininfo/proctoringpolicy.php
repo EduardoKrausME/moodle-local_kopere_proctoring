@@ -28,7 +28,6 @@ use admin_setting_configcheckbox;
 use admin_settingpage;
 use core\plugininfo\base;
 use core_component;
-use context_system;
 use Exception;
 use moodle_url;
 use part_of_admin_tree;
@@ -110,25 +109,7 @@ class proctoringpolicy extends base {
      * @throws Exception
      */
     public function uninstall(progress_trace $progress) {
-        global $DB;
-
         $component = "proctoringpolicy_{$this->name}";
-
-        // Remove trail items that reference this subplugin.
-        $items = $DB->get_records("local_kopere_proctoring_item", ["component" => $component], "id ASC", "id");
-        if ($items) {
-            $sysctx = context_system::instance();
-            $fs = get_file_storage();
-
-            // Purge files used by the HTML editor area for these items.
-            foreach ($items as $it) {
-                $fs->delete_area_files($sysctx->id, "local_kopere_proctoring", "itemhtml", $it->id);
-            }
-
-            [$insql, $inparams] = $DB->get_in_or_equal(array_keys($items));
-            $DB->delete_records_select("local_kopere_proctoring_item", "id " . $insql, $inparams);
-            $progress->output("Removed " . count($items) . " trail items for component {$component}", 1);
-        }
 
         // Clear all component config (including 'enabled').
         unset_all_config_for_plugin($component);
@@ -141,6 +122,7 @@ class proctoringpolicy extends base {
      * Return URL used for management of plugins of this type.
      *
      * @return moodle_url
+     * @throws \core\exception\moodle_exception
      */
     public static function get_manage_url() {
         return new moodle_url("/admin/settings.php", ["section" => "local_kopere_proctoring"]);

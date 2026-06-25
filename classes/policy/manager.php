@@ -387,7 +387,6 @@ class manager {
      * @param int $cmid
      * @param int $attemptid
      * @return array
-     * @throws moodle_exception
      * @throws dml_exception
      */
     public static function get_start_policy_html(int $cmid, int $attemptid): array {

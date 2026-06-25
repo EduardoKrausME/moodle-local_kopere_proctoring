@@ -118,6 +118,7 @@ class user_data_repository {
      *
      * @param object $attempt
      * @return moodle_url
+     * @throws \core\exception\moodle_exception
      */
     public static function get_quiz_url(object $attempt): moodle_url {
         return new moodle_url('/mod/quiz/view.php', ['id' => (int) $attempt->cmid]);
