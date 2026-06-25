@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$string['accept_label'] = 'Li e concordo com os termos acima';
+$string['accept_label'] = 'Declaro que li e compreendi os termos acima e me comprometo a realizar a prova de forma honesta, ética e responsável.';
 $string['cancel_button'] = 'Cancelar';
 $string['contract_title'] = 'Compromisso de Honestidade Acadêmica';
 $string['enabled'] = 'Ativar contrato ';
