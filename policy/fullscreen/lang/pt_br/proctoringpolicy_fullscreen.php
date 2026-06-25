@@ -37,12 +37,11 @@ $string['message_cm_desc'] = 'Mensagem exibida apenas quando o aluno sai do modo
 $string['message_default'] = 'Mensagem padrão de violação';
 $string['message_default_desc'] = 'Mensagem padrão exibida apenas quando o aluno sai do modo de tela cheia. <i>No questionário pode alterar este valor</i>';
 $string['message_default_text'] = '<h2>Você saiu do modo de tela cheia durante a prova</h2>
-<p><strong>.</strong></p>
 <p>Retorne imediatamente para a tela cheia. Saídas repetidas podem bloquear ou encerrar a tentativa.</p>';
 $string['message_init'] = 'Esta tentativa exige modo de tela cheia.';
 $string['pluginname'] = 'Tela cheia ';
 $string['start_message_cm'] = 'Mensagem inicial exibida antes do início da prova';
 $string['start_message_default'] = 'Mensagem inicial padrão';
 $string['start_message_default_desc'] = 'Mensagem curta exibida antes do início da tentativa para explicar que o modo de tela cheia é obrigatório. <i>No questionário pode alterar este valor</i>';
-$string['start_message_default_text'] = '<p>Você deve permanecer em modo de tela cheia durante toda a tentativa.</p>';
+$string['start_message_default_text'] = '<p>Você deve permanecer em modo de tela cheia durante toda a prova.</p>';
 $string['teacher_info'] = 'Ative isto quando o aluno precisar permanecer em tela cheia durante toda a prova. Use a mensagem inicial para explicar a regra antes do início da tentativa e use a mensagem de violação para avisar o aluno apenas depois que ele sair do modo de tela cheia.';

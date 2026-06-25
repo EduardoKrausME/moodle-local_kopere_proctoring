@@ -37,7 +37,6 @@ $string['message_cm_desc'] = 'Message shown only when the student exits fullscre
 $string['message_default'] = 'Default violation message';
 $string['message_default_desc'] = 'Default message shown only when the student exits fullscreen mode. <i>This value can be changed in the quiz</i>';
 $string['message_default_text'] = '<h2>You exited fullscreen mode during the exam</h2>
-<p><strong>.</strong></p>
 <p>Return to fullscreen immediately. Repeated exits may block or end the attempt.</p>';
 $string['message_init'] = 'This attempt requires fullscreen mode.';
 $string['pluginname'] = 'Fullscreen ';
