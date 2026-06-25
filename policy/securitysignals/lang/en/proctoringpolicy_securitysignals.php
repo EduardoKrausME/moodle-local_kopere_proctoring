@@ -25,7 +25,6 @@
 defined('MOODLE_INTERNAL') || die;
 
 $string['enabled'] = 'Enable security signals';
-$string['enabled_cm'] = 'Enable security signals for this exam';
 $string['enabled_desc'] = 'If enabled, the browser will emit lightweight integrity/devtools signals and report suspicious changes.';
 $string['event_devtools_suspected'] = 'Suspicious DevTools';
 $string['event_integrity_changed'] = 'Client integrity changed';
@@ -34,7 +33,5 @@ $string['heading_info'] = 'Collects lightweight browser-side security telemetry,
 $string['js_warn_devtools'] = 'Suspicious activity detected.';
 $string['js_warn_integrity'] = 'Security integrity changed.';
 $string['pluginname'] = 'Security';
-$string['pulsems_cm'] = 'Pulse interval (seconds)';
 $string['pulsems_default'] = 'Default pulse interval (seconds)';
 $string['pulsems_default_desc'] = 'How often the client sends security pulses when suspicious activity is detected.';
-$string['teacher_info'] = 'Enable this when you want extra technical signals from the browser about suspicious changes in the environment. This does not replace other policies, but adds more context for audit and incident analysis.';

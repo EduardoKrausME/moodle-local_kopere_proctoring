@@ -24,35 +24,24 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$string['body_cm'] = 'Body for this exam';
 $string['body_default'] = 'Default body';
 $string['body_default_text'] = 'Course: {coursename}<br>Exam: {quizname}<br>Event: {event}<br>Reason: {reason}';
 $string['email_from_name'] = 'Proctoring notifications';
 $string['enabled'] = 'Enable notification system';
-$string['enabled_cm'] = 'Enable notifications for this exam';
 $string['enabled_desc'] = 'If enabled, this policy can send e-mail notifications based on exam events.';
 $string['event_attempt_finished'] = 'Attempt finished';
 $string['event_exam_locked'] = 'Exam blocked by proctoring rules';
 $string['event_suspicious_activity'] = 'Suspicious activity detected';
 $string['heading_info'] = 'Sends automatic e-mail notifications based on events detected for students.';
-$string['moment_attemptfinished'] = 'When the attempt is finished';
-$string['moment_cm'] = 'Notification trigger time';
-$string['moment_cm_help'] = 'Defines when notifications will be sent for this exam.';
 $string['moment_default'] = 'Default trigger time';
 $string['moment_default_attemptfinished'] = 'When the attempt is finished';
 $string['moment_default_desc'] = 'Defines when notifications should be sent by default.';
 $string['moment_default_examlocked'] = 'When the exam is blocked';
 $string['moment_default_none'] = 'Do not send notifications';
 $string['moment_default_suspicious'] = 'In case of suspicious activity';
-$string['moment_examlocked'] = 'When the exam is blocked';
-$string['moment_none'] = 'Do not send notifications';
-$string['moment_suspicious'] = 'In case of suspicious activity';
 $string['pluginname'] = 'Notifications ';
-$string['recipients_cm'] = 'Recipients for this exam';
-$string['recipients_cm_help'] = 'Comma-separated e-mails. If left empty, the site-wide default will be used.';
 $string['recipients_default'] = 'Default recipients (comma-separated e-mails)';
 $string['recipients_default_desc'] = 'List of e-mails that will receive notifications if there is no override at module level.';
-$string['subject_cm'] = 'Subject for this exam';
 $string['subject_default'] = 'Default subject';
 $string['subject_default_desc'] = 'Default subject of notification e-mails. You can use the placeholders: 
 <ul>
@@ -72,4 +61,3 @@ $string['body_default_desc'] = 'Default body of notification e-mails. You can us
     <li>{event}</li>
     <li>{reason}</li>
 </ul>';
-$string['teacher_info'] = 'Use this policy to alert coordinators, supervisors, or support teams when suspicious activity occurs, when the exam is blocked, or when the attempt is finished.';
