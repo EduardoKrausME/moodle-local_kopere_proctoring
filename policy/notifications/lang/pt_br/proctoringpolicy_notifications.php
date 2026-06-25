@@ -26,7 +26,6 @@ defined('MOODLE_INTERNAL') || die;
 
 $string['body_cm'] = 'Corpo para esta prova';
 $string['body_default'] = 'Corpo padrão';
-$string['body_default_desc'] = 'Corpo padrão dos e-mails de notificação. Você pode usar placeholders: {coursename}, {quizname}, {userid}, {username}, {event}, {reason}.';
 $string['body_default_text'] = 'Curso: {coursename}<br>Prova: {quizname}<br>Evento: {event}<br>Motivo: {reason}';
 $string['email_from_name'] = 'Notificações de proctoring';
 $string['enabled'] = 'Ativar sistema de notificações';
@@ -35,9 +34,7 @@ $string['enabled_desc'] = 'Se ativado, esta política poderá enviar notificaç�
 $string['event_attempt_finished'] = 'Tentativa finalizada';
 $string['event_exam_locked'] = 'Prova bloqueada pelas regras de proctoring';
 $string['event_suspicious_activity'] = 'Atividade suspeita detectada';
-$string['heading'] = 'Notificações ';
-$string['heading_info'] = 'Envia notificações automáticas por e-mail a partir de eventos de proctoring no momento de disparo selecionado. Suporta destinatários por atividade, assunto, corpo HTML e placeholders em tempo de execução, como curso, questionário, evento e motivo.';
-$string['legend'] = 'Notificações';
+$string['heading_info'] = 'Envia notificações automáticas por e-mail a partir de eventos detectados com os alunos.';
 $string['moment_attemptfinished'] = 'Quando a tentativa for finalizada';
 $string['moment_cm'] = 'Momento de disparo da notificação';
 $string['moment_cm_help'] = 'Define quando as notificações serão enviadas para esta prova.';
@@ -57,5 +54,22 @@ $string['recipients_default'] = 'Destinatários padrão (e-mails separados por v
 $string['recipients_default_desc'] = 'Lista de e-mails que receberão notificações se não houver substituição no nível do módulo.';
 $string['subject_cm'] = 'Assunto para esta prova';
 $string['subject_default'] = 'Assunto padrão';
-$string['subject_default_desc'] = 'Assunto padrão dos e-mails de notificação. Você pode usar placeholders: {coursename}, {quizname}, {userid}, {username}, {event}, {reason}.';
+$string['subject_default_desc'] = 'Assunto padrão dos e-mails de notificação. Você pode usar os placeholders: 
+<ul>
+    <li>{coursename}</li>
+    <li>{quizname}</li>
+    <li>{userid}</li>
+    <li>{username}</li>
+    <li>{event}</li>
+    <li>{reason}</li>
+</ul>';
+$string['body_default_desc'] = 'Corpo padrão dos e-mails de notificação. Você pode usar os placeholders:
+<ul>
+    <li>{coursename}</li>
+    <li>{quizname}</li>
+    <li>{userid}</li>
+    <li>{username}</li>
+    <li>{event}</li>
+    <li>{reason}</li>
+</ul>';
 $string['teacher_info'] = 'Use esta política para alertar coordenadores, supervisores ou equipes de suporte quando ocorrer atividade suspeita, quando a prova for bloqueada ou quando a tentativa for finalizada.';

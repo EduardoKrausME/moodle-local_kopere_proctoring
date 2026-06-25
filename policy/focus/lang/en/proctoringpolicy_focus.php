@@ -25,25 +25,25 @@
 defined('MOODLE_INTERNAL') || die;
 
 $string['enabled'] = 'Enable focus ';
-$string['enabled_desc'] = 'If enabled, focus and visibility changes will be monitored on quiz attempts.';
+$string['enabled_desc'] = 'If enabled, focus changes will be monitored on quiz attempts.';
 $string['form_enabled_label'] = 'Apply focus policy to this quiz';
 $string['form_limit_label'] = 'Allowed focus changes (blur / hidden)';
 $string['form_message_label'] = 'Violation message shown when the student leaves the page';
-$string['form_start_message_label'] = 'Start message shown before the exam starts';
-$string['heading'] = 'Focus and window visibility';
-$string['heading_desc'] = 'Defines how many times the student can leave the quiz window (blur or tab change) before the attempt is locked.';
-$string['heading_info'] = 'Monitors browser focus and visibility state changes, such as blur events, tab switches, or hidden windows, during the attempt. The policy can show one short instruction before the attempt starts and a separate warning message only after the student leaves the page or switches tabs.';
-$string['legend'] = 'Focus and window visibility';
-$string['limit_default'] = 'Default allowed focus changes';
-$string['limit_default_desc'] = 'Maximum number of focus loss events (blur or tab hidden) allowed before locking the attempt.';
+$string['form_start_message_label'] = 'Initial message shown before the exam starts';
+$string['heading_desc'] = 'Defines how many times the student can leave the quiz window before the exam is submitted.';
+$string['heading_info'] = 'Monitors focus changes during the exam, such as switching tabs or accessing other applications. The policy shows a brief instruction before the assessment starts and displays a warning message when the student leaves the page or switches to another tab.';
+$string['limit_default'] = 'Focus changes allowed by default';
+$string['limit_default_desc'] = 'Maximum number of times the student may leave the exam before the exam is blocked.';
 $string['message_default'] = 'Default violation message';
 $string['message_default_desc'] = 'Default HTML message shown only when the student leaves the page or changes browser focus.';
-$string['message_default_text'] = '<h2>Exam focus violation detected</h2>
-<p><strong>You left the exam page or switched to another window/tab.</strong></p>
-<p>Please return to the exam immediately. This event may be reviewed by the instructor or support team.</p>';
-$string['pluginname'] = 'Focus ';
+$string['message_default_text'] = '<h2>Exam page exit detected</h2>
+<p><strong>You left the exam page.</strong></p>
+<p>During the exam, accessing other tabs, windows, or applications is not allowed. Return to the exam page immediately.</p>
+<p>This occurrence was recorded and will be reviewed by the teacher.</p>';
+$string['pluginname'] = 'Exam focus ';
 $string['start_limit_label'] = 'Allowed focus changes:';
-$string['start_message_default'] = 'Default start message';
-$string['start_message_default_desc'] = 'Short message shown before the attempt starts to explain that the student must stay on the exam page.';
-$string['start_message_default_text'] = '<p>You must remain on this exam page and cannot switch tabs, windows, or applications during the attempt.</p>';
-$string['teacher_info'] = 'Enable this when the student must remain on the exam page. Use the start message to explain the rule before the attempt starts, and use the violation message to warn the student only after the page loses focus.';
+$string['start_message_default'] = 'Default initial message';
+$string['start_message_default_desc'] = 'Short message shown before the exam starts to explain that the student must remain on the exam page.';
+$string['start_message_default_text'] = '<p>During the entire exam, you must remain on this page and may not switch to other tabs, windows, applications, or programs until you complete and submit the assessment.</p>
+<p>If you leave this page or access another environment during the exam, this action will be recorded by the system, considered a violation of the assessment rules, and sent to the Teacher for review.</p>';
+$string['teacher_info'] = 'Enable this when the student must remain on the exam page. Use the initial message to explain the rule before the exam starts and use the violation message to warn the student only after the page loses focus.';
