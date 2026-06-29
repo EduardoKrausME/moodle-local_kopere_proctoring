@@ -188,7 +188,7 @@ function proctoringpolicy_password_build_admin_context(int $cmid = 0, int $cours
         $rows[] = [
             'id' => $request->id,
             'coursefullname' => format_string($course->fullname),
-            'courseshortname' =>$course->shortname,
+            'courseshortname' => $course->shortname,
             'courseurl' => new moodle_url('/course/view.php', ['id' => $course->id]),
             'userfullname' => fullname($user),
             'userid' => $user->id,
@@ -199,12 +199,12 @@ function proctoringpolicy_password_build_admin_context(int $cmid = 0, int $cours
             'cmname' => $cm ? format_string($cm->name, true) : '',
             'cmurl' => $cm ? $cm->url->out(false) : '',
             'hascmurl' => !empty($cm) && !empty($cm->url),
-            'ip' =>$request->ip,
+            'ip' => $request->ip,
             'ipurl' => new moodle_url('https://www.geodatatool.com/en', ['ip' => $request->ip]),
             'browserinfo' => user_agent::to_text($request->browserinfo),
             'timecreated' => userdate($request->timecreated, get_string('strftimedatetimeshort', 'langconfig')),
             'status' => get_string("status_{$request->status}", 'proctoringpolicy_password'),
-            'password' =>$request->password,
+            'password' => $request->password,
             'approveurl' => new moodle_url('/local/kopere_proctoring/policy/password/admin.php', $approveparams),
             'denyurl' => new moodle_url('/local/kopere_proctoring/policy/password/admin.php', $denyparams),
         ];
