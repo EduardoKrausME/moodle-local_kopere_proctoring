@@ -207,7 +207,6 @@ class manager {
     public static function get_policy_classes($onlyactive = false): array {
         $policies = [];
 
-        // Returns ['fullscreen' => '/path/to/policy/fullscreen', ...].
         $list = core_component::get_plugin_list("proctoringpolicy");
 
         foreach ($list as $name => $path) {
