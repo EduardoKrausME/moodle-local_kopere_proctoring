@@ -31,17 +31,6 @@ define(["jquery"], function ($) {
             return "";
         }
 
-        function getString(key, component, fallback) {
-            try {
-                if (window.M && window.M.util && window.M.util.get_string) {
-                    return window.M.util.get_string(key, component);
-                }
-            } catch (e) {
-                // ignore
-            }
-            return fallback || "";
-        }
-
         function hashString(input) {
             // Lightweight non-crypto hash (deterministic).
             let h = 0;
@@ -100,7 +89,7 @@ define(["jquery"], function ($) {
             });
         }
 
-        function init(ctx, cfg) {
+        function startPolicy(ctx, cfg) {
             let component = "proctoringpolicy_securitysignals";
 
             let cmid = Number(ctx.cmid || 0);
@@ -176,12 +165,25 @@ define(["jquery"], function ($) {
                     // Avoid blocking UI here; other policies can decide to lock.
                     // This is just a hint.
                     // eslint-disable-next-line no-console
-                    console.warn(getString("js_warn_integrity", component, "Security integrity changed."));
+                    console.warn(M.util.get_string("js_warn_integrity", "proctoringpolicy_securitysignals"));
                 }
             }
 
-            // Start loop.
             setInterval(pulse, pulseMs);
+        }
+
+        function init(ctx, cfg) {
+            ctx = ctx || {};
+            cfg = cfg || {};
+
+            if (ctx.api && typeof ctx.api.registerStartCallback === "function") {
+                ctx.api.registerStartCallback(function () {
+                    startPolicy(ctx, cfg);
+                });
+                return;
+            }
+
+            startPolicy(ctx, cfg);
         }
 
         return {

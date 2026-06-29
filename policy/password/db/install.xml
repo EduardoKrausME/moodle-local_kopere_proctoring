@@ -10,18 +10,13 @@
                 <FIELD NAME="cmid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" COMMENT="Course module id (quiz)"/>
                 <FIELD NAME="attemptid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" COMMENT="Quiz attempt id"/>
                 <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" COMMENT="User id (student)"/>
-                <FIELD NAME="status" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="pending"
-                       COMMENT="Request status (pending | approved | blocked)"/>
-                <FIELD NAME="password" TYPE="char" LENGTH="8" NOTNULL="true" DEFAULT="00000000"
-                       COMMENT="Numeric 8-digit password"/>
-                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"
-                       COMMENT="Creation timestamp"/>
-                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"
-                       COMMENT="Last modification timestamp"/>
+                <FIELD NAME="status" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="pending" COMMENT="Request status (pending | approved | blocked)"/>
+                <FIELD NAME="password" TYPE="char" LENGTH="4" NOTNULL="true" DEFAULT="00000000" COMMENT="Numeric 8-digit password"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" COMMENT="Creation timestamp"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" COMMENT="Last modification timestamp"/>
                 <FIELD NAME="ip" TYPE="char" LENGTH="45" NOTNULL="false" DEFAULT="" COMMENT="Remote IP address"/>
                 <FIELD NAME="useragent" TYPE="text" LENGTH="small" NOTNULL="false" COMMENT="User agent string"/>
-                <FIELD NAME="browserinfo" TYPE="text" LENGTH="small" NOTNULL="false"
-                       COMMENT="JSON with browser details"/>
+                <FIELD NAME="browserinfo" TYPE="text" LENGTH="small" NOTNULL="false" COMMENT="JSON with browser details"/>
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -38,8 +33,7 @@
                 <FIELD NAME="cmid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" COMMENT="Course module id (quiz)"/>
                 <FIELD NAME="attemptid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" COMMENT="Quiz attempt id"/>
                 <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" COMMENT="User id (student)"/>
-                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"
-                       COMMENT="Timestamp of wrong attempt"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" COMMENT="Timestamp of wrong attempt"/>
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

@@ -30,6 +30,7 @@ use admin_setting_configtext;
 use admin_setting_heading;
 use admin_settingpage;
 use coding_exception;
+use core\hook\output\before_footer_html_generation;
 use dml_exception;
 use local_kopere_proctoring\policy\cm_config;
 use local_kopere_proctoring\policy\policy_interface;
@@ -196,11 +197,10 @@ class provider implements policy_interface {
     /**
      * Notifications are completely server-side. No JS config is required.
      *
-     * @param int $cmid
      * @param int $attemptid
      * @return array
      */
-    public static function get_js_config(int $cmid, int $attemptid): array {
+    public static function get_js_config(int $attemptid): array {
         return [];
     }
 
@@ -238,5 +238,14 @@ class provider implements policy_interface {
      */
     public static function render_start_html(int $cmid, int $attemptid): string {
         return "";
+    }
+
+    /**
+     * Inject proctoring overlay on quiz attempt/review pages and password admin alerts on quiz pages.
+     *
+     * @params before_footer_html_generation $hook
+     * @return void
+     */
+    public static function hooks_before_footer_html_generation(before_footer_html_generation $hook) {
     }
 }

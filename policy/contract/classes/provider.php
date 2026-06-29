@@ -28,6 +28,7 @@ use admin_setting_confightmleditor;
 use admin_setting_heading;
 use admin_settingpage;
 use coding_exception;
+use core\hook\output\before_footer_html_generation;
 use dml_exception;
 use local_kopere_proctoring\policy\cm_config;
 use local_kopere_proctoring\policy\policy_interface;
@@ -184,21 +185,26 @@ class provider implements policy_interface {
     /**
      * JS config for attempt page. If disabled, returns [].
      *
-     * @param int $cmid
      * @param int $attemptid
      * @return array
      * @throws dml_exception
      */
-    public static function get_js_config(int $cmid, int $attemptid): array {
-        $cfg = self::get_effective_cm_config($cmid);
+    public static function get_js_config(int $attemptid): array {
+        global $PAGE;
+
+        $cfg = self::get_effective_cm_config($PAGE->cm->id);
         if (empty($cfg["enabled"])) {
             return [];
         }
 
+        global $PAGE;
+        $PAGE->requires->strings_for_js([
+            "requirement_label",
+        ], "proctoringpolicy_contract");
+
         return [
             "enabled" => true,
             "limit" => 1,
-            "requirementlabel" => get_string("requirement_label", "proctoringpolicy_contract"),
         ];
     }
 
@@ -254,5 +260,14 @@ class provider implements policy_interface {
      * @return void
      */
     public static function handle_server_event(string $eventkey, int $cmid, int $attemptid, array $payload): void {
+    }
+
+    /**
+     * Inject proctoring overlay on quiz attempt/review pages and password admin alerts on quiz pages.
+     *
+     * @params before_footer_html_generation $hook
+     * @return void
+     */
+    public static function hooks_before_footer_html_generation(before_footer_html_generation $hook) {
     }
 }

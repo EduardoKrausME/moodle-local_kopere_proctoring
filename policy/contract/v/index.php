@@ -41,8 +41,6 @@ $PAGE->set_heading(contract_service::get_site_fullname());
 $att = contract_service::get_att_by_document_code($code);
 $valid = $att && !empty($att->contract) && !empty($att->contract_time);
 
-$documentcode = s($code);
-
 echo $OUTPUT->header();
 
 echo html_writer::start_div('container py-4');
@@ -51,10 +49,14 @@ echo html_writer::tag('p', get_string('verification_page_intro', 'proctoringpoli
 
 if (!$valid) {
     echo html_writer::div(
-        html_writer::tag('h4',
-            get_string('verification_invalid_title', 'proctoringpolicy_contract'), ['class' => 'mb-2']) .
-        html_writer::tag('p',
-            get_string('verification_invalid_desc', 'proctoringpolicy_contract', $documentcode), ['class' => 'mb-0']),
+        html_writer::tag(
+            'h4',
+            get_string('verification_invalid_title', 'proctoringpolicy_contract'), ['class' => 'mb-2']
+        ) .
+        html_writer::tag(
+            'p',
+            get_string('verification_invalid_desc', 'proctoringpolicy_contract', $code), ['class' => 'mb-0']
+        ),
         'alert alert-danger'
     );
     echo html_writer::end_div();
@@ -77,18 +79,20 @@ $verifycard[] = html_writer::tag('dd', contract_service::get_document_code($att)
 $verifycard[] = html_writer::tag('dt', get_string('pdf_full_name', 'proctoringpolicy_contract'), ['class' => 'col-sm-3']);
 $verifycard[] = html_writer::tag('dd', fullname($user), ['class' => 'col-sm-9']);
 $verifycard[] = html_writer::tag('dt', get_string('pdf_username', 'proctoringpolicy_contract'), ['class' => 'col-sm-3']);
-$verifycard[] = html_writer::tag('dd', s($user->username) . ($maskedidnumber ? ' | ' .
-        get_string('pdf_cpf', 'proctoringpolicy_contract') . ' ' . s($maskedidnumber) : ''), ['class' => 'col-sm-9']);
+$verifycard[] = html_writer::tag(
+    'dd', $user->username . ($maskedidnumber ? ' | ' .
+        get_string('pdf_cpf', 'proctoringpolicy_contract') . ' ' . $maskedidnumber : ''), ['class' => 'col-sm-9']
+);
 $verifycard[] = html_writer::tag('dt', get_string('pdf_email', 'proctoringpolicy_contract'), ['class' => 'col-sm-3']);
-$verifycard[] = html_writer::tag('dd', s($user->email), ['class' => 'col-sm-9']);
+$verifycard[] = html_writer::tag('dd', $user->email, ['class' => 'col-sm-9']);
 $verifycard[] = html_writer::tag('dt', get_string('pdf_acceptance_date', 'proctoringpolicy_contract'), ['class' => 'col-sm-3']);
-$verifycard[] = html_writer::tag('dd', contract_service::format_datetime((int)$att->contract_time), ['class' => 'col-sm-9']);
+$verifycard[] = html_writer::tag('dd', contract_service::format_datetime((int) $att->contract_time), ['class' => 'col-sm-9']);
 $verifycard[] = html_writer::tag('dt', get_string('pdf_ip_address', 'proctoringpolicy_contract'), ['class' => 'col-sm-3']);
-$verifycard[] = html_writer::tag('dd', s((string)$att->contract_ip), ['class' => 'col-sm-9']);
+$verifycard[] = html_writer::tag('dd', $att->contract_ip, ['class' => 'col-sm-9']);
 $verifycard[] = html_writer::tag('dt', get_string('verification_exam', 'proctoringpolicy_contract'), ['class' => 'col-sm-3']);
-$verifycard[] = html_writer::tag('dd', s($meta->quizname), ['class' => 'col-sm-9']);
+$verifycard[] = html_writer::tag('dd', $meta->quizname, ['class' => 'col-sm-9']);
 $verifycard[] = html_writer::tag('dt', get_string('pdf_unique_hash', 'proctoringpolicy_contract'), ['class' => 'col-sm-3']);
-$verifycard[] = html_writer::tag('dd', s($hash), ['class' => 'col-sm-9 text-break']);
+$verifycard[] = html_writer::tag('dd', $hash, ['class' => 'col-sm-9 text-break']);
 $verifycard[] = html_writer::end_tag('dl');
 
 echo html_writer::div(html_writer::div(implode('', $verifycard), 'card-body'), 'card shadow-sm');

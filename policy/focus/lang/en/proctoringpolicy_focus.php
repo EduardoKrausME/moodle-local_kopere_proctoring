@@ -47,3 +47,4 @@ $string['start_message_default_desc'] = 'Short message shown before the exam sta
 $string['start_message_default_text'] = '<p>During the entire exam, you must remain on this page and may not switch to other tabs, windows, applications, or programs until you complete and submit the assessment.</p>
 <p>If you leave this page or access another environment during the exam, this action will be recorded by the system, considered a violation of the assessment rules, and sent to the Teacher for review.</p>';
 $string['teacher_info'] = 'Enable this when the student must remain on the exam page. Use the initial message to explain the rule before the exam starts and use the violation message to warn the student only after the page loses focus.';
+$string['requirement_label'] = 'Understand the exam focus policy';

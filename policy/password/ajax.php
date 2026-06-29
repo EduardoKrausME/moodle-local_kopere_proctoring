@@ -40,12 +40,7 @@ $context = context_module::instance($cmid);
 $maxerrors = get_config("proctoringpolicy_password", "maxerrors");
 
 // Blocked?
-if (password_service::is_blocked(
-    $cmid,
-    $attemptid,
-    $USER->id,
-    $maxerrors
-)) {
+if (password_service::is_blocked($cmid, $attemptid, $USER->id, $maxerrors)) {
     echo json_encode(["error" => "blocked"]);
     die;
 }
@@ -66,7 +61,7 @@ if ($action === "request") {
 
     echo json_encode([
         "status" => $req->status,
-        "mode" => $req->mode,
+        "mode" => "code",
     ]);
     die;
 }

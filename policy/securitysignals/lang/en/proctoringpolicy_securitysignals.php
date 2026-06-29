@@ -35,3 +35,5 @@ $string['js_warn_integrity'] = 'Security integrity changed.';
 $string['pluginname'] = 'Security';
 $string['pulsems_default'] = 'Default pulse interval (seconds)';
 $string['pulsems_default_desc'] = 'How often the client sends security pulses when suspicious activity is detected.';
+$string['requirement_label'] = 'Understand the security signals policy';
+$string['start_message'] = 'During the exam, the system may check browser integrity signals and record suspicious security-related changes in the attempt.';

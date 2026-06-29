@@ -23,7 +23,7 @@
     }
 }}
 
-    <div id="kopere-proctoring-overlay" class="kopere-proctoring-dialog">
+    <div id="kopere-proctoring-overlay" class="kopere-password-policy kopere-proctoring-dialog">
         <div class="kopere-proctoring-header">
             <h3 class="kopere-proctoring-title">
                 {{#str}}contract_title, proctoringpolicy_contract{{/str}}
@@ -49,7 +49,7 @@
             <div class="kopere-proctoring-proof mt-2"
                  data-role="proof"
                  {{^accepted}}style="display: none;"{{/accepted}}>
-                <a href="{{proofurl}}"
+                <a href="{{{proofurl}}}"
                    target="_blank"
                    rel="noopener"
                    data-role="proof-link">

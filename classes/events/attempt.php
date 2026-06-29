@@ -95,6 +95,5 @@ class attempt {
      * @return void
      */
     public static function module_viewed(base $event): void {
-
     }
 }

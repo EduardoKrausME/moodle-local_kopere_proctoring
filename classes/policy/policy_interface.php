@@ -25,6 +25,7 @@
 namespace local_kopere_proctoring\policy;
 
 use admin_settingpage;
+use core\hook\output\before_footer_html_generation;
 use moodleform_mod;
 use MoodleQuickForm;
 use stdClass;
@@ -79,11 +80,10 @@ interface policy_interface {
     /**
      * Provide JS config for the attempt page.
      *
-     * @param int $cmid
      * @param int $attemptid
      * @return array
      */
-    public static function get_js_config(int $cmid, int $attemptid): array;
+    public static function get_js_config(int $attemptid): array;
 
     /**
      * AMD module name to init this policy on client side, or null if no JS needed.
@@ -114,4 +114,12 @@ interface policy_interface {
      * @return string
      */
     public static function render_start_html(int $cmid, int $attemptid): string;
+
+    /**
+     * Inject proctoring overlay on quiz attempt/review pages and password admin alerts on quiz pages.
+     *
+     * @params before_footer_html_generation $hook
+     * @return void
+     */
+    public static function hooks_before_footer_html_generation(before_footer_html_generation $hook);
 }

@@ -43,3 +43,4 @@ $string['start_message_default'] = 'Default initial message';
 $string['start_message_default_desc'] = 'Short message shown before the attempt starts to explain that copy and paste are not allowed.';
 $string['start_message_default_text'] = '<p>During this attempt, copying, cutting, pasting, printing, or using the right mouse button is not allowed.</p>';
 $string['teacher_info'] = 'Enable this to block copy and paste actions during the attempt. Use the initial message to explain the rule before the exam starts and use the violation message to warn the student only when the rule is broken.';
+$string['requirement_label'] = 'Understand the copy and paste policy';

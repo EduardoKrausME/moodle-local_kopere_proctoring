@@ -29,6 +29,9 @@ use admin_setting_configtext;
 use admin_setting_heading;
 use admin_settingpage;
 use coding_exception;
+use context_module;
+use context_system;
+use core\hook\output\before_footer_html_generation;
 use dml_exception;
 use local_kopere_proctoring\policy\cm_config;
 use local_kopere_proctoring\policy\policy_interface;
@@ -162,13 +165,14 @@ class provider implements policy_interface {
     /**
      * get_js_config
      *
-     * @param int $cmid
      * @param int $attemptid
      * @return array
      * @throws dml_exception
      */
-    public static function get_js_config(int $cmid, int $attemptid): array {
-        if (!cm_config::get("password", "enabled", $cmid, 0)) {
+    public static function get_js_config(int $attemptid): array {
+        global $PAGE;
+
+        if (!cm_config::get("password", "enabled", $PAGE->cm->id, 0)) {
             return [];
         }
 
@@ -177,22 +181,22 @@ class provider implements policy_interface {
             "student_title",
             "student_waiting",
             "student_enter_password",
-            "student_password_label",
+            "column_password",
             "student_submit_password",
             "student_toomany_errors",
             "student_wrong_password",
-            "js_status_waiting",
+            "student_waiting",
             "js_status_approved",
             "js_status_blocked",
+            "js_status_denied",
             "js_status_pending",
-            "js_wrong_password",
             "js_toomany_errors",
+            "requirement_label",
         ], "proctoringpolicy_password");
 
         return [
             "limit" => 1,
             "maxerrors" => get_config("proctoringpolicy_password", "maxerrors"),
-            "requirementlabel" => get_string("requirement_label", "proctoringpolicy_password"),
         ];
     }
 
@@ -224,12 +228,14 @@ class provider implements policy_interface {
      * @param int $attemptid
      * @return string
      * @throws dml_exception
+     * @throws \coding_exception
+     * @throws \Random\RandomException
      */
     public static function render_start_html(int $cmid, int $attemptid): string {
         global $OUTPUT, $USER;
 
         if (!cm_config::get("password", "enabled", $cmid, 0)) {
-            return false;
+            return "";
         }
 
         $cm = get_coursemodule_from_id("quiz", $cmid, 0, false, MUST_EXIST);
@@ -248,5 +254,30 @@ class provider implements policy_interface {
         );
 
         return $OUTPUT->render_from_template("proctoringpolicy_password/password_student", []);
+    }
+
+    /**
+     * Teachers/admins get a fast pending-password alert on quiz pages where the password policy is enabled.
+     *
+     * @params before_footer_html_generation $hook
+     * @param \core\hook\output\before_footer_html_generation $hook
+     * @return void
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
+    public static function hooks_before_footer_html_generation(before_footer_html_generation $hook) {
+        global $PAGE;
+
+        $context = context_system::instance();
+        if (password_service::user_can_manage_context($context)) {
+            $PAGE->requires->strings_for_js([
+                'admin_popover_title',
+                'admin_popover_body',
+                'admin_popover_open',
+                'quiz_pending_title',
+            ], 'proctoringpolicy_password');
+
+            $PAGE->requires->js_call_amd('proctoringpolicy_password/adminwatch', 'init', []);
+        }
     }
 }

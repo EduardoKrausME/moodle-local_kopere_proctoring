@@ -22,6 +22,7 @@
  */
 
 define(["jquery"], function ($) {
+    "use strict";
 
     function isFullscreenActive() {
         return !!(
@@ -59,8 +60,6 @@ define(["jquery"], function ($) {
     function showViolationMessage(ctx) {
         let html = getViolationHtml();
 
-        $("body").hasClass("")
-
         if (!html) {
             return;
         }
@@ -92,13 +91,82 @@ define(["jquery"], function ($) {
         }]);
     }
 
-    function bindFullscreenExit(ctx, state) {
-        $(document).on("fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange", function () {
-            if (!state.inexam) {
-                return;
-            }
+    function setRequirement(ctx, satisfied) {
+        if (ctx.api && typeof ctx.api.updateRequirement === "function") {
+            ctx.api.updateRequirement("fullscreen", {
+                satisfied: !!satisfied
+            });
+        }
+    }
 
-            if (!isFullscreenActive()) {
+    function setPendingState($footer, $control, satisfied) {
+        if (typeof updatePendingState === "function") {
+            updatePendingState($footer, $control, $(), !!satisfied);
+            return;
+        }
+
+        if ($footer && $footer.length) {
+            $footer.toggleClass("is-pending", !satisfied);
+        }
+        if ($control && $control.length) {
+            $control.attr("aria-invalid", satisfied ? "false" : "true");
+        }
+    }
+
+    function setStatus($status, kind, text) {
+        if (!$status || !$status.length) {
+            return;
+        }
+
+        if (!text) {
+            $status.empty().hide();
+            return;
+        }
+
+        let classname = "alert-info";
+        if (kind === "success") {
+            classname = "alert-success";
+        } else if (kind === "warning") {
+            classname = "alert-warning";
+        } else if (kind === "danger") {
+            classname = "alert-danger";
+        }
+
+        $status.html('<div class="alert ' + classname + ' mb-0">' + text + '</div>').show();
+    }
+
+    function refreshFullscreenRequirement(ctx, cfg, state, $status, $footer, $button) {
+        let active = isFullscreenActive();
+        state.fullscreenentered = active;
+        setRequirement(ctx, active);
+        setPendingState($footer, $button, active);
+
+        if (!state.inexam) {
+            setStatus($status, active ? "success" : "warning", active ? M.util.get_string("fullscreen_ready", "proctoringpolicy_fullscreen") :M.util.get_string("fullscreen_required", "proctoringpolicy_fullscreen"));
+        }
+
+        return active;
+    }
+
+    function bindFullscreenEvents(ctx, cfg, state, $status, $footer, $button) {
+        if (state.bound) {
+            return;
+        }
+
+        state.bound = true;
+        $(document).off(".kopere_proctoring_fullscreen");
+        $(document).on(
+            "fullscreenchange.kopere_proctoring_fullscreen " +
+            "webkitfullscreenchange.kopere_proctoring_fullscreen " +
+            "mozfullscreenchange.kopere_proctoring_fullscreen " +
+            "MSFullscreenChange.kopere_proctoring_fullscreen",
+            function () {
+                let active = refreshFullscreenRequirement(ctx, cfg, state, $status, $footer, $button);
+
+                if (!state.inexam || active) {
+                    return;
+                }
+
                 state.exits = state.exits + 1;
                 emitLog(ctx, "fullscreen_exit", String(state.exits));
                 showViolationMessage(ctx);
@@ -111,67 +179,107 @@ define(["jquery"], function ($) {
                     }
                 }
             }
-        });
+        );
     }
 
-    function registerStartGatekeeper(ctx, state) {
+    function registerStartGatekeeper(ctx, cfg, state, $status, $button, $footer) {
         if (!ctx.api || typeof ctx.api.registerGatekeeper !== "function") {
             return;
         }
 
         ctx.api.registerGatekeeper(function () {
-            let deferred = $.Deferred();
-
-            if (isFullscreenActive()) {
+            if (refreshFullscreenRequirement(ctx, cfg, state, $status, $footer, $button)) {
                 hideViolationMessage(ctx);
-                state.inexam = true;
-                deferred.resolve(true);
-                return deferred.promise();
+                return true;
+            }
+
+            setPendingState($footer, $button, false);
+            setStatus($status, "warning", M.util.get_string("fullscreen_required", "proctoringpolicy_fullscreen") || "Enter fullscreen mode before starting the exam.");
+            if ($button && $button.length) {
+                $button.trigger("focus");
+            }
+            return false;
+        });
+    }
+
+    function bindFullscreenButton(ctx, cfg, state, $button, $status, $footer) {
+        if (!$button || !$button.length) {
+            refreshFullscreenRequirement(ctx, cfg, state, $status, $footer, $button);
+            return;
+        }
+
+        $button.on("click.kopere_proctoring_fullscreen", function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (refreshFullscreenRequirement(ctx, cfg, state, $status, $footer, $button)) {
+                return;
             }
 
             if (!requestFullscreen()) {
-                showViolationMessage(ctx);
-                warnStatus(ctx, "Your browser does not support fullscreen.");
-                emitLog(ctx, "fullscreen_not_supported", "");
-                deferred.resolve(false);
-                return deferred.promise();
+                setStatus($status, "danger", M.util.get_string("requirement_label", "proctoringpolicy_fullscreen") || "Your browser does not support fullscreen.");
+                setRequirement(ctx, false);
+                setPendingState($footer, $button, false);
+                return;
             }
 
             let start = Date.now();
             let timer = window.setInterval(function () {
-                if (isFullscreenActive()) {
+                if (refreshFullscreenRequirement(ctx, cfg, state, $status, $footer, $button)) {
                     window.clearInterval(timer);
-                    hideViolationMessage(ctx);
-                    state.inexam = true;
-                    emitLog(ctx, "fullscreen_entered", "");
-                    deferred.resolve(true);
                     return;
                 }
 
                 if ((Date.now() - start) > 3000) {
                     window.clearInterval(timer);
-                    showViolationMessage(ctx);
-                    emitLog(ctx, "fullscreen_failed", "");
-                    deferred.resolve(false);
+                    setRequirement(ctx, false);
+                    setPendingState($footer, $button, false);
+                    setStatus($status, "danger", M.util.get_string("fullscreen_failed", "proctoringpolicy_fullscreen") || "Fullscreen was not enabled.");
                 }
             }, 100);
-
-            return deferred.promise();
         });
     }
 
     return {
         init: function (ctx, cfg) {
+            cfg = cfg || {};
+
             let parsedlimit = Number(cfg.limit || 0);
             let state = {
                 inexam: false,
+                fullscreenentered: false,
+                bound: false,
                 exits: 0,
                 limit: isNaN(parsedlimit) ? 0 : parsedlimit
             };
 
-            bindFullscreenExit(ctx, state);
-            registerStartGatekeeper(ctx, state);
-            emitLog(ctx, "fullscreen_policy_loaded", "");
+            let $policy = $("[data-kopere-fullscreen=\"container\"]");
+            let $footer = $policy.find(".kopere-proctoring-footer");
+            let $button = $policy.find("[data-kopere-fullscreen=\"button\"]");
+            let $status = $policy.find("[data-kopere-fullscreen=\"status\"]");
+
+            if (ctx.api && typeof ctx.api.registerRequirement === "function") {
+                ctx.api.registerRequirement("fullscreen", {
+                    label: M.util.get_string("requirement_label", "proctoringpolicy_fullscreen"),
+                    satisfied: isFullscreenActive()
+                });
+            }
+
+            bindFullscreenEvents(ctx, cfg, state, $status, $footer, $button);
+            bindFullscreenButton(ctx, cfg, state, $button, $status, $footer);
+            refreshFullscreenRequirement(ctx, cfg, state, $status, $footer, $button);
+            registerStartGatekeeper(ctx, cfg, state, $status, $button, $footer);
+
+            if (ctx.api && typeof ctx.api.registerStartCallback === "function") {
+                ctx.api.registerStartCallback(function () {
+                    state.inexam = true;
+                    emitLog(ctx, "fullscreen_policy_started", state.fullscreenentered ? "fullscreen" : "");
+                });
+                return;
+            }
+
+            state.inexam = true;
+            emitLog(ctx, "fullscreen_policy_started", "");
         }
     };
 });

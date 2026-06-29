@@ -2,7 +2,8 @@
     @template proctoringpolicy_focus/start
 }}
 
-<div class="alert alert-warning kopere-password-policy kopere-proctoring-policy-focus mb-3">
+<div class="alert alert-warning kopere-password-policy kopere-proctoring-policy-focus mb-3"
+     data-kopere-policy-card="focus">
     <div class="kopere-proctoring-header">
         <h3 class="kopere-proctoring-title">
             {{#str}}pluginname, proctoringpolicy_focus{{/str}}
@@ -11,6 +12,21 @@
 
     <div class="kopere-proctoring-body">
         {{{start_message}}}
+    </div>
+
+    <div class="kopere-proctoring-footer is-pending">
+        <label class="kopere-proctoring-accept">
+            <input type="checkbox"
+                   data-kopere-policy-ack="focus"
+                   data-kopere-policy-label="{{#str}}requirement_label, proctoringpolicy_focus{{/str}}">
+            <span>{{#str}}understand_label, local_kopere_proctoring{{/str}}</span>
+        </label>
+
+        <div class="kopere-proctoring-error mt-2"
+             data-kopere-policy-ack-error
+             style="display: none;">
+            {{#str}}understand_error, local_kopere_proctoring{{/str}}
+        </div>
     </div>
 
     <div id="proctoringpolicy_focus-message" style="display:none;">

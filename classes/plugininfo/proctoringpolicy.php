@@ -67,7 +67,7 @@ class proctoringpolicy extends base {
      * @return string
      */
     public function get_settings_section_name() {
-        return "proctoringpolicy_" . $this->name . "_settings";
+        return "proctoringpolicy_{$this->name}_settings";
     }
 
     /**
@@ -87,7 +87,7 @@ class proctoringpolicy extends base {
         $section = $this->get_settings_section_name();
         $page = new admin_settingpage($section, $this->displayname, "moodle/site:config");
 
-        $component = "proctoringpolicy_" . $this->name;
+        $component = "proctoringpolicy_{$this->name}";
         $page->add(
             new admin_setting_configcheckbox(
                 "{$component}/enabled",
@@ -113,7 +113,7 @@ class proctoringpolicy extends base {
 
         // Clear all component config (including 'enabled').
         unset_all_config_for_plugin($component);
-        $progress->output("Cleared config for " . $component, 1);
+        $progress->output("Cleared config for {$component}", 1);
 
         return true;
     }

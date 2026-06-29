@@ -23,12 +23,18 @@
  */
 
 use core\hook\output\before_footer_html_generation;
+use core\hook\output\before_http_headers;
+use local_kopere_proctoring\hook_callbacks;
 
 defined('MOODLE_INTERNAL') || die;
 
 $callbacks = [
     [
         'hook' => before_footer_html_generation::class,
-        'callback' => '\\local_kopere_proctoring\\hook_callbacks::before_footer_html_generation',
+        'callback' => [hook_callbacks::class, "before_footer_html_generation"],
+    ],
+    [
+        "hook" => before_http_headers::class,
+        "callback" => [hook_callbacks::class, "before_http_headers"],
     ],
 ];

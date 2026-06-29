@@ -24,19 +24,6 @@
 define(["jquery"], function ($) {
     "use strict";
 
-    function getString(key) {
-        return M.util.get_string(key, "proctoringpolicy_password");
-    }
-
-    function postAjax(url, data) {
-        return $.ajax({
-            url: url,
-            method: "POST",
-            dataType: "json",
-            data: data
-        });
-    }
-
     function init(ctx, cfg) {
         if (!cfg) {
             return;
@@ -44,13 +31,13 @@ define(["jquery"], function ($) {
 
         let cmid = Number(ctx.cmid || 0);
         let attemptid = Number(ctx.attemptid || 0);
-        let ajaxurl = M.cfg.wwwroot + "/local/kopere_proctoring/policy/password/ajax.php";
 
         let $container = $("[data-kppass=\"container\"]");
         if ($container.length === 0) {
             return;
         }
 
+        let $footer = $container.find(".kopere-proctoring-footer");
         let $status = $container.find("[data-kppass=\"status\"]");
         let $inputPassword = $container.find("[data-kppass=\"password\"]");
         let $btnSubmit = $container.find("[data-kppass=\"submit\"]");
@@ -59,9 +46,25 @@ define(["jquery"], function ($) {
 
         if (ctx.api && typeof ctx.api.registerRequirement === "function") {
             ctx.api.registerRequirement("password", {
-                label: cfg.requirementlabel || "Teacher approval or exam password",
+                label: M.util.get_string("requirement_label", "proctoringpolicy_password"),
                 satisfied: false
             });
+        }
+
+        setPendingState(false);
+
+        function setPendingState(satisfied) {
+            if (typeof updatePendingState === "function") {
+                updatePendingState($footer, $inputPassword, $(), !!satisfied);
+                return;
+            }
+
+            if ($footer.length) {
+                $footer.toggleClass("is-pending", !satisfied);
+            }
+            if ($inputPassword.length) {
+                $inputPassword.attr("aria-invalid", satisfied ? "false" : "true");
+            }
         }
 
         function setRequirementSatisfied(satisfied) {
@@ -70,6 +73,7 @@ define(["jquery"], function ($) {
                     satisfied: !!satisfied
                 });
             }
+            setPendingState(!!satisfied);
         }
 
         function setStatus(kind, text) {
@@ -100,22 +104,23 @@ define(["jquery"], function ($) {
         function handleStatusResponse(resp) {
             if (!resp) {
                 setRequirementSatisfied(false);
-                setStatus("warning", getString("js_status_pending"));
+                setStatus("warning", M.util.get_string("js_status_pending", "proctoringpolicy_password"));
                 return;
             }
 
             if (resp.error === "blocked" || resp.status === "blocked") {
                 setRequirementSatisfied(false);
-                setStatus("danger", getString("js_status_blocked"));
+                setStatus("danger", M.util.get_string("js_status_blocked", "proctoringpolicy_password"));
                 stopPolling();
                 return;
             }
 
             if (resp.status === "approved") {
                 setRequirementSatisfied(true);
-                setStatus("success", getString("js_status_approved"));
+                setStatus("success", M.util.get_string("js_status_approved", "proctoringpolicy_password"));
                 $inputPassword.prop("disabled", true);
-                $(".kopere-password-policy .kopere-proctoring-footer").hide(300);
+                $("#password-student_enter_password").hide(300);
+                $("#password-student_footer").hide(300);
                 $btnSubmit.prop("disabled", true);
                 window.dispatchEvent(new CustomEvent("kopere_proctoring_password_authorized", {
                     detail: {
@@ -128,14 +133,21 @@ define(["jquery"], function ($) {
             }
 
             setRequirementSatisfied(false);
-            setStatus("warning", getString("js_status_pending"));
+            setStatus("warning", M.util.get_string("js_status_pending", "proctoringpolicy_password"));
         }
 
         function checkStatus() {
-            return postAjax(ajaxurl, {
-                action: "check",
-                cmid: cmid,
-                attemptid: attemptid
+            console.log("checkStatus")
+            return;
+            $.ajax({
+                url: `${M.cfg.wwwroot}/local/kopere_proctoring/policy/password/ajax.php`,
+                method: "POST",
+                dataType: "json",
+                data: {
+                    action: "check",
+                    cmid: cmid,
+                    attemptid: attemptid
+                }
             }).done(function (response) {
                 handleStatusResponse(response);
             }).fail(function () {
@@ -153,11 +165,16 @@ define(["jquery"], function ($) {
         }
 
         function ensureRequestExists() {
-            return postAjax(ajaxurl, {
-                action: "request",
-                cmid: cmid,
-                attemptid: attemptid,
-                browserinfo: window.navigator.userAgent || ""
+            $.ajax({
+                url: `${M.cfg.wwwroot}/local/kopere_proctoring/policy/password/ajax.php`,
+                method: "POST",
+                dataType: "json",
+                data: {
+                    action: "request",
+                    cmid: cmid,
+                    attemptid: attemptid,
+                    browserinfo: window.navigator.userAgent || ""
+                }
             }).done(function (response) {
                 handleStatusResponse(response);
             }).always(function () {
@@ -168,31 +185,37 @@ define(["jquery"], function ($) {
         ensureRequestExists();
 
         $btnSubmit.on("click", function () {
-            let code = ($inputPassword.val() || "").replace(/\D/g, "");
-            if (code.length !== 8) {
+            let code = ($inputPassword.val() || "").trim();
+            if (code.length !== 6) {
                 setRequirementSatisfied(false);
-                setStatus("danger", getString("js_wrong_password"));
+                setStatus("danger", M.util.get_string("student_wrong_password", "proctoringpolicy_password"));
+                console.log("OPs....");
                 return;
             }
 
-            postAjax(ajaxurl, {
-                action: "submitcode",
-                cmid: cmid,
-                attemptid: attemptid,
-                code: code
+            $.ajax({
+                url: `${M.cfg.wwwroot}/local/kopere_proctoring/policy/password/ajax.php`,
+                method: "POST",
+                dataType: "json",
+                data: {
+                    action: "submitcode",
+                    cmid: cmid,
+                    attemptid: attemptid,
+                    code: code
+                }
             }).done(function (resp) {
                 if (!resp) {
                     return;
                 }
                 if (resp.error === "blocked") {
                     setRequirementSatisfied(false);
-                    setStatus("danger", getString("js_toomany_errors"));
+                    setStatus("danger", M.util.get_string("js_toomany_errors", "proctoringpolicy_password"));
                     stopPolling();
                     return;
                 }
                 if (resp.error === "wrong") {
                     setRequirementSatisfied(false);
-                    setStatus("danger", getString("js_wrong_password"));
+                    setStatus("danger", M.util.get_string("student_wrong_password", "proctoringpolicy_password"));
                     return;
                 }
                 if (resp.status === "approved") {

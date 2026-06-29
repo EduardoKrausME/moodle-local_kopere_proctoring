@@ -61,36 +61,80 @@ class password_service {
         global $DB;
 
         $params = [
-            "cmid" => $cmid,
-            "attemptid" => $attemptid,
-            "userid" => $userid,
-            "status" => "pending",
+            'cmid' => $cmid,
+            'attemptid' => $attemptid,
+            'userid' => $userid,
+            'status' => 'pending',
         ];
 
-        $existing = $DB->get_record("local_kppassword_req", $params);
+        $existing = $DB->get_record('local_kppassword_req', $params);
         if ($existing) {
+            $changed = false;
+
+            if ($existing->courseid != $courseid) {
+                $existing->courseid = $courseid;
+                $changed = true;
+            }
+            if ($existing->ip !== $ip) {
+                $existing->ip = $ip;
+                $changed = true;
+            }
+            if ($existing->useragent !== $useragent) {
+                $existing->useragent = $useragent;
+                $changed = true;
+            }
+            if ($browserinfo !== '' && $existing->browserinfo !== $browserinfo) {
+                $existing->browserinfo = $browserinfo;
+                $changed = true;
+            }
+
+            if ($changed) {
+                $existing->timemodified = time();
+                $DB->update_record('local_kppassword_req', $existing);
+            }
+
+            self::rebuild_pending_cache();
             return $existing;
         }
 
-        $kppassword = $DB->get_record("local_kppassword_req", ["cmid" => $cmid, "attemptid" => $attemptid, "userid" => $userid]);
+        $kppassword = $DB->get_record('local_kppassword_req', [
+            'cmid' => $cmid,
+            'attemptid' => $attemptid,
+            'userid' => $userid,
+        ]);
+
+        if ($kppassword && $kppassword->status !== 'pending') {
+            return $kppassword;
+        }
+
+        $password = substr(strtoupper(dechex(rand())), 0, 6);
+
         if ($kppassword) {
+            $kppassword->courseid = $courseid;
+            $kppassword->status = 'pending';
+            $kppassword->password = $password;
             $kppassword->timemodified = time();
-            $kppassword->id = $DB->update_record("local_kppassword_req", $kppassword);
+            $kppassword->ip = $ip;
+            $kppassword->useragent = $useragent;
+            $kppassword->browserinfo = $browserinfo;
+            $DB->update_record('local_kppassword_req', $kppassword);
         } else {
             $kppassword = new stdClass();
             $kppassword->courseid = $courseid;
             $kppassword->cmid = $cmid;
             $kppassword->attemptid = $attemptid;
             $kppassword->userid = $userid;
-            $kppassword->status = "pending"; // Accept pending, approved, blocked.
-            $kppassword->password = self::generate_password();
+            $kppassword->status = 'pending'; // Accept pending, approved, blocked.
+            $kppassword->password = $password;
             $kppassword->timecreated = $kppassword->timemodified = time();
             $kppassword->ip = $ip;
             $kppassword->useragent = $useragent;
             $kppassword->browserinfo = $browserinfo;
 
-            $kppassword->id = $DB->insert_record("local_kppassword_req", $kppassword);
+            $kppassword->id = $DB->insert_record('local_kppassword_req', $kppassword);
         }
+
+        self::rebuild_pending_cache();
 
         return $kppassword;
     }
@@ -108,22 +152,28 @@ class password_service {
         global $DB;
 
         $params = [
-            "cmid" => $cmid,
-            "attemptid" => $attemptid,
-            "userid" => $userid,
+            'cmid' => $cmid,
+            'attemptid' => $attemptid,
+            'userid' => $userid,
         ];
-        return $DB->get_record("local_kppassword_req", $params);
+        return $DB->get_record('local_kppassword_req', $params) ?: null;
     }
 
     /**
-     * Generate numeric 8-digit password.
+     * Get request by id.
      *
-     * @return string
-     * @throws RandomException
+     * @param int $requestid
+     * @return stdClass|null
+     * @throws dml_exception
      */
-    public static function generate_password(): string {
-        $n = random_int(12345678, 99999999);
-        return $n;
+    public static function get_request_by_id(int $requestid): ?stdClass {
+        global $DB;
+
+        if ($requestid <= 0) {
+            return null;
+        }
+
+        return $DB->get_record('local_kppassword_req', ['id' => $requestid]) ?: null;
     }
 
     /**
@@ -152,10 +202,10 @@ class password_service {
                    AND userid = :userid
                    AND timecreated > :since";
         $params = [
-            "cmid" => $cmid,
-            "attemptid" => $attemptid,
-            "userid" => $userid,
-            "since" => $tenminutesago,
+            'cmid' => $cmid,
+            'attemptid' => $attemptid,
+            'userid' => $userid,
+            'since' => $tenminutesago,
         ];
 
         $count = $DB->count_records_sql($sql, $params);
@@ -180,7 +230,7 @@ class password_service {
         $rec->userid = $userid;
         $rec->timecreated = time();
 
-        $DB->insert_record("local_kppassword_attempt", $rec);
+        $DB->insert_record('local_kppassword_attempt', $rec);
     }
 
     /**
@@ -193,14 +243,36 @@ class password_service {
     public static function approve_auto(int $requestid): void {
         global $DB;
 
-        if (!$req = $DB->get_record("local_kppassword_req", ["id" => $requestid])) {
+        if (!$req = self::get_request_by_id($requestid)) {
             return;
         }
 
-        $req->status = "approved";
+        $req->status = 'approved';
         $req->timemodified = time();
 
-        $DB->update_record("local_kppassword_req", $req);
+        $DB->update_record('local_kppassword_req', $req);
+        self::rebuild_pending_cache();
+    }
+
+    /**
+     * Deny a pending request.
+     *
+     * @param int $requestid
+     * @return void
+     * @throws dml_exception
+     */
+    public static function deny_auto(int $requestid): void {
+        global $DB;
+
+        if (!$req = self::get_request_by_id($requestid)) {
+            return;
+        }
+
+        $req->status = 'denied';
+        $req->timemodified = time();
+
+        $DB->update_record('local_kppassword_req', $req);
+        self::rebuild_pending_cache();
     }
 
     /**
@@ -226,11 +298,7 @@ class password_service {
             return false;
         }
 
-        if ($req->status !== "pending" && $req->status !== "approved") {
-            return false;
-        }
-
-        if (!preg_match("/^[0-9]{8}$/", $password)) {
+        if ($req->status !== 'pending' && $req->status !== 'approved') {
             return false;
         }
 
@@ -238,9 +306,10 @@ class password_service {
             return false;
         }
 
-        $req->status = "approved";
+        $req->status = 'approved';
         $req->timemodified = time();
-        $DB->update_record("local_kppassword_req", $req);
+        $DB->update_record('local_kppassword_req', $req);
+        self::rebuild_pending_cache();
 
         return true;
     }
@@ -257,11 +326,11 @@ class password_service {
     public static function get_request_status(int $cmid, int $attemptid, int $userid): array {
         $req = self::get_request_for_user($cmid, $attemptid, $userid);
         if (!$req) {
-            return ["status" => "none"];
+            return ['status' => 'none'];
         }
 
         return [
-            "status" => $req->status,
+            'status' => $req->status,
         ];
     }
 
@@ -282,12 +351,12 @@ class password_service {
             return array_values(array_unique(array_map('intval', $rolesallowed)));
         }
 
-        $decoded = json_decode((string)$rolesallowed, true);
+        $decoded = json_decode($rolesallowed, true);
         if (is_array($decoded)) {
             return array_values(array_unique(array_map('intval', $decoded)));
         }
 
-        preg_match_all('/\d+/', (string)$rolesallowed, $matches);
+        preg_match_all('/\d+/', $rolesallowed, $matches);
         if (empty($matches[0])) {
             return [];
         }
@@ -307,7 +376,11 @@ class password_service {
     public static function user_can_manage_context(context $context, int $userid = 0): bool {
         global $USER;
 
-        $userid = $userid ?: (int)$USER->id;
+        $userid = $userid ?: $USER->id;
+
+        if (is_siteadmin($userid)) {
+            return true;
+        }
 
         if (has_capability('moodle/course:manageactivities', $context, $userid)) {
             return true;
@@ -320,7 +393,7 @@ class password_service {
 
         $userroles = get_user_roles($context, $userid);
         foreach ($userroles as $userrole) {
-            if (in_array((int)$userrole->roleid, $rolesallowed, true)) {
+            if (in_array($userrole->roleid, $rolesallowed, true)) {
                 return true;
             }
         }
@@ -356,7 +429,7 @@ class password_service {
     public static function user_can_manage_any_course(int $userid = 0): bool {
         global $USER;
 
-        $userid = $userid ?: (int)$USER->id;
+        $userid = $userid ?: $USER->id;
 
         if (is_siteadmin($userid)) {
             return true;
@@ -364,7 +437,7 @@ class password_service {
 
         $courses = get_user_capability_course('moodle/course:view', $userid, true, 'id');
         foreach ($courses as $course) {
-            if (self::user_can_manage_course((int)$course->id, $userid)) {
+            if (self::user_can_manage_course($course->id, $userid)) {
                 return true;
             }
         }
@@ -373,7 +446,59 @@ class password_service {
     }
 
     /**
-     * Get pending requests for admin page.
+     * Get pending requests for admin page, filtered to courses the current user can manage.
+     *
+     * @param int $cmid Optional course module filter.
+     * @param int $courseid Optional course filter.
+     * @param int $userid Optional manager user id.
+     * @return stdClass[]
+     * @throws coding_exception|dml_exception
+     */
+    public static function get_pending_requests_for_user(int $cmid = 0, int $courseid = 0, int $userid = 0): array {
+        global $DB, $USER;
+
+        $userid = $userid ?: $USER->id;
+
+        $where = [1];
+        $params = [];
+
+        if ($cmid > 0) {
+            $where[] = 'r.cmid = :cmid';
+            $params['cmid'] = $cmid;
+        }
+
+        if ($courseid > 0) {
+            $where[] = 'r.courseid = :courseid';
+            $params['courseid'] = $courseid;
+        }
+
+        $sql = "SELECT r.*
+                  FROM {local_kppassword_req} r
+                 WHERE r.status = 'pending'
+                   AND " . implode(' AND ', $where) . "
+              ORDER BY r.timecreated ASC";
+        $requests = $DB->get_records_sql($sql, $params);
+
+        if (is_siteadmin($userid)) {
+            return $requests;
+        }
+
+        $allowed = [];
+        foreach ($requests as $key => $request) {
+            $courseid = $request->courseid;
+            if (!array_key_exists($courseid, $allowed)) {
+                $allowed[$courseid] = self::user_can_manage_course($courseid, $userid);
+            }
+            if (!$allowed[$courseid]) {
+                unset($requests[$key]);
+            }
+        }
+
+        return $requests;
+    }
+
+    /**
+     * Get pending requests for a course without manager filtering.
      *
      * @param int $courseid
      * @return stdClass[]
@@ -387,6 +512,47 @@ class password_service {
                  WHERE r.courseid = :courseid
                    AND r.status = :status
               ORDER BY r.timecreated ASC";
-        return $DB->get_records_sql($sql, ["courseid" => $courseid, "status" => "pending"]);
+        return $DB->get_records_sql($sql, ['courseid' => $courseid, 'status' => 'pending']);
+    }
+
+    /**
+     * Rebuild the fast JSON cache used by the public lightweight checker.
+     *
+     * The file intentionally stores only counters by course and cm. It must not
+     * expose student names, passwords, IPs or other sensitive data because the
+     * lightweight checker can run without a logged-in session.
+     *
+     * @return void
+     * @throws dml_exception
+     */
+    public static function rebuild_pending_cache(): void {
+        global $DB, $CFG;
+
+        $records = $DB->get_records('local_kppassword_req', ['status' => 'pending'], '', 'id,courseid,cmid,timecreated');
+
+        $cache = [
+            'generated' => time(),
+            'total' => 0,
+            'courses' => [],
+            'cms' => [],
+            'oldest' => 0,
+        ];
+
+        foreach ($records as $record) {
+            $courseid = $record->courseid;
+            $cmid = $record->cmid;
+
+            $cache['total']++;
+            $cache['courses'][$courseid] = ($cache['courses'][$courseid] ?? 0) + 1;
+            $cache['cms'][$cmid] = ($cache['cms'][$cmid] ?? 0) + 1;
+
+            if (empty($cache['oldest']) || $record->timecreated < $cache['oldest']) {
+                $cache['oldest'] = $record->timecreated;
+            }
+        }
+
+        $file = "{$CFG->dataroot}/local_kopere_proctoring-pending.json";
+        $json = json_encode($cache, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        file_put_contents($file, $json, LOCK_EX);
     }
 }

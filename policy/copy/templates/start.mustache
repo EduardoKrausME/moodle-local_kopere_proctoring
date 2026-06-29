@@ -2,7 +2,8 @@
     @template proctoringpolicy_copy/start
 }}
 
-<div class="alert alert-warning kopere-password-policy kopere-proctoring-policy-copy mb-3">
+<div class="alert alert-warning kopere-password-policy kopere-proctoring-policy-copy mb-3"
+     data-kopere-policy-card="copy">
     <div class="kopere-proctoring-header">
         <h3 class="kopere-proctoring-title">
             {{#str}}pluginname, proctoringpolicy_copy{{/str}}
@@ -11,6 +12,21 @@
 
     <div class="kopere-proctoring-body">
         {{{start_message}}}
+    </div>
+
+    <div class="kopere-proctoring-footer is-pending">
+        <label class="kopere-proctoring-accept">
+            <input type="checkbox"
+                   data-kopere-policy-ack="copy"
+                   data-kopere-policy-label="{{#str}}requirement_label, proctoringpolicy_copy{{/str}}">
+            <span>{{#str}}understand_label, local_kopere_proctoring{{/str}}</span>
+        </label>
+
+        <div class="kopere-proctoring-error mt-2"
+             data-kopere-policy-ack-error
+             style="display: none;">
+            {{#str}}understand_error, local_kopere_proctoring{{/str}}
+        </div>
     </div>
 
     <div id="proctoringpolicy_copy-message" style="display:none;">

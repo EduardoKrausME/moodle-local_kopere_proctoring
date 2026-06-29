@@ -37,6 +37,24 @@ define(["jquery"], function ($) {
         );
     }
 
+    function bindPendingState() {
+        let $checkbox = $('[data-kopere-policy-ack="copy"]');
+        if (!$checkbox.length) {
+            return;
+        }
+
+        let $footer = $checkbox.closest(".kopere-proctoring-footer");
+        let $error = $footer.find("[data-kopere-policy-ack-error]");
+
+        function refreshPendingState() {
+            updatePendingState($footer, $checkbox, $error, $checkbox.is(":checked"));
+        }
+
+        refreshPendingState();
+        $checkbox.off("change.kopere_proctoring_copy_pending");
+        $checkbox.on("change.kopere_proctoring_copy_pending", refreshPendingState);
+    }
+
     function showWarning(context) {
         let html = getViolationHtml();
         if (!html || !isExamActive(context)) {
@@ -120,6 +138,7 @@ define(["jquery"], function ($) {
             registerWarning();
         }
 
+        $(document).off(".local_kopere_proctoring_copy");
         $(document).on("keydown.local_kopere_proctoring_copy", handleKeydown);
         $(document).on("copy.local_kopere_proctoring_copy", handleClipboardEvent);
         $(document).on("cut.local_kopere_proctoring_copy", handleClipboardEvent);
@@ -135,7 +154,19 @@ define(["jquery"], function ($) {
          * @param {Object} cfg Policy-specific config.
          */
         init: function (context, cfg) {
-            initCopyPolicy(context || {}, cfg || {});
+            context = context || {};
+            cfg = cfg || {};
+
+            bindPendingState();
+
+            if (context.api && typeof context.api.registerStartCallback === "function") {
+                context.api.registerStartCallback(function () {
+                    initCopyPolicy(context, cfg);
+                });
+                return;
+            }
+
+            initCopyPolicy(context, cfg);
         }
     };
 });

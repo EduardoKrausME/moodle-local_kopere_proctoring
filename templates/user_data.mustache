@@ -37,8 +37,8 @@
                 {{{userpicture}}}
             </div>
             <div>
-                <h3 class="mb-1">{{title}}</h3>
-                <div class="text-muted">{{userfullname}}</div>
+                <h3 class="mb-1">{{{title}}}</h3>
+                <div class="text-muted">{{{userfullname}}}</div>
             </div>
         </div>
     </div>
@@ -48,7 +48,7 @@
             <div class="card h-100">
                 <div class="card-body">
                     <div class="small text-muted">{{#str}}userdata_total_attempts, local_kopere_proctoring{{/str}}</div>
-                    <div class="h2 mb-0">{{summary_attempts}}</div>
+                    <div class="h2 mb-0">{{{summary_attempts}}}</div>
                 </div>
             </div>
         </div>
@@ -56,15 +56,15 @@
             <div class="card h-100">
                 <div class="card-body">
                     <div class="small text-muted">{{#str}}userdata_total_contracts, local_kopere_proctoring{{/str}}</div>
-                    <div class="h2 mb-0">{{summary_contracts}}</div>
+                    <div class="h2 mb-0">{{{summary_contracts}}}</div>
                 </div>
             </div>
         </div>
         <div class="col-md-4 mb-3">
             <div class="card h-100">
                 <div class="card-body">
-                    <div class="small text-muted">{{#str}}userdata_total_logs, local_kopere_proctoring{{/str}}</div>
-                    <div class="h2 mb-0">{{summary_logs}}</div>
+                    <div class="small text-muted">{{#str}}userdata_logs, local_kopere_proctoring{{/str}}</div>
+                    <div class="h2 mb-0">{{{summary_logs}}}</div>
                 </div>
             </div>
         </div>
@@ -75,12 +75,12 @@
             <div class="card mb-4">
                 <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
                     <div>
-                        <strong>{{coursename}}</strong><br>
-                        <a href="{{quizurl}}">{{quizname}}</a>
+                        <strong>{{{coursename}}}</strong><br>
+                        <a href="{{{quizurl}}}">{{{quizname}}}</a>
                     </div>
                     <div class="text-muted text-end">
-                        {{#str}}userdata_attempt_label, local_kopere_proctoring{{/str}} #{{attemptnumber}}<br>
-                        {{attemptstate}}
+                        {{#str}}userdata_attempt_label, local_kopere_proctoring{{/str}} #{{{attemptnumber}}}<br>
+                        {{{attemptstate}}}
                     </div>
                 </div>
 
@@ -92,23 +92,23 @@
                                 <tbody>
                                 <tr>
                                     <th>{{#str}}userdata_attemptid, local_kopere_proctoring{{/str}}</th>
-                                    <td>{{attemptid}}</td>
+                                    <td>{{{attemptid}}}</td>
                                 </tr>
                                 <tr>
                                     <th>{{#str}}userdata_activity, local_kopere_proctoring{{/str}}</th>
-                                    <td>{{cmid}}</td>
+                                    <td>{{{cmid}}}</td>
                                 </tr>
                                 <tr>
                                     <th>{{#str}}userdata_created, local_kopere_proctoring{{/str}}</th>
-                                    <td>{{createdtime}}</td>
+                                    <td>{{{createdtime}}}</td>
                                 </tr>
                                 <tr>
                                     <th>{{#str}}userdata_started, local_kopere_proctoring{{/str}}</th>
-                                    <td>{{timestart}}</td>
+                                    <td>{{{timestart}}}</td>
                                 </tr>
                                 <tr>
                                     <th>{{#str}}userdata_finished, local_kopere_proctoring{{/str}}</th>
-                                    <td>{{timefinish}}</td>
+                                    <td>{{{timefinish}}}</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -120,27 +120,27 @@
                                 <tbody>
                                 <tr>
                                     <th>{{#str}}userdata_contractaccepted, local_kopere_proctoring{{/str}}</th>
-                                    <td>{{contractacceptedlabel}}</td>
+                                    <td>{{{contractacceptedlabel}}}</td>
                                 </tr>
                                 <tr>
                                     <th>{{#str}}userdata_contracttime, local_kopere_proctoring{{/str}}</th>
-                                    <td>{{contracttime}}</td>
+                                    <td>{{{contracttime}}}</td>
                                 </tr>
                                 <tr>
                                     <th>{{#str}}userdata_ip, local_kopere_proctoring{{/str}}</th>
-                                    <td>{{contractip}}</td>
+                                    <td>{{{contractip}}}</td>
                                 </tr>
                                 <tr>
                                     <th>{{#str}}userdata_useragent, local_kopere_proctoring{{/str}}</th>
-                                    <td><small>{{contractuseragent}}</small></td>
+                                    <td><small>{{{contractuseragent}}}</small></td>
                                 </tr>
                                 <tr>
                                     <th>{{#str}}userdata_screenresolution, local_kopere_proctoring{{/str}}</th>
-                                    <td>{{contractscreenresolution}}</td>
+                                    <td>{{{contractscreenresolution}}}</td>
                                 </tr>
                                 <tr>
                                     <th>{{#str}}userdata_geo, local_kopere_proctoring{{/str}}</th>
-                                    <td>{{contractgeo}}</td>
+                                    <td>{{{contractgeo}}}</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -148,7 +148,7 @@
                     </div>
 
                     <div>
-                        <h5>{{#str}}userdata_logs, local_kopere_proctoring{{/str}} ({{logcount}})</h5>
+                        <h5>{{#str}}userdata_logs, local_kopere_proctoring{{/str}} ({{{logcount}}})</h5>
 
                         {{#haslogs}}
                             <div class="table-responsive">
@@ -165,11 +165,11 @@
                                     <tbody>
                                     {{#logs}}
                                         <tr>
-                                            <td>{{actionvalue}}</td>
-                                            <td>{{time}}</td>
-                                            <td>{{ip}}</td>
-                                            <td>{{screenresolution}}</td>
-                                            <td><small>{{useragent}}</small></td>
+                                            <td>{{{actionvalue}}}</td>
+                                            <td>{{{time}}}</td>
+                                            <td>{{{ip}}}</td>
+                                            <td>{{{screenresolution}}}</td>
+                                            <td><small>{{{useragent}}}</small></td>
                                         </tr>
                                     {{/logs}}
                                     </tbody>

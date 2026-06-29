@@ -43,3 +43,4 @@ $string['start_message_default'] = 'Mensagem inicial padrão';
 $string['start_message_default_desc'] = 'Mensagem curta exibida antes do início da tentativa para explicar que copiar e colar não são permitidos.';
 $string['start_message_default_text'] = '<p>Durante esta tentativa, não é permitido copiar, recortar, colar, imprimir ou usar o botão direito do mouse.</p>';
 $string['teacher_info'] = 'Ative isto para bloquear ações de copiar e colar durante a tentativa. Use a mensagem inicial para explicar a regra antes do início da prova e use a mensagem de violação para avisar o aluno apenas quando a regra for quebrada.';
+$string['requirement_label'] = 'Entender a política de copiar e colar';

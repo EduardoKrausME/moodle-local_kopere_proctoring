@@ -15,21 +15,37 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * version.php
+ * Lightweight pending-password checker.
+ *
+ * This endpoint intentionally does not require a logged-in user. It reads only
+ * the tiny JSON counter stored in moodledata and never exposes names, passwords,
+ * IP addresses or browser information.
  *
  * @package   proctoringpolicy_password
  * @copyright 2026 Eduardo Kraus {@link https://eduardokraus.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+session_name("MOODLEID1_");
+session_start();
 
-$plugin->version = 2026062501;
-$plugin->release = "1.0.2";
-$plugin->requires = 2022041900;
-$plugin->maturity = MATURITY_STABLE;
-$plugin->component = "proctoringpolicy_password";
+if (!isset($_SESSION['pending-dataroot'])) {
+    define('AJAX_SCRIPT', true);
+    define('NO_MOODLE_COOKIES', true);
 
-$plugin->dependencies = [
-    "local_kopere_proctoring" => 2026011500,
-];
+    require_once(__DIR__ . '/../../../../config.php');
+    $_SESSION['pending-dataroot'] = $CFG->dataroot;
+}
+
+header('Content-Type: application/json; charset=utf-8');
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+
+$file = "{$_SESSION['pending-dataroot']}/local_kopere_proctoring-pending.json";
+if (file_exists($file)) {
+    readfile($file);
+} else {
+    echo '{}';
+}
+
+die;

@@ -29,6 +29,7 @@ use admin_setting_configtext;
 use admin_setting_heading;
 use admin_settingpage;
 use coding_exception;
+use core\hook\output\before_footer_html_generation;
 use dml_exception;
 use local_kopere_proctoring\policy\cm_config;
 use local_kopere_proctoring\policy\policy_interface;
@@ -228,19 +229,26 @@ class provider implements policy_interface {
     /**
      * Provide JS configuration for this policy on quiz attempt.
      *
-     * @param int $cmid
      * @param int $attemptid
      * @return array
      * @throws dml_exception
      */
-    public static function get_js_config(int $cmid, int $attemptid): array {
-        if (!cm_config::get("focus", "enabled", $cmid, 0)) {
+    public static function get_js_config(int $attemptid): array {
+        global $PAGE;
+
+        if (!cm_config::get("focus", "enabled", $PAGE->cm->id, 0)) {
             return [];
         }
 
+        global $PAGE;
+        $PAGE->requires->strings_for_js([
+            "requirement_label",
+        ], "proctoringpolicy_focus");
+
+        $limitdefault = get_config("proctoringpolicy_focus", "limit_default");
         return [
             "enabled" => true,
-            "limit" => cm_config::get("focus", "limit", $cmid, get_config("proctoringpolicy_focus", "limit_default")),
+            "limit" => cm_config::get("focus", "limit", $PAGE->cm->id, $limitdefault),
         ];
     }
 
@@ -293,5 +301,14 @@ class provider implements policy_interface {
             "start_message" => $startmessage,
             "message" => $message,
         ]);
+    }
+
+    /**
+     * Inject proctoring overlay on quiz attempt/review pages and password admin alerts on quiz pages.
+     *
+     * @params before_footer_html_generation $hook
+     * @return void
+     */
+    public static function hooks_before_footer_html_generation(before_footer_html_generation $hook) {
     }
 }

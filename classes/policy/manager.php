@@ -247,7 +247,7 @@ class manager {
     public static function add_admin_settings(admin_settingpage $settings): void {
         global $OUTPUT;
 
-         $page = new admin_settingpage(
+        $page = new admin_settingpage(
             "local_kopere_proctoringa_dmin_plugins",
             "Plugins"
         );
@@ -255,8 +255,7 @@ class manager {
         $mustachedata = self::get_mustachedata("/admin/settings.php", ["section" => "local_kopere_proctoring"]);
         $page->add(
             new admin_setting_heading(
-                "local_kopere_proctoring/admin_plugins",
-                get_string("managekopere_proctoringplugins", "local_kopere_proctoring"),
+                "local_kopere_proctoring/admin_plugins", "",
                 $OUTPUT->render_from_template('local_kopere_proctoring/admin_plugins', $mustachedata)
             )
         );
@@ -298,6 +297,10 @@ class manager {
             $mform->addElement("static", "local_kopere_proctoring/adminlink", "", $adminlink);
         }
 
+        $proctoringwarning =
+            '<div class="alert alert-warning">' . get_string("proctoring_warning", "local_kopere_proctoring") . '</div>';
+        $mform->addElement("html",  $proctoringwarning);
+
         /** @var policy_interface $classname */
         foreach (self::get_policy_classes(true) as $classname) {
             $classname::add_module_form($formwrapper, $mform, (int) $cmid);
@@ -316,10 +319,16 @@ class manager {
      * @throws dml_exception
      */
     public static function save_module_form(stdClass $data): void {
+        global $DB;
+
         $cmid = $data->coursemodule;
 
         if (isset($data->kopere_proctoring_enabled)) {
             set_config("kopere_proctoring_enabled_{$cmid}", $data->kopere_proctoring_enabled, "local_kopere_proctoring");
+
+            if ($data->kopere_proctoring_enabled) {
+                $DB->set_field("quiz", "questionsperpage", 50, ["id" => $data->instance]);
+            }
 
             /** @var policy_interface $classname */
             foreach (self::get_policy_classes(true) as $classname) {
@@ -331,14 +340,14 @@ class manager {
     /**
      * get_js_payload
      *
-     * @param int $cmid
      * @param int $attemptid
      * @return array
      * @throws dml_exception
      */
-    public static function get_js_payload(int $cmid, int $attemptid): array {
+    public static function get_js_payload(int $attemptid): array {
+        global $PAGE;
         $payload = [
-            "cmid" => $cmid,
+            "cmid" => $PAGE->cm->id,
             "attemptid" => $attemptid,
             "policies" => [],
         ];
@@ -346,7 +355,7 @@ class manager {
         /** @var policy_interface $classname */
         foreach (self::get_policy_classes(true) as $name => $classname) {
             $amd = $classname::get_amd_module();
-            $cfg = $classname::get_js_config($cmid, $attemptid);
+            $cfg = $classname::get_js_config($attemptid);
 
             // Only include enabled policies (policy decides how).
             if ($cfg === []) {
@@ -426,12 +435,14 @@ class manager {
             }
 
             if (($pluginaction === "moveup" || $pluginaction === "movedown") && self::is_policy_sortable($pluginname)) {
-                $pluginsordered = array_values(array_filter(
-                    self::get_sorted_policy_names(),
-                    static function(string $policyname): bool {
-                        return self::is_policy_sortable($policyname);
-                    }
-                ));
+                $pluginsordered = array_values(
+                    array_filter(
+                        self::get_sorted_policy_names(),
+                        static function(string $policyname): bool {
+                            return self::is_policy_sortable($policyname);
+                        }
+                    )
+                );
                 $currentindex = array_search($pluginname, $pluginsordered, true);
 
                 if ($currentindex !== false) {
@@ -491,12 +502,14 @@ class manager {
             return self::compare_policy_names($a, $b);
         });
 
-        $sortableplugins = array_values(array_filter(
-            array_keys($plugins),
-            static function(string $policyname): bool {
-                return self::is_policy_sortable($policyname);
-            }
-        ));
+        $sortableplugins = array_values(
+            array_filter(
+                array_keys($plugins),
+                static function(string $policyname): bool {
+                    return self::is_policy_sortable($policyname);
+                }
+            )
+        );
         $lastsortableindex = count($sortableplugins) - 1;
         $index = 0;
         foreach ($plugins as $plugin => $plugindata) {

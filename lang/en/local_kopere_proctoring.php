@@ -33,7 +33,6 @@ $string['locked_default_message'] = 'The exam is temporarily locked due to proct
 $string['locked_title'] = 'Exam locked';
 $string['managekopere_proctoringplugins'] = 'Manage Proctoring policies plugins';
 $string['managekopere_proctoringplugins_desc'] = 'Enable, disable, and arrange the order of the plugins. The order defined here will also be used to display the data to students.';
-$string['modulename'] = 'Kopere Proctoring';
 $string['movedownplugin'] = 'Move plugin down';
 $string['moveupplugin'] = 'Move plugin up';
 $string['pluginname'] = 'Kopere Proctoring';
@@ -71,5 +70,11 @@ $string['userdata_time'] = 'Time';
 $string['userdata_title'] = 'Proctoring data - {$a}';
 $string['userdata_total_attempts'] = 'Attempts';
 $string['userdata_total_contracts'] = 'Accepted contracts';
-$string['userdata_total_logs'] = 'Logs';
+$string['userdata_logs'] = 'Logs';
 $string['userdata_useragent'] = 'User agent';
+$string['understand_label'] = 'I understand';
+$string['understand_error'] = 'Confirm that you understand this rule before starting the exam.';
+$string['proctoring_warning'] = '<p>When <strong>Proctoring</strong> is enabled, the quiz layout will be automatically adjusted so that <strong>all questions are displayed on a single page</strong>.</p>
+<p>This change prevents the student from having to navigate between pages during the attempt, reducing the risk of interruptions, page reloads, or improper termination of the Proctoring session.</p>
+<p>To achieve this, the Quiz <code>Layout</code> setting will be automatically changed, ensuring that the quiz is presented on a single page while Proctoring is active.</p>';
+$string['unknown'] = 'Unknown';

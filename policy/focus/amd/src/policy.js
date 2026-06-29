@@ -36,6 +36,24 @@ define(["jquery"], function ($) {
         );
     }
 
+    function bindPendingState() {
+        let $checkbox = $('[data-kopere-policy-ack="focus"]');
+        if (!$checkbox.length) {
+            return;
+        }
+
+        let $footer = $checkbox.closest(".kopere-proctoring-footer");
+        let $error = $footer.find("[data-kopere-policy-ack-error]");
+
+        function refreshPendingState() {
+            updatePendingState($footer, $checkbox, $error, $checkbox.is(":checked"));
+        }
+
+        refreshPendingState();
+        $checkbox.off("change.kopere_proctoring_focus_pending");
+        $checkbox.on("change.kopere_proctoring_focus_pending", refreshPendingState);
+    }
+
     function showViolationMessage(ctx) {
         let html = getViolationHtml();
         if (!html || !isExamActive(ctx)) {
@@ -92,6 +110,9 @@ define(["jquery"], function ($) {
             }
         }
 
+        $(window).off(namespace);
+        $(document).off(namespace);
+
         $(window).on("blur" + namespace, function () {
             registerEvent("blur", "window");
         });
@@ -104,6 +125,20 @@ define(["jquery"], function ($) {
     }
 
     return {
-        init: init
+        init: function (ctx, cfg) {
+            ctx = ctx || {};
+            cfg = cfg || {};
+
+            bindPendingState();
+
+            if (ctx.api && typeof ctx.api.registerStartCallback === "function") {
+                ctx.api.registerStartCallback(function () {
+                    init(ctx, cfg);
+                });
+                return;
+            }
+
+            init(ctx, cfg);
+        }
     };
 });

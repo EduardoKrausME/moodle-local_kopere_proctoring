@@ -2,7 +2,8 @@
     @template proctoringpolicy_fullscreen/start
 }}
 
-<div class="alert alert-warning kopere-password-policy kopere-proctoring-policy-fullscreen mb-3">
+<div class="alert alert-warning kopere-password-policy kopere-proctoring-policy-fullscreen mb-3"
+     data-kopere-fullscreen="container">
     <div class="kopere-proctoring-header">
         <h3 class="kopere-proctoring-title">
             {{#str}}pluginname, proctoringpolicy_fullscreen{{/str}}
@@ -11,6 +12,16 @@
 
     <div class="kopere-proctoring-body">
         {{{start_message}}}
+    </div>
+
+    <div class="kopere-proctoring-footer is-pending">
+        <button type="button"
+                class="btn btn-secondary"
+                data-kopere-fullscreen="button">
+            {{#str}}button_fullscreen, proctoringpolicy_fullscreen{{/str}}
+        </button>
+
+        <div class="mt-2" data-kopere-fullscreen="status"></div>
     </div>
 
     <div id="proctoringpolicy_fullscreen-message" style="display:none;">

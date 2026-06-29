@@ -28,6 +28,7 @@ use admin_setting_configtext;
 use admin_setting_heading;
 use admin_settingpage;
 use coding_exception;
+use core\hook\output\before_footer_html_generation;
 use dml_exception;
 use local_kopere_proctoring\policy\cm_config;
 use local_kopere_proctoring\policy\policy_interface;
@@ -121,13 +122,14 @@ class provider implements policy_interface {
     /**
      * Function get_js_config
      *
-     * @param int $cmid
      * @param int $attemptid
      * @return array
      * @throws dml_exception
      */
-    public static function get_js_config(int $cmid, int $attemptid): array {
-        if (!cm_config::get("securitysignals", "enabled", $cmid, 0)) {
+    public static function get_js_config(int $attemptid): array {
+        global $PAGE;
+
+        if (!cm_config::get("securitysignals", "enabled", $PAGE->cm->id, 0)) {
             return [];
         }
 
@@ -141,7 +143,7 @@ class provider implements policy_interface {
 
         return [
             "limit" => 1,
-            "pulsems" => cm_config::get("securitysignals", "pulsems", $cmid, $pulsemsdefault),
+            "pulsems" => cm_config::get("securitysignals", "pulsems", $PAGE->cm->id, $pulsemsdefault),
         ];
     }
 
@@ -174,6 +176,21 @@ class provider implements policy_interface {
      * @return string
      */
     public static function render_start_html(int $cmid, int $attemptid): string {
-        return "";
+        global $OUTPUT;
+
+        if (!cm_config::get("securitysignals", "enabled", $cmid, 0)) {
+            return "";
+        }
+
+        return $OUTPUT->render_from_template("proctoringpolicy_securitysignals/start", []);
+    }
+
+    /**
+     * Inject proctoring overlay on quiz attempt/review pages and password admin alerts on quiz pages.
+     *
+     * @params before_footer_html_generation $hook
+     * @return void
+     */
+    public static function hooks_before_footer_html_generation(before_footer_html_generation $hook) {
     }
 }

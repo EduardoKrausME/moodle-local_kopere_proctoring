@@ -47,3 +47,4 @@ $string['start_message_default_desc'] = 'Mensagem curta exibida antes do início
 $string['start_message_default_text'] = '<p>Durante toda a prova, você deve permanecer nesta página e não é permitido alternar para outras abas, janelas, aplicativos ou programas até concluir e enviar a avaliação.</p>
 <p>Caso você saia desta página ou acesse outro ambiente durante a prova, essa ação será registrada pelo sistema e considerada uma violação das regras da avaliação e enviada para revisão pelo Professor.</p>';
 $string['teacher_info'] = 'Ative isto quando o aluno precisar permanecer na página da prova. Use a mensagem inicial para explicar a regra antes do início da prova e use a mensagem de violação para avisar o aluno apenas após a página perder o foco.';
+$string['requirement_label'] = 'Entender a política de foco na prova';

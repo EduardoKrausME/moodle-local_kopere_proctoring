@@ -24,30 +24,14 @@
 define(["jquery"], function ($) {
     "use strict";
 
-    function ensurePopupStyles() {
-        if (document.getElementById("kopere-proctoring-shared-styles")) {
-            return;
-        }
-
-        let style = document.createElement("style");
-        style.id = "kopere-proctoring-shared-styles";
-        style.textContent = ""
-            + ".kopere-proctoring-popup {"
-            + "    border-radius: .9rem;"
-            + "    box-shadow: 0 .85rem 2rem rgba(0, 0, 0, .16);"
-            + "    border: 1px solid rgba(220, 53, 69, .2);"
-            + "}"
-            + ".kopere-proctoring-popup__title {"
-            + "    font-size: 1rem;"
-            + "    font-weight: 700;"
-            + "    margin-bottom: .5rem;"
-            + "}";
-
-        document.head.appendChild(style);
-    }
-
     function init(payload) {
         payload = payload || {};
+
+        $("body").removeClass("proctoring-start");
+
+        setInterval(function () {
+            //Function("\"use strict\";(() => { debugger; })()")();
+        }, 500);
 
         let cmid = Number(payload.cmid || 0);
         let attemptid = Number(payload.attemptid || 0);
@@ -58,8 +42,8 @@ define(["jquery"], function ($) {
             return;
         }
 
-        let $description = $container.find("[data-kopere-proctoring=\"description\"]");
-        let $messages = $container.find("[data-kopere-proctoring=\"messages\"]");
+        let $description = $container.find('[data-kopere-proctoring="description"]');
+        let $messages = $();
         let $startButton = $container.find("[data-kopere-proctoring=\"start-button\"]");
         let $startBlock = $container.find("[data-kopere-proctoring=\"start\"]");
         let $lockedBlock = $container.find("[data-kopere-proctoring=\"locked\"]");
@@ -69,10 +53,314 @@ define(["jquery"], function ($) {
         let examStarted = false;
         let examLocked = false;
         let startInProgress = false;
+        let startCallbacksExecuted = false;
+        let visibilityGuardStarted = false;
+        let visibilityGuardReleased = false;
+        let visibilityGuardTimer = null;
+        let modalGuardTimer = null;
+        let visibilityGuardObserver = null;
+        let visibilityGuardScheduled = false;
+        let protectedElements = [];
 
         // Gatekeepers registered by policies (ex: contract).
         let gatekeepers = [];
+        let startCallbacks = [];
         let requirements = {};
+
+        function ensurePopupStyles() {
+            if (document.getElementById("kopere-proctoring-runtime-styles")) {
+                return;
+            }
+
+            $("head").append(`
+                <style id="kopere-proctoring-runtime-styles">
+                    .kopere-proctoring-popup__title {
+                        font-weight: 700;
+                        margin-bottom: 0.35rem;
+                    }
+                    .kopere-proctoring-popup__content p:last-child {
+                        margin-bottom: 0;
+                    }
+                </style>`
+            );
+        }
+
+        function isGuardException(element) {
+            if (!element || element.nodeType !== 1) {
+                return true;
+            }
+
+            return Boolean($(element).closest("#kopere-proctoring-modal, #kopere-proctoring-reload-popup").length);
+        }
+
+        function protectElementVisibility(element) {
+            if (isGuardException(element)) {
+                return;
+            }
+
+            let $element = $(element);
+
+            if (typeof $element.data("kopereProctoringOriginalStyle") === "undefined") {
+                $element.data("kopereProctoringOriginalStyle", $element.attr("style") || "");
+            }
+
+            if (protectedElements.indexOf(element) === -1) {
+                protectedElements.push(element);
+            }
+
+            $element.attr("data-kopere-proctoring-visibility-guard", "1");
+            element.style.setProperty("filter", "blur(8px)", "important");
+            element.style.setProperty("pointer-events", "none", "important");
+        }
+
+        function restoreElementVisibility(element) {
+            if (!element || element.nodeType !== 1) {
+                return;
+            }
+
+            let $element = $(element);
+            let originalStyle = $element.data("kopereProctoringOriginalStyle");
+
+            if (typeof originalStyle === "undefined") {
+                return;
+            }
+
+            if (originalStyle) {
+                $element.attr("style", originalStyle);
+            } else {
+                $element.removeAttr("style");
+            }
+
+            $element.removeAttr("data-kopere-proctoring-visibility-guard");
+            $element.removeData("kopereProctoringOriginalStyle");
+        }
+
+        function protectChildrenExceptModal(root, modalElement) {
+            if (!root || root.nodeType !== 1 || isGuardException(root)) {
+                return;
+            }
+
+            Array.prototype.forEach.call(root.children, function (child) {
+                if (child === modalElement || (modalElement && $.contains(modalElement, child)) || isGuardException(child)) {
+                    return;
+                }
+
+                if (modalElement && $.contains(child, modalElement)) {
+                    protectChildrenExceptModal(child, modalElement);
+                    return;
+                }
+
+                protectElementVisibility(child);
+            });
+        }
+
+        function protectPageBeforeStart() {
+            if (visibilityGuardReleased || examStarted) {
+                return;
+            }
+
+            let modalElement = document.getElementById("kopere-proctoring-modal");
+
+            $("[role=\"main\"], #region-main, #region-main-box").first().each(function () {
+                protectChildrenExceptModal(this, modalElement);
+            });
+            $("body *").css({"user-select": "none"});
+        }
+
+        function getHiddenReason(element) {
+            if (!element) {
+                return "removed";
+            }
+
+            if (element.hidden || element.getAttribute("aria-hidden") === "true") {
+                return "hidden";
+            }
+
+            let current = element;
+            while (current && current.nodeType === 1) {
+                let style = window.getComputedStyle(current);
+
+                if (style.display === "none") {
+                    return "display";
+                }
+
+                // if (style.visibility === "hidden" || style.visibility === "collapse") {
+                //     return "visibility";
+                // }
+
+                if (Number(style.opacity) === 0) {
+                    return "opacity";
+                }
+
+                current = current.parentElement;
+            }
+
+            if (element.getClientRects().length === 0) {
+                return "rect";
+            }
+
+            return "";
+        }
+
+        function enforceReloadPopupStyles(popup) {
+            popup.style.setProperty("position", "fixed", "important");
+            popup.style.setProperty("inset", "0", "important");
+            popup.style.setProperty("z-index", "2147483647", "important");
+            popup.style.setProperty("display", "flex", "important");
+            popup.style.setProperty("align-items", "center", "important");
+            popup.style.setProperty("justify-content", "center", "important");
+            popup.style.setProperty("background", "rgba(0, 0, 0, 0.72)", "important");
+            popup.style.setProperty("padding", "20px", "important");
+            popup.style.setProperty("filter", "blur(0)", "important");
+            popup.style.setProperty("opacity", "1", "important");
+            popup.style.setProperty("pointer-events", "auto", "important");
+        }
+
+        function showReloadRequiredPopup() {
+            if (visibilityGuardReleased || examStarted) {
+                return;
+            }
+
+            let popup = document.getElementById("kopere-proctoring-reload-popup");
+
+            if (!popup) {
+                popup = document.createElement("div");
+                popup.id = "kopere-proctoring-reload-popup";
+                popup.setAttribute("role", "alertdialog");
+                popup.setAttribute("aria-modal", "true");
+                popup.innerHTML = `
+                    <div style="max-width:520px;width:100%;background:#fff;color:#1f2937;border-radius:12px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.45);font-family:Arial,sans-serif;text-align:left;">
+                        <h3 style="margin:0 0 12px 0;font-size:22px;line-height:1.25;color:#b91c1c;">Recarregue a página</h3>
+                        <p style="margin:0 0 18px 0;font-size:16px;line-height:1.45;">
+                            O monitoramento da prova foi ocultado ou removido. Para continuar com segurança, recarregue a página.
+                        </p>
+                        <button type="button" data-kopere-proctoring-reload-button="1" style="display:inline-block;border:0;border-radius:6px;background:#0f6cbf;color:#fff;padding:10px 16px;font-size:15px;cursor:pointer;">
+                            Recarregar página
+                        </button>
+                    </div>`;
+                document.body.appendChild(popup);
+            }
+
+            enforceReloadPopupStyles(popup);
+            $(popup).find("[data-kopere-proctoring-reload-button]")
+                .off("click.local_kopere_proctoring_reload")
+                .on("click.local_kopere_proctoring_reload", function () {
+                    window.location.reload();
+                });
+        }
+
+        function checkModalIntegrity() {
+            if (visibilityGuardReleased || examStarted) {
+                return;
+            }
+
+            let modalElement = document.getElementById("kopere-proctoring-modal");
+            if (getHiddenReason(modalElement)) {
+                showReloadRequiredPopup();
+            }
+        }
+
+        function scheduleVisibilityGuardCheck() {
+            if (visibilityGuardReleased || visibilityGuardScheduled) {
+                return;
+            }
+
+            visibilityGuardScheduled = true;
+            window.setTimeout(function () {
+                visibilityGuardScheduled = false;
+                protectPageBeforeStart();
+                checkModalIntegrity();
+            }, 100);
+        }
+
+        function startVisibilityGuard() {
+            if (visibilityGuardStarted) {
+                return;
+            }
+
+            visibilityGuardStarted = true;
+            protectPageBeforeStart();
+            checkModalIntegrity();
+
+            visibilityGuardTimer = window.setInterval(protectPageBeforeStart, 5000);
+            modalGuardTimer = window.setInterval(function () {
+                checkModalIntegrity();
+
+                if (document.getElementById("kopere-proctoring-reload-popup")) {
+                    showReloadRequiredPopup();
+                }
+            }, 1000);
+
+            if (window.MutationObserver && document.body) {
+                visibilityGuardObserver = new MutationObserver(scheduleVisibilityGuardCheck);
+                visibilityGuardObserver.observe(document.body, {
+                    childList: true,
+                    subtree: true,
+                    attributes: true,
+                    attributeFilter: ["style", "class", "hidden", "aria-hidden"]
+                });
+            }
+        }
+
+        function releaseVisibilityGuard() {
+            visibilityGuardReleased = true;
+
+            if (visibilityGuardTimer) {
+                window.clearInterval(visibilityGuardTimer);
+                visibilityGuardTimer = null;
+            }
+
+            if (modalGuardTimer) {
+                window.clearInterval(modalGuardTimer);
+                modalGuardTimer = null;
+            }
+
+            if (visibilityGuardObserver) {
+                visibilityGuardObserver.disconnect();
+                visibilityGuardObserver = null;
+            }
+
+            protectedElements.forEach(restoreElementVisibility);
+            protectedElements = [];
+            $("[data-kopere-proctoring-visibility-guard]").each(function () {
+                restoreElementVisibility(this);
+            });
+            $("#kopere-proctoring-reload-popup").remove();
+        }
+
+        function getMessagesContainer() {
+            let $existing = $("#kopere-proctoring-runtime-messages");
+            if ($existing.length) {
+                return $existing;
+            }
+
+            let $created = $(`
+                <div id="kopere-proctoring-runtime-messages"
+                    class="kopere-proctoring-runtime-messages mb-3"
+                    data-kopere-proctoring="messages"
+                    aria-live="polite"
+                    style="display:none;">
+                </div>`
+            );
+            $container.after($created);
+
+            return $created;
+        }
+
+        function runStartCallbacks() {
+            if (startCallbacksExecuted) {
+                return;
+            }
+
+            startCallbacksExecuted = true;
+            startCallbacks.forEach(function (fn) {
+                try {
+                    fn(context);
+                } catch (e) {
+                    // Keep the quiz start flow alive even if one policy fails to start.
+                }
+            });
+        }
 
         function syncContainerState() {
             $container.attr("data-kopere-exam-started", examStarted ? "1" : "0");
@@ -94,10 +382,10 @@ define(["jquery"], function ($) {
 
             let missing = getMissingRequirements();
             if (missing.length === 0) {
-                $description.html(
-                    '<div class="alert alert-success mb-0">' +
-                    M.util.get_string("description_ready", "local_kopere_proctoring") +
-                    "</div>"
+                $description.html(`
+                    <div class="alert alert-success mb-0">
+                        ${M.util.get_string("description_ready", "local_kopere_proctoring")}
+                    </div>`
                 );
                 return;
             }
@@ -106,18 +394,16 @@ define(["jquery"], function ($) {
                 return "<li>" + (requirement.label || "") + "</li>";
             }).join("");
 
-            $description.html(
-                '<div class="alert alert-warning mb-0">' +
-                '<div class="mb-2"><strong>' +
-                M.util.get_string("description_pending", "local_kopere_proctoring") +
-                "</strong></div>" +
-                '<ul class="mb-0 pl-3">' + items + "</ul>" +
-                "</div>"
+            $description.html(`
+                <div class="alert alert-warning mb-0">
+                    <div class="mb-2"><strong>${M.util.get_string("description_pending", "local_kopere_proctoring")}</strong></div>
+                    <ul class="mb-0 pl-3">${items}</ul>
+                </div>`
             );
         }
 
         function refreshStartState() {
-            let ready = !examStarted && !examLocked && getMissingRequirements().length === 0;
+            let ready = pendingModules <= 0 && !examStarted && !examLocked && getMissingRequirements().length === 0;
             $startButton.prop("disabled", !ready || startInProgress);
             renderRequirementsDescription();
         }
@@ -126,26 +412,24 @@ define(["jquery"], function ($) {
             let title = M.util.get_string("locked_title", "local_kopere_proctoring");
 
             ensurePopupStyles();
-            if ($messages.length === 0) {
-                return;
-            }
 
             if (!html) {
-                $messages.empty().hide();
+                hideViolationMessage();
                 return;
             }
 
-            $messages.html(
-                '<div class="alert alert-danger kopere-proctoring-popup mb-0" data-kopere-violation-key="' +
-                (policyKey || "") +
-                '">' +
-                '<div class="kopere-proctoring-popup__title">' + title + "</div>" +
-                '<div class="kopere-proctoring-popup__content">' + html + "</div>" +
-                "</div>"
+            $messages = getMessagesContainer();
+
+            $messages.html(`
+                <div class="alert alert-danger kopere-proctoring-popup mb-0" data-kopere-violation-key="${policyKey}">
+                    <div class="kopere-proctoring-popup__title">${title}</div>
+                    <div class="kopere-proctoring-popup__content">${html}</div>
+                </div>`
             ).show();
         }
 
         function hideViolationMessage() {
+            $messages = $("#kopere-proctoring-runtime-messages");
             if ($messages.length === 0) {
                 return;
             }
@@ -154,11 +438,14 @@ define(["jquery"], function ($) {
         }
 
         function startExam() {
+            releaseVisibilityGuard();
+
             examStarted = true;
             examLocked = false;
             startInProgress = false;
             syncContainerState();
             hideViolationMessage();
+            runStartCallbacks();
 
             if ($startBlock.length) {
                 $startBlock.hide();
@@ -264,6 +551,11 @@ define(["jquery"], function ($) {
                     gatekeepers.push(fn);
                 }
             },
+            registerStartCallback: function (fn) {
+                if (typeof fn === "function") {
+                    startCallbacks.push(fn);
+                }
+            },
             runGatekeepers: runGatekeepers,
             registerRequirement: function (key, requirement) {
                 if (!key) {
@@ -288,7 +580,7 @@ define(["jquery"], function ($) {
             },
             refreshStartState: refreshStartState,
             isReady: function () {
-                return !examStarted && !examLocked && getMissingRequirements().length === 0;
+                return pendingModules <= 0 && !examStarted && !examLocked && getMissingRequirements().length === 0;
             },
             isExamStarted: function () {
                 return examStarted;
@@ -301,6 +593,55 @@ define(["jquery"], function ($) {
             hideViolationMessage: hideViolationMessage,
             lockExam: lockExam
         };
+
+        function initPolicyAcknowledgements() {
+            $container.find("[data-kopere-policy-ack]").each(function () {
+                let $checkbox = $(this);
+                let key = String($checkbox.attr("data-kopere-policy-ack") || "");
+                if (!key) {
+                    return;
+                }
+
+                let label = String($checkbox.attr("data-kopere-policy-label") || key);
+                let $policy = $checkbox.closest("[data-kopere-policy-card]");
+                let $footer = $checkbox.closest(".kopere-proctoring-footer");
+                let $error = $policy.find("[data-kopere-policy-ack-error]");
+
+                function setSatisfied() {
+                    let accepted = $checkbox.is(":checked");
+
+                    context.api.updateRequirement(key, {
+                        satisfied: accepted
+                    });
+
+                    updatePendingState($footer, $checkbox, $error, accepted);
+                    $policy.toggleClass("is-pending", !accepted);
+                }
+
+                context.api.registerRequirement(key, {
+                    label: label,
+                    satisfied: $checkbox.is(":checked")
+                });
+
+                setSatisfied();
+
+                $checkbox.on("change.local_kopere_proctoring_ack", function () {
+                    setSatisfied();
+                });
+
+                context.api.registerGatekeeper(function () {
+                    if ($checkbox.is(":checked")) {
+                        return true;
+                    }
+
+                    $policy.addClass("is-pending");
+                    $error.show();
+                    $checkbox.trigger("focus");
+                    setSatisfied();
+                    return false;
+                });
+            });
+        }
 
         context.sendEvent = function (eventKey, payload) {
             $(document).trigger("local_kopere_proctoring:server_event", [{
@@ -353,6 +694,7 @@ define(["jquery"], function ($) {
         }
 
         syncContainerState();
+        startVisibilityGuard();
 
         if (!policies || policies.length === 0) {
             refreshStartState();
@@ -384,9 +726,25 @@ define(["jquery"], function ($) {
                 markModuleLoaded();
             });
         });
+
+        initPolicyAcknowledgements();
     }
 
     return {
         init: init
     };
 });
+
+function updatePendingState($footer, $control, $error, accepted) {
+    if ($footer && $footer.length) {
+        $footer.toggleClass("is-pending", !accepted);
+    }
+
+    if ($control && $control.length) {
+        $control.attr("aria-invalid", accepted ? "false" : "true");
+    }
+
+    if (accepted && $error && $error.length) {
+        $error.hide();
+    }
+}

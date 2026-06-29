@@ -26,8 +26,10 @@ namespace local_kopere_proctoring;
 
 use core\hook\output\before_footer_html_generation;
 use context_module;
+use core\hook\output\before_http_headers;
 use Exception;
 use local_kopere_proctoring\policy\manager;
+use local_kopere_proctoring\policy\policy_interface;
 
 /**
  * Class core_hook_output
@@ -35,7 +37,7 @@ use local_kopere_proctoring\policy\manager;
 class hook_callbacks {
 
     /**
-     * Inject proctoring overlay on quiz attempt/review pages.
+     * Inject proctoring overlay on quiz attempt/review pages and password admin alerts on quiz pages.
      *
      * @param before_footer_html_generation $hook
      * @return void
@@ -53,23 +55,28 @@ class hook_callbacks {
             return;
         }
 
+        /** @var policy_interface $classname */
+        foreach (manager::get_policy_classes(true) as $name => $classname) {
+            $classname::hooks_before_footer_html_generation($hook);
+        }
+
         // Only quiz module pages.
-        if (($PAGE->cm->modname ?? '') != 'quiz') {
+        if (($PAGE->cm->modname ?? '') !== 'quiz') {
             return;
         }
 
-        // Only attempt/review pages.
+        $context = context_module::instance($PAGE->cm->id);
         $path = $PAGE->url ? $PAGE->url->get_path() : '';
-        $isattemptpage = (strpos($path, '/mod/quiz/attempt.php') !== false);
-        $isreviewpage = (strpos($path, '/mod/quiz/review.php') !== false);
+        $isattemptpage = strpos($path, '/mod/quiz/attempt.php') !== false;
+        $isreviewpage = strpos($path, '/mod/quiz/review.php') !== false;
+
+        // Only attempt/review pages need the proctoring overlay.
         if (!$isattemptpage && !$isreviewpage) {
             return;
         }
 
-        $cmid = $PAGE->cm->id;
-
         // Check if enabled for this cm.
-        $enable = get_config('local_kopere_proctoring', "kopere_proctoring_enabled_{$cmid}");
+        $enable = get_config('local_kopere_proctoring', "kopere_proctoring_enabled_{$PAGE->cm->id}");
         if (!$enable) {
             return;
         }
@@ -91,30 +98,83 @@ class hook_callbacks {
         }
 
         // Capability check (extra safety).
-        $context = context_module::instance($cmid);
         if (!has_capability('mod/quiz:attempt', $context)) {
             return;
         }
 
-        $mustachedata = [
-            "policies" => manager::get_start_policy_html($cmid, $attemptid),
-        ];
-
         $PAGE->requires->strings_for_js([
-            "description_pending",
-            "description_ready",
-            "locked_title",
-            "locked_default_message",
-        ], "local_kopere_proctoring");
+            'description_pending',
+            'description_ready',
+            'locked_title',
+            'locked_default_message',
+        ], 'local_kopere_proctoring');
 
         // Require assets in the normal render flow.
-        $payload = manager::get_js_payload($cmid, $attemptid);
-        $PAGE->requires->js_call_amd("local_kopere_proctoring/start", "init", [$payload]);
+        $payload = manager::get_js_payload($attemptid);
+        $PAGE->requires->js_call_amd('local_kopere_proctoring/start', 'init', [$payload]);
 
         // Inject HTML via hook.
-        // echo $OUTPUT->render_from_template('local_kopere_proctoring/start', $mustachedata);
+        $mustachedata = [
+            'policies' => manager::get_start_policy_html($PAGE->cm->id, $attemptid),
+        ];
         $hook->add_html($OUTPUT->render_from_template('local_kopere_proctoring/start', $mustachedata));
 
         $rendered = true;
+    }
+
+    /**
+     * @throws \core\exception\coding_exception
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
+    public static function before_http_headers(before_http_headers $hook): void {
+        global $DB, $USER, $PAGE;
+
+        if (!isloggedin() || isguestuser()) {
+            return;
+        }
+
+        // Only quiz module pages.
+        if (($PAGE->cm->modname ?? '') !== 'quiz') {
+            return;
+        }
+
+        $context = context_module::instance($PAGE->cm->id);
+        $path = $PAGE->url ? $PAGE->url->get_path() : '';
+        $isattemptpage = strpos($path, '/mod/quiz/attempt.php') !== false;
+
+        // Only attempt/review pages need the proctoring overlay.
+        if (!$isattemptpage) {
+            return;
+        }
+
+        // Capability check (extra safety).
+        if (!has_capability('mod/quiz:attempt', $context)) {
+            return;
+        }
+
+        // Check if enabled for this cm.
+        $enable = get_config('local_kopere_proctoring', "kopere_proctoring_enabled_{$PAGE->cm->id}");
+        if (!$enable) {
+            return;
+        }
+
+        // Attempt id from URL.
+        $params = $PAGE->url ? $PAGE->url->params() : [];
+        $attemptid = ($params['attempt'] ?? 0);
+        if (!$attemptid) {
+            return;
+        }
+
+        // Ensure attempt belongs to current user and exists in our table.
+        $attempt = $DB->get_record('local_kopere_proctoring_att', [
+            'attemptid' => $attemptid,
+            'userid' => $USER->id,
+        ]);
+        if (!$attempt) {
+            return;
+        }
+
+        $PAGE->add_body_class("proctoring-start");
     }
 }

@@ -33,7 +33,6 @@ $string['locked_default_message'] = 'A prova está temporariamente bloqueada dev
 $string['locked_title'] = 'Prova bloqueada';
 $string['managekopere_proctoringplugins'] = 'Gerenciar plugins de políticas de Proctoring';
 $string['managekopere_proctoringplugins_desc'] = 'Ative, desative e organize a ordem dos plugins. A ordem definida aqui também será usada para exibir os dados aos alunos.';
-$string['modulename'] = 'Kopere Proctoring';
 $string['movedownplugin'] = 'Mover plugin para baixo';
 $string['moveupplugin'] = 'Mover plugin para cima';
 $string['pluginname'] = 'Kopere Proctoring';
@@ -71,5 +70,11 @@ $string['userdata_time'] = 'Hora';
 $string['userdata_title'] = 'Dados de proctoring - {$a}';
 $string['userdata_total_attempts'] = 'Tentativas';
 $string['userdata_total_contracts'] = 'Contratos aceitos';
-$string['userdata_total_logs'] = 'Logs';
+$string['userdata_logs'] = 'Logs';
 $string['userdata_useragent'] = 'Agente do usuário';
+$string['understand_label'] = 'Entendo';
+$string['understand_error'] = 'Marque que você entendeu esta regra antes de iniciar a prova.';
+
+$string['proctoring_warning'] = '<p>Ao ativar o <strong>Proctoring</strong>, o layout da prova será ajustado automaticamente para que <strong>todas as questões sejam exibidas em uma única página</strong> e essa alteração evita que o aluno precise navegar entre páginas durante a tentativa, reduzindo o risco de interrupções, recarregamentos ou encerramento indevido da sessão do Proctoring.</p>
+<p>Para isso, o valor da configuração <code>Layout</code> do Quiz será alterado automaticamente, garantindo que a prova seja apresentada em página única enquanto o Proctoring estiver ativo.</p>';
+$string['unknown'] = 'Desconhecido';

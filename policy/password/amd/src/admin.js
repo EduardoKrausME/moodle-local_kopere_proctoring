@@ -24,16 +24,18 @@
 define(['jquery'], function($) {
     'use strict';
 
-    function getString(key, fallback) {
-        let component = 'proctoringpolicy_password';
+    function getString(name, value) {
         try {
-            if (window.M && window.M.util && window.M.util.get_string) {
-                return window.M.util.get_string(key, component);
-            }
+            return M.util.get_string(name, 'proctoringpolicy_password', value);
         } catch (e) {
-            // Ignore and use fallback.
+            if (name === 'admin_lastcheck_nochange') {
+                return 'Última verificação em ' + value + ': nada novo.';
+            }
+            if (name === 'admin_lastcheck_updated') {
+                return 'Atualizado em ' + value + '.';
+            }
+            return value || '';
         }
-        return fallback || '';
     }
 
     function init(config) {
@@ -43,6 +45,7 @@ define(['jquery'], function($) {
 
         let $container = $('[data-region="password-admin-content"]');
         let $meta = $('[data-region="password-admin-meta"]');
+        let signature = String($container.attr('data-signature') || '');
 
         if ($container.length === 0) {
             return;
@@ -59,20 +62,35 @@ define(['jquery'], function($) {
             $.ajax({
                 url: config.url,
                 method: 'GET',
-                dataType: 'json'
+                dataType: 'json',
+                cache: false,
+                data: {
+                    signature: signature,
+                    _: Date.now()
+                }
             }).done(function(response) {
                 if (!response) {
                     return;
                 }
 
-                if (typeof response.html === 'string') {
+                if (response.changed && typeof response.html === 'string') {
                     $container.html(response.html);
+                    signature = String(response.signature || '');
+                    $container.attr('data-signature', signature);
+
+                    if ($meta.length && response.lastcheck) {
+                        $meta.text(getString('admin_lastcheck_updated', response.lastcheck));
+                    }
+                    return;
                 }
 
-                if ($meta.length && response.lastupdated) {
-                    $meta.text(
-                        getString('admin_refreshing', 'Automatically refreshing every 10 seconds.') + ' ' + response.lastupdated
-                    );
+                if (response.signature) {
+                    signature = String(response.signature);
+                    $container.attr('data-signature', signature);
+                }
+
+                if ($meta.length && response.lastcheck) {
+                    $meta.text(getString('admin_lastcheck_nochange', response.lastcheck));
                 }
             }).always(function() {
                 loading = false;
