@@ -23,8 +23,6 @@
  */
 namespace local_kopere_proctoring\util;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class user_agent
  */
