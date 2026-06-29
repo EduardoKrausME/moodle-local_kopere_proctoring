@@ -40,6 +40,9 @@ $string['pluginstatus_activate'] = 'Ativar';
 $string['pluginstatus_active'] = 'Ativo';
 $string['pluginstatus_deactivate'] = 'Desativar';
 $string['pluginstatus_inactive'] = 'Inativo';
+$string['proctoring_warning'] = '<p>When <strong>Proctoring</strong> is enabled, the quiz layout will be automatically adjusted so that <strong>all questions are displayed on a single page</strong>.</p>
+<p>This change prevents the student from having to navigate between pages during the attempt, reducing the risk of interruptions, page reloads, or improper termination of the Proctoring session.</p>
+<p>To achieve this, the Quiz <code>Layout</code> setting will be automatically changed, ensuring that the quiz is presented on a single page while Proctoring is active.</p>';
 $string['reorder'] = 'Reorder';
 $string['return_button'] = 'I understand, return to Exam';
 $string['start_button'] = 'Start exam';
@@ -47,6 +50,9 @@ $string['start_title'] = 'Exam access';
 $string['status'] = 'Status';
 $string['subplugintype_proctoringpolicy'] = 'Proctoring Polices';
 $string['subplugintype_proctoringpolicy_plural'] = 'Proctoring policies';
+$string['understand_error'] = 'Confirm that you understand this rule before starting the exam.';
+$string['understand_label'] = 'I understand';
+$string['unknown'] = 'Unknown';
 $string['userdata_activity'] = 'Activity ID';
 $string['userdata_attempt_details'] = 'Attempt details';
 $string['userdata_attempt_label'] = 'Attempt';
@@ -70,11 +76,4 @@ $string['userdata_time'] = 'Time';
 $string['userdata_title'] = 'Proctoring data - {$a}';
 $string['userdata_total_attempts'] = 'Attempts';
 $string['userdata_total_contracts'] = 'Accepted contracts';
-$string['userdata_logs'] = 'Logs';
 $string['userdata_useragent'] = 'User agent';
-$string['understand_label'] = 'I understand';
-$string['understand_error'] = 'Confirm that you understand this rule before starting the exam.';
-$string['proctoring_warning'] = '<p>When <strong>Proctoring</strong> is enabled, the quiz layout will be automatically adjusted so that <strong>all questions are displayed on a single page</strong>.</p>
-<p>This change prevents the student from having to navigate between pages during the attempt, reducing the risk of interruptions, page reloads, or improper termination of the Proctoring session.</p>
-<p>To achieve this, the Quiz <code>Layout</code> setting will be automatically changed, ensuring that the quiz is presented on a single page while Proctoring is active.</p>';
-$string['unknown'] = 'Unknown';

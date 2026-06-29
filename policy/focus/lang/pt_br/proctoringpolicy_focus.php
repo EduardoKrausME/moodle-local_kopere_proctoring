@@ -41,10 +41,10 @@ $string['message_default_text'] = '<h2>Saída da página da prova detectada</h2>
 <p>Durante a realização da prova, não é permitido acessar outras abas, janelas ou aplicativos. Retorne imediatamente à página da prova.</p>
 <p>Esta ocorrência foi registrada e será revisada pelo professor.</p>';
 $string['pluginname'] = 'Foco na prova ';
+$string['requirement_label'] = 'Entender a política de foco na prova';
 $string['start_limit_label'] = 'Mudanças de foco permitidas:';
 $string['start_message_default'] = 'Mensagem inicial padrão';
 $string['start_message_default_desc'] = 'Mensagem curta exibida antes do início da prova para explicar que o aluno deve permanecer na página da prova.';
 $string['start_message_default_text'] = '<p>Durante toda a prova, você deve permanecer nesta página e não é permitido alternar para outras abas, janelas, aplicativos ou programas até concluir e enviar a avaliação.</p>
 <p>Caso você saia desta página ou acesse outro ambiente durante a prova, essa ação será registrada pelo sistema e considerada uma violação das regras da avaliação e enviada para revisão pelo Professor.</p>';
 $string['teacher_info'] = 'Ative isto quando o aluno precisar permanecer na página da prova. Use a mensagem inicial para explicar a regra antes do início da prova e use a mensagem de violação para avisar o aluno apenas após a página perder o foco.';
-$string['requirement_label'] = 'Entender a política de foco na prova';

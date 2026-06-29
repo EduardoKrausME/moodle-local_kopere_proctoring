@@ -25,6 +25,15 @@
 defined('MOODLE_INTERNAL') || die;
 
 $string['body_default'] = 'Default body';
+$string['body_default_desc'] = 'Default body of notification e-mails. You can use the placeholders:
+<ul>
+    <li>{coursename}</li>
+    <li>{quizname}</li>
+    <li>{userid}</li>
+    <li>{username}</li>
+    <li>{event}</li>
+    <li>{reason}</li>
+</ul>';
 $string['body_default_text'] = 'Course: {coursename}<br>Exam: {quizname}<br>Event: {event}<br>Reason: {reason}';
 $string['email_from_name'] = 'Proctoring notifications';
 $string['enabled'] = 'Enable notification system';
@@ -44,15 +53,6 @@ $string['recipients_default'] = 'Default recipients (comma-separated e-mails)';
 $string['recipients_default_desc'] = 'List of e-mails that will receive notifications if there is no override at module level.';
 $string['subject_default'] = 'Default subject';
 $string['subject_default_desc'] = 'Default subject of notification e-mails. You can use the placeholders: 
-<ul>
-    <li>{coursename}</li>
-    <li>{quizname}</li>
-    <li>{userid}</li>
-    <li>{username}</li>
-    <li>{event}</li>
-    <li>{reason}</li>
-</ul>';
-$string['body_default_desc'] = 'Default body of notification e-mails. You can use the placeholders:
 <ul>
     <li>{coursename}</li>
     <li>{quizname}</li>

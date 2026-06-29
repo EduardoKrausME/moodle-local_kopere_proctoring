@@ -25,6 +25,15 @@
 defined('MOODLE_INTERNAL') || die;
 
 $string['body_default'] = 'Corpo padrão';
+$string['body_default_desc'] = 'Corpo padrão dos e-mails de notificação. Você pode usar os placeholders:
+<ul>
+    <li>{coursename}</li>
+    <li>{quizname}</li>
+    <li>{userid}</li>
+    <li>{username}</li>
+    <li>{event}</li>
+    <li>{reason}</li>
+</ul>';
 $string['body_default_text'] = 'Curso: {coursename}<br>Prova: {quizname}<br>Evento: {event}<br>Motivo: {reason}';
 $string['email_from_name'] = 'Notificações de proctoring';
 $string['enabled'] = 'Ativar sistema de notificações';
@@ -44,15 +53,6 @@ $string['recipients_default'] = 'Destinatários padrão (e-mails separados por v
 $string['recipients_default_desc'] = 'Lista de e-mails que receberão notificações se não houver substituição no nível do módulo.';
 $string['subject_default'] = 'Assunto padrão';
 $string['subject_default_desc'] = 'Assunto padrão dos e-mails de notificação. Você pode usar os placeholders: 
-<ul>
-    <li>{coursename}</li>
-    <li>{quizname}</li>
-    <li>{userid}</li>
-    <li>{username}</li>
-    <li>{event}</li>
-    <li>{reason}</li>
-</ul>';
-$string['body_default_desc'] = 'Corpo padrão dos e-mails de notificação. Você pode usar os placeholders:
 <ul>
     <li>{coursename}</li>
     <li>{quizname}</li>

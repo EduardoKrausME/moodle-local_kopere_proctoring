@@ -38,9 +38,9 @@ $string['message_default_text'] = '<h2>Tentativa de copiar/colar bloqueada.</h2>
 <p><strong>Durante a prova, não é permitido copiar, recortar, colar, selecionar todo o conteúdo, imprimir ou usar o botão direito do mouse.</strong></p>
 <p>Esta ação foi registrada e poderá ser revisada pela equipe responsável.</p>';
 $string['pluginname'] = 'Copiar e colar';
+$string['requirement_label'] = 'Entender a política de copiar e colar';
 $string['start_message_cm'] = 'Mensagem inicial exibida antes do início da prova';
 $string['start_message_default'] = 'Mensagem inicial padrão';
 $string['start_message_default_desc'] = 'Mensagem curta exibida antes do início da tentativa para explicar que copiar e colar não são permitidos.';
 $string['start_message_default_text'] = '<p>Durante esta tentativa, não é permitido copiar, recortar, colar, imprimir ou usar o botão direito do mouse.</p>';
 $string['teacher_info'] = 'Ative isto para bloquear ações de copiar e colar durante a tentativa. Use a mensagem inicial para explicar a regra antes do início da prova e use a mensagem de violação para avisar o aluno apenas quando a regra for quebrada.';
-$string['requirement_label'] = 'Entender a política de copiar e colar';

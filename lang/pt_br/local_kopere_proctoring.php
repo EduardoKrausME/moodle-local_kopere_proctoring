@@ -40,6 +40,8 @@ $string['pluginstatus_activate'] = 'Ativar';
 $string['pluginstatus_active'] = 'Ativo';
 $string['pluginstatus_deactivate'] = 'Desativar';
 $string['pluginstatus_inactive'] = 'Inativo';
+$string['proctoring_warning'] = '<p>Ao ativar o <strong>Proctoring</strong>, o layout da prova será ajustado automaticamente para que <strong>todas as questões sejam exibidas em uma única página</strong> e essa alteração evita que o aluno precise navegar entre páginas durante a tentativa, reduzindo o risco de interrupções, recarregamentos ou encerramento indevido da sessão do Proctoring.</p>
+<p>Para isso, o valor da configuração <code>Layout</code> do Quiz será alterado automaticamente, garantindo que a prova seja apresentada em página única enquanto o Proctoring estiver ativo.</p>';
 $string['reorder'] = 'Reordenar';
 $string['return_button'] = 'Entendi, voltar para a prova';
 $string['start_button'] = 'Iniciar prova';
@@ -47,6 +49,9 @@ $string['start_title'] = 'Acesso à prova';
 $string['status'] = 'Status';
 $string['subplugintype_proctoringpolicy'] = 'Políticas de Proctoring';
 $string['subplugintype_proctoringpolicy_plural'] = 'Políticas de proctoring';
+$string['understand_error'] = 'Marque que você entendeu esta regra antes de iniciar a prova.';
+$string['understand_label'] = 'Entendo';
+$string['unknown'] = 'Desconhecido';
 $string['userdata_activity'] = 'ID da atividade';
 $string['userdata_attempt_details'] = 'Detalhes da tentativa';
 $string['userdata_attempt_label'] = 'Tentativa';
@@ -70,11 +75,4 @@ $string['userdata_time'] = 'Hora';
 $string['userdata_title'] = 'Dados de proctoring - {$a}';
 $string['userdata_total_attempts'] = 'Tentativas';
 $string['userdata_total_contracts'] = 'Contratos aceitos';
-$string['userdata_logs'] = 'Logs';
 $string['userdata_useragent'] = 'Agente do usuário';
-$string['understand_label'] = 'Entendo';
-$string['understand_error'] = 'Marque que você entendeu esta regra antes de iniciar a prova.';
-
-$string['proctoring_warning'] = '<p>Ao ativar o <strong>Proctoring</strong>, o layout da prova será ajustado automaticamente para que <strong>todas as questões sejam exibidas em uma única página</strong> e essa alteração evita que o aluno precise navegar entre páginas durante a tentativa, reduzindo o risco de interrupções, recarregamentos ou encerramento indevido da sessão do Proctoring.</p>
-<p>Para isso, o valor da configuração <code>Layout</code> do Quiz será alterado automaticamente, garantindo que a prova seja apresentada em página única enquanto o Proctoring estiver ativo.</p>';
-$string['unknown'] = 'Desconhecido';

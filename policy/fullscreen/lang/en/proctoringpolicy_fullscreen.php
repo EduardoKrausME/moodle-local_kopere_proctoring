@@ -24,9 +24,13 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+$string['button_fullscreen'] = 'Enter fullscreen';
 $string['enabled'] = 'Enable fullscreen ';
 $string['enabled_cm'] = 'Require fullscreen during the attempt';
 $string['enabled_desc'] = 'If enabled, the policy can be configured per quiz activity.';
+$string['fullscreen_failed'] = 'Fullscreen could not be enabled. Click the button again.';
+$string['fullscreen_ready'] = 'Fullscreen enabled.';
+$string['fullscreen_required'] = 'Click “Enter fullscreen” before starting the exam.';
 $string['heading_info'] = 'Requires the student to remain in fullscreen mode during the entire exam. Before the attempt starts, it displays a short instruction and, if the student exits fullscreen, shows a clear warning message.';
 $string['limit_cm'] = 'Maximum exits allowed';
 $string['limit_cm_desc'] = 'How many times the student can exit fullscreen before being blocked.';
@@ -40,13 +44,9 @@ $string['message_default_text'] = '<h2>You exited fullscreen mode during the exa
 <p>Return to fullscreen immediately. Repeated exits may block or end the attempt.</p>';
 $string['message_init'] = 'This attempt requires fullscreen mode.';
 $string['pluginname'] = 'Fullscreen ';
+$string['requirement_label'] = 'Enter fullscreen mode';
 $string['start_message_cm'] = 'Initial message shown before the exam starts';
 $string['start_message_default'] = 'Default initial message';
 $string['start_message_default_desc'] = 'Short message shown before the attempt starts to explain that fullscreen mode is mandatory. <i>This value can be changed in the quiz</i>';
 $string['start_message_default_text'] = '<p>You must remain in fullscreen mode during the entire attempt.</p>';
 $string['teacher_info'] = 'Enable this when the student must remain in fullscreen during the entire exam. Use the initial message to explain the rule before the attempt starts and use the violation message to warn the student only after they exit fullscreen mode.';
-$string['button_fullscreen'] = 'Enter fullscreen';
-$string['fullscreen_failed'] = 'Fullscreen could not be enabled. Click the button again.';
-$string['fullscreen_ready'] = 'Fullscreen enabled.';
-$string['fullscreen_required'] = 'Click “Enter fullscreen” before starting the exam.';
-$string['requirement_label'] = 'Enter fullscreen mode';
