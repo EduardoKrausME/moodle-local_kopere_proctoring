@@ -259,7 +259,7 @@ class provider implements policy_interface {
     /**
      * Teachers/admins get a fast pending-password alert on quiz pages where the password policy is enabled.
      *
-     * @params before_footer_html_generation $hook
+     * @param before_footer_html_generation $hook
      * @param \core\hook\output\before_footer_html_generation $hook
      * @return void
      * @throws \coding_exception

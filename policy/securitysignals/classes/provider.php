@@ -188,7 +188,7 @@ class provider implements policy_interface {
     /**
      * Inject proctoring overlay on quiz attempt/review pages and password admin alerts on quiz pages.
      *
-     * @params before_footer_html_generation $hook
+     * @param before_footer_html_generation $hook
      * @return void
      */
     public static function hooks_before_footer_html_generation(before_footer_html_generation $hook) {
