@@ -279,6 +279,7 @@ class provider implements policy_interface {
      * @param int $cmid
      * @param int $attemptid
      * @return string
+     * @throws \dml_exception
      */
     public static function render_start_html(int $cmid, int $attemptid): string {
         global $OUTPUT;
@@ -306,7 +307,7 @@ class provider implements policy_interface {
     /**
      * Inject proctoring overlay on quiz attempt/review pages and password admin alerts on quiz pages.
      *
-     * @params before_footer_html_generation $hook
+     * @param \core\hook\output\before_footer_html_generation $hook
      * @return void
      */
     public static function hooks_before_footer_html_generation(before_footer_html_generation $hook) {
