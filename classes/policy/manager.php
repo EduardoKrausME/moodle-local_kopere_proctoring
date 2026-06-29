@@ -299,7 +299,7 @@ class manager {
 
         $proctoringwarning =
             '<div class="alert alert-warning">' . get_string("proctoring_warning", "local_kopere_proctoring") . '</div>';
-        $mform->addElement("html",  $proctoringwarning);
+        $mform->addElement("html", $proctoringwarning);
 
         /** @var policy_interface $classname */
         foreach (self::get_policy_classes(true) as $classname) {
