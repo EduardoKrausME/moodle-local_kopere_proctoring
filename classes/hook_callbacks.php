@@ -123,8 +123,12 @@ class hook_callbacks {
     }
 
     /**
-     * @throws \core\exception\coding_exception
+     * Function before_http_headers
+     *
+     * @param \core\hook\output\before_http_headers $hook
+     * @return void
      * @throws \coding_exception
+     * @throws \core\exception\coding_exception
      * @throws \dml_exception
      */
     public static function before_http_headers(before_http_headers $hook): void {
