@@ -1,79 +1,70 @@
 # Kopere Proctoring
 
-O **Kopere Proctoring** foi criado para tornar provas online mais controladas, transparentes e seguras dentro do Moodle.
+**Kopere Proctoring** was created to make online exams more controlled, transparent, and secure within Moodle.
 
-Em vez de simplesmente liberar o questionário e esperar que todas as regras sejam seguidas, o plugin permite definir condições que o aluno precisa conhecer e respeitar antes e durante a avaliação. O professor escolhe quais controles deseja usar em cada prova e o sistema acompanha a tentativa, registra ocorrências e pode impedir a continuidade quando uma regra importante é descumprida.
+Instead of simply making a quiz available and expecting all rules to be followed, the plugin allows conditions to be defined that students must understand and comply with before and during the assessment. The teacher chooses which controls to use for each exam, while the system monitors the attempt, records incidents, and can prevent the student from continuing when an important rule is violated.
 
-O objetivo não é transformar a prova em uma experiência complicada. Para o aluno, as orientações aparecem antes do início da avaliação, deixando claro o que será permitido e o que será acompanhado.
+The goal is not to make the exam experience complicated. Students receive the instructions before starting the assessment, clearly showing what is allowed and what will be monitored.
 
-## Como funciona
+## How it works
 
-Quando o Proctoring está ativado em uma prova, o aluno passa por uma tela de preparação antes de começar. Nessa etapa ele vê as regras definidas pelo professor e precisa concluir os itens obrigatórios antes que o botão para iniciar a prova seja liberado.
+When Proctoring is enabled for an exam, the student goes through a preparation screen before starting. At this stage, the student sees the rules defined by the teacher and must complete all mandatory requirements before the button to start the exam becomes available.
 
-Cada prova pode usar apenas os controles necessários. Uma avaliação simples pode exigir somente o aceite de um compromisso de honestidade. Uma prova mais controlada pode exigir tela cheia, impedir troca de abas, bloquear copiar e colar e depender da liberação do professor para começar.
+Each exam can use only the controls that are necessary. A simple assessment may require only the acceptance of an honesty agreement. A more controlled exam may require fullscreen mode, prevent tab switching, block copy and paste actions, and require teacher approval before it can begin.
 
-Durante a tentativa, determinadas ações podem ser registradas como ocorrências. Dependendo da regra configurada, o aluno recebe um aviso e, ao ultrapassar o limite permitido, a prova pode ser bloqueada ou encerrada.
+During the attempt, certain actions may be recorded as incidents. Depending on the configured rule, the student receives a warning and, after exceeding the allowed limit, the exam may be blocked or terminated.
 
-## Recursos disponíveis
+## Available features
 
-- **Contrato de honestidade:** antes da prova, o aluno lê e aceita um compromisso definido pela instituição. O texto pode ser personalizado para cada avaliação e o aceite gera um comprovante em PDF com informações que permitem verificar sua autenticidade.
-- **Foco na prova:** identifica quando o aluno sai da página da avaliação, muda de aba ou alterna para outro aplicativo. O professor pode definir quantas saídas serão toleradas antes de uma ação mais rígida.
-- **Tela cheia:** exige que a avaliação permaneça em modo de tela cheia. Se o aluno sair desse modo, recebe um aviso e a ocorrência é registrada.
-- **Proteção contra copiar e colar:** bloqueia ações como copiar, recortar, colar, imprimir e usar o botão direito do mouse durante a prova.
-- **Liberação por professor ou senha:** indicada principalmente para avaliações presenciais ou supervisionadas. O aluno solicita acesso e o professor pode aprovar a entrada ou fornecer uma senha de uso único.
-- **Notificações:** responsáveis pela avaliação podem receber avisos por e-mail quando determinados acontecimentos ocorrem, como atividade suspeita, bloqueio da prova ou finalização da tentativa.
-- **Sinais de segurança:** acompanha indícios de alterações incomuns no navegador durante a avaliação e registra sinais que podem ajudar na análise de comportamentos suspeitos.
+* **Honesty agreement:** before the exam, the student reads and accepts a commitment defined by the institution. The text can be customized for each assessment, and acceptance generates a PDF receipt containing information that can be used to verify its authenticity.
+* **Exam focus:** detects when the student leaves the assessment page, switches browser tabs, or changes to another application. The teacher can define how many focus changes are tolerated before a stricter action is taken.
+* **Fullscreen mode:** requires the assessment to remain in fullscreen mode. If the student exits fullscreen, a warning is displayed and the incident is recorded.
+* **Copy and paste protection:** blocks actions such as copying, cutting, pasting, printing, and using the right mouse button during the exam.
+* **Notifications:** people responsible for the assessment can receive email notifications when certain events occur, such as suspicious activity, exam blocking, or completion of the attempt.
+* **Security signals:** monitors signs of unusual browser changes during the assessment and records signals that may help when reviewing suspicious behavior.
 
-## O aluno sabe o que está acontecendo
+## Students know what is happening
 
-Uma preocupação importante do Kopere Proctoring é não esconder as regras do aluno. Antes de iniciar a avaliação, ele recebe as orientações correspondentes aos controles que estão ativos naquela prova.
+An important principle of Kopere Proctoring is that the rules are not hidden from students. Before starting the assessment, they receive instructions corresponding to the controls that are active for that exam.
 
-Isso permite que a instituição explique, por exemplo, que a prova deve permanecer em tela cheia, que não é permitido trocar de aba ou que ações de copiar e colar serão bloqueadas. Assim, o monitoramento deixa de ser uma surpresa e passa a fazer parte das regras da avaliação.
+This allows the institution to explain, for example, that the exam must remain in fullscreen mode, that switching tabs is not allowed, or that copy and paste actions will be blocked. This way, monitoring is not a surprise and instead becomes part of the assessment rules.
 
-## Controle diferente para cada prova
+## Different controls for each exam
 
-Nem toda avaliação precisa do mesmo nível de controle. Por isso, o professor pode escolher quais políticas serão utilizadas de acordo com a importância e o formato da prova.
+Not every assessment requires the same level of control. For this reason, teachers can choose which policies will be used according to the importance and format of each exam.
 
-Em uma atividade de revisão, talvez nenhum controle adicional seja necessário. Em uma prova final feita a distância, pode ser interessante combinar várias regras. Em uma avaliação presencial realizada em laboratório, a liberação por professor ou senha pode ser suficiente.
+For a review activity, no additional controls may be necessary. For a final exam taken remotely, combining several rules may be appropriate. For an in-person assessment conducted in a computer lab, teacher approval or password-based access may be sufficient.
 
-Essa flexibilidade evita aplicar restrições desnecessárias a todos os questionários do ambiente.
+This flexibility avoids applying unnecessary restrictions to every quiz in the Moodle environment.
 
-## Registro das tentativas
+## Attempt records
 
-O Kopere Proctoring mantém informações que ajudam a entender como cada tentativa aconteceu. Entre os dados que podem ficar associados à avaliação estão horário de início e término, endereço IP, navegador utilizado, resolução da tela, geolocalização quando disponível, aceite do contrato e registros das ocorrências detectadas pelas políticas de Proctoring.
+Kopere Proctoring stores information that helps explain how each attempt took place. Data associated with an assessment may include the start and end times, IP address, browser used, screen resolution, geolocation when available, agreement acceptance, and records of incidents detected by the Proctoring policies.
 
-Esses registros ajudam o responsável pela avaliação a analisar o contexto de uma tentativa quando existe alguma dúvida ou comportamento fora do esperado.
+These records help the person responsible for the assessment review the context of an attempt whenever there is a question or behavior outside what was expected.
 
-O registro de uma ocorrência não deve ser entendido automaticamente como comprovação de fraude. Uma troca de foco, por exemplo, pode ter diferentes causas. Os dados servem como apoio para análise e tomada de decisão pela instituição.
+An incident record should not automatically be considered proof of cheating. A loss of focus, for example, can have several causes. The data is intended to support the institution's analysis and decision-making process.
 
-## Contrato com comprovante de aceite
+## Agreement with proof of acceptance
 
-Quando a política de contrato é utilizada, a instituição pode apresentar ao aluno um código de honra, regras da avaliação, orientações de privacidade ou outro termo que precise ser aceito antes da prova.
+When the agreement policy is used, the institution can present the student with an honor code, assessment rules, privacy guidelines, or another document that must be accepted before the exam.
 
-Depois do aceite, o sistema pode disponibilizar um comprovante em PDF contendo os dados relacionados à confirmação, além de um código para verificação da autenticidade do documento.
+After acceptance, the system can provide a PDF receipt containing information related to the confirmation, along with a code that can be used to verify the authenticity of the document.
 
-Isso cria um registro claro de que o aluno recebeu as regras e concordou com elas antes de iniciar a avaliação.
+This creates a clear record showing that the student received the rules and agreed to them before starting the assessment.
 
-## Provas presenciais também podem usar Proctoring
+## In-person exams can also use Proctoring
 
-Proctoring não precisa ser usado apenas em avaliações realizadas em casa.
+Proctoring does not need to be used only for assessments completed at home.
 
-Em laboratórios, polos ou salas de aula, o professor pode configurar a prova para aguardar uma liberação. Quando o aluno chega à etapa inicial, uma solicitação é enviada e o responsável pode aprovar o acesso ou fornecer a senha correspondente.
+In computer labs, learning centers, or classrooms, the teacher can configure the exam to wait for approval before the student is allowed to begin. When the student reaches the initial stage, a request is sent and the person responsible can approve access or provide the corresponding password.
 
-Dessa forma, a prova pode ficar preparada antecipadamente sem precisar ser aberta para todos os alunos ao mesmo tempo.
+This allows the exam to be prepared in advance without making it available to all students at the same time.
 
-## Mais segurança sem depender de uma única regra
+## Greater security without relying on a single rule
 
-Não existe um único recurso capaz de determinar sozinho se uma avaliação foi realizada corretamente. Por isso, o Kopere Proctoring trabalha com várias políticas que podem ser combinadas.
+There is no single feature capable of determining on its own whether an assessment was completed correctly. For this reason, Kopere Proctoring works with multiple policies that can be combined.
 
-A instituição pode juntar regras de comportamento, controles do navegador, registros da tentativa, aceite de termos, notificações e aprovação do professor de acordo com a necessidade de cada avaliação.
+The institution can combine behavioral rules, browser controls, attempt records, agreement acceptance, notifications, and teacher approval according to the needs of each assessment.
 
-O resultado é um processo de prova mais organizado, com regras claras para o aluno e mais informações para quem precisa acompanhar e revisar as tentativas.
-
-## Privacidade e responsabilidade
-
-Ao utilizar recursos de Proctoring, a instituição deve deixar claro quais dados são coletados, por qual motivo são necessários, por quanto tempo serão mantidos e quem poderá consultá-los.
-
-As regras e mensagens exibidas antes da prova podem ser usadas para orientar o aluno sobre o funcionamento da avaliação e sobre as condições necessárias para participação.
-
-O Kopere Proctoring fornece ferramentas para apoiar a aplicação e a análise de provas. A interpretação dos registros e qualquer decisão acadêmica continuam sendo responsabilidade da instituição e das pessoas responsáveis pela avaliação.
+The result is a more organized exam process, with clear rules for students and more information for those responsible for monitoring and reviewing attempts.
