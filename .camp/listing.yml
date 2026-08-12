@@ -1,0 +1,13 @@
+# (RFC §4.1). Authors update their listing with an ordinary commit; camp
+# ingests and hash-pins it at each tagged release. Listing for local_kopere_proctoring.
+
+name: "Kopere Proctoring"
+summary: "Kopere Proctoring"
+description: |
+
+labels:
+  - fully-free
+category: "administration"
+links:
+  docs: https://github.com/EduardoKrausME/moodle-local_kopere_proctoring#readme
+  issues: https://github.com/EduardoKrausME/moodle-local_kopere_proctoring/issues
