@@ -52,7 +52,7 @@ $string['pluginname'] = 'Notificações ';
 $string['recipients_default'] = 'Destinatários padrão (e-mails separados por vírgula)';
 $string['recipients_default_desc'] = 'Lista de e-mails que receberão notificações se não houver substituição no nível do módulo.';
 $string['subject_default'] = 'Assunto padrão';
-$string['subject_default_desc'] = 'Assunto padrão dos e-mails de notificação. Você pode usar os placeholders: 
+$string['subject_default_desc'] = 'Assunto padrão dos e-mails de notificação. Você pode usar os placeholders:
 <ul>
     <li>{coursename}</li>
     <li>{quizname}</li>
