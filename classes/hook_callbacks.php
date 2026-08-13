@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * phpcs:disable moodle.Commenting.InlineComment.TypeHintingForeach
  * core_hook_output.php
  *
  * @package   local_kopere_proctoring
