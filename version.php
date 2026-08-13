@@ -24,10 +24,10 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->version = 2026070501;
-$plugin->release = "4.0.5";
+$plugin->version = 2026081300;
+$plugin->release = "4.0.6";
 $plugin->requires = 2021041900;
-$plugin->maturity = MATURITY_RC;
+$plugin->maturity = MATURITY_STABLE;
 $plugin->component = "local_kopere_proctoring";
 
 $plugin->dependencies = [
