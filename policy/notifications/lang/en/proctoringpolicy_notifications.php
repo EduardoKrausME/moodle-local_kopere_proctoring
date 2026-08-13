@@ -52,7 +52,7 @@ $string['pluginname'] = 'Notifications ';
 $string['recipients_default'] = 'Default recipients (comma-separated e-mails)';
 $string['recipients_default_desc'] = 'List of e-mails that will receive notifications if there is no override at module level.';
 $string['subject_default'] = 'Default subject';
-$string['subject_default_desc'] = 'Default subject of notification e-mails. You can use the placeholders: 
+$string['subject_default_desc'] = 'Default subject of notification e-mails. You can use the placeholders:
 <ul>
     <li>{coursename}</li>
     <li>{quizname}</li>
