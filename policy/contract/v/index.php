@@ -24,10 +24,6 @@
 
 require_once(__DIR__ . '/../../../../../config.php');
 
-if (false) {
-    require_login();
-}
-
 use proctoringpolicy_contract\contract_service;
 
 $code = required_param('code', PARAM_TEXT);
@@ -46,18 +42,9 @@ $templatedata = [
 ];
 
 if ($valid) {
-    $user = contract_service::get_user($att);
-    $meta = contract_service::get_attempt_meta($att);
-
     $templatedata += [
         'documentcode' => contract_service::get_document_code($att),
-        'fullname' => fullname($user),
-        'username' => $user->username,
-        'maskedidnumber' => contract_service::get_masked_idnumber($user),
-        'email' => $user->email,
         'acceptancedate' => contract_service::format_datetime((int) $att->contract_time),
-        'ipaddress' => $att->contract_ip,
-        'exam' => $meta->quizname,
         'uniquehash' => contract_service::get_unique_hash($att),
     ];
 } else {
