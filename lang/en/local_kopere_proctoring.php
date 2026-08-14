@@ -101,7 +101,3 @@ $string['userdata_title'] = 'Proctoring data - {$a}';
 $string['userdata_total_attempts'] = 'Attempts';
 $string['userdata_total_contracts'] = 'Accepted contracts';
 $string['userdata_useragent'] = 'User agent';
-
-$string['reload_required_title'] = 'Reload the page';
-$string['reload_required_message'] = 'The exam monitoring interface was hidden or removed. Reload the page to continue securely.';
-$string['reload_required_button'] = 'Reload page';

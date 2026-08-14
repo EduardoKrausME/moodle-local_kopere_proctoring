@@ -100,7 +100,3 @@ $string['userdata_title'] = 'Dados de proctoring - {$a}';
 $string['userdata_total_attempts'] = 'Tentativas';
 $string['userdata_total_contracts'] = 'Contratos aceitos';
 $string['userdata_useragent'] = 'Agente do usuário';
-
-$string['reload_required_title'] = 'Recarregue a página';
-$string['reload_required_message'] = 'O monitoramento da prova foi ocultado ou removido. Para continuar com segurança, recarregue a página.';
-$string['reload_required_button'] = 'Recarregar página';
