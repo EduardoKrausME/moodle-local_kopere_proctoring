@@ -15,21 +15,28 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * version.php
+ * services.php
  *
  * @package   proctoringpolicy_contract
  * @copyright 2026 Eduardo Kraus {@link https://eduardokraus.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2026081400;
-$plugin->release = "1.0.2";
-$plugin->requires = 2022041900;
-$plugin->maturity = MATURITY_STABLE;
-$plugin->component = "proctoringpolicy_contract";
-
-$plugin->dependencies = [
-    "local_kopere_proctoring" => 2026011500,
+$functions = [
+    'proctoringpolicy_contract_get_status' => [
+        'classname' => 'proctoringpolicy_contract\\external\\get_status',
+        'methodname' => 'execute',
+        'description' => 'Return the current contract acceptance status.',
+        'type' => 'read',
+        'ajax' => true,
+    ],
+    'proctoringpolicy_contract_accept_contract' => [
+        'classname' => 'proctoringpolicy_contract\\external\\accept_contract',
+        'methodname' => 'execute',
+        'description' => 'Record contract acceptance for the current quiz attempt.',
+        'type' => 'write',
+        'ajax' => true,
+    ],
 ];

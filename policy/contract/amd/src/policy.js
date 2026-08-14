@@ -21,53 +21,91 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(["jquery"], function ($) {
+define(["jquery", "core/ajax"], function ($, Ajax) {
     "use strict";
 
-    return {
-        init: function (ctx, cfg) {
-            if (!cfg) {
+    function call(methodname, args) {
+        return Ajax.call([{methodname: methodname, args: args}])[0];
+    }
+
+    return {init: function (ctx, cfg) {
+        if (!cfg || !ctx || !ctx.api || typeof ctx.api.registerGatekeeper !== "function") {
+            return;
+        }
+        let $container = $("#kopere-proctoring-overlay");
+        if ($container.length === 0) {
+            return;
+        }
+        let $footer = $container.find(".kopere-proctoring-footer");
+        let $checkbox = $container.find('[data-role="contract-accept"]');
+        let $error = $container.find('[data-role="contract-error"]');
+        let $proof = $container.find('[data-role="proof"]');
+        let $proofLink = $container.find('[data-role="proof-link"]');
+        let accepted = false;
+
+        function screenResolution() {
+            return String(screen.width || 0) + "x" + String(screen.height || 0);
+        }
+        function satisfied() {
+            return accepted || $checkbox.is(":checked");
+        }
+        function updateProof(result) {
+            if (!result || !result.accepted) {
                 return;
             }
-            if (!ctx || !ctx.api || typeof ctx.api.registerGatekeeper !== "function") {
-                return;
+            accepted = true;
+            $checkbox.prop("checked", true).prop("disabled", true);
+            $error.hide();
+            if (result.pdfurl) {
+                $proofLink.attr("href", result.pdfurl);
+                $proof.show();
             }
+            ctx.api.updateRequirement("contract", {satisfied: true});
+            updatePendingState($footer, $checkbox, $error, true);
+        }
 
-            let $container = $("#kopere-proctoring-overlay");
-            if ($container.length === 0) {
-                return;
+        ctx.api.registerRequirement("contract", {
+            label: M.util.get_string("requirement_label", "proctoringpolicy_contract"),
+            satisfied: satisfied()
+        });
+        updatePendingState($footer, $checkbox, $error, satisfied());
+
+        $checkbox.on("change", function () {
+            ctx.api.updateRequirement("contract", {satisfied: satisfied()});
+            updatePendingState($footer, $checkbox, $error, satisfied());
+        });
+
+        call("proctoringpolicy_contract_get_status", {
+            cmid: Number(ctx.cmid || 0),
+            attemptid: Number(ctx.attemptid || 0)
+        }).done(updateProof);
+
+        ctx.api.registerGatekeeper(function () {
+            if (accepted) {
+                return true;
             }
-
-            let $footer = $container.find(".kopere-proctoring-footer");
-            let $checkbox = $container.find("[data-role=\"contract-accept\"]");
-            let $error = $container.find("[data-role=\"contract-error\"]");
-            let accepted = $checkbox.is(":checked");
-
-            ctx.api.registerRequirement("contract", {
-                label: M.util.get_string("requirement_label", "proctoringpolicy_contract"),
-                satisfied: accepted
-            });
-
-            updatePendingState($footer, $checkbox, $error, accepted);
-
-            $checkbox.on("change", function () {
-                accepted = $(this).is(":checked");
-                ctx.api.updateRequirement("contract", {
-                    satisfied: accepted
-                });
-                updatePendingState($footer, $checkbox, $error, accepted);
-            });
-
-            ctx.api.registerGatekeeper(function () {
-                if (accepted) {
-                    return true;
-                }
-
+            if (!$checkbox.is(":checked")) {
                 $error.show();
-                updatePendingState($footer, $checkbox, $error, accepted);
+                updatePendingState($footer, $checkbox, $error, false);
                 $checkbox.trigger("focus");
                 return false;
+            }
+
+            let deferred = $.Deferred();
+            call("proctoringpolicy_contract_accept_contract", {
+                cmid: Number(ctx.cmid || 0),
+                attemptid: Number(ctx.attemptid || 0),
+                screenresolution: screenResolution(),
+                geo: ""
+            }).done(function (result) {
+                updateProof(result);
+                deferred.resolve(true);
+            }).fail(function () {
+                $error.show();
+                updatePendingState($footer, $checkbox, $error, false);
+                deferred.resolve(false);
             });
-        }
-    };
+            return deferred.promise();
+        });
+    }};
 });

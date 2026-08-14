@@ -21,173 +21,80 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(["jquery"], function ($) {
-        "use strict";
+define(["jquery", "core/ajax"], function ($, Ajax) {
+    "use strict";
 
-        function getSesskey() {
-            if (window.M && window.M.cfg && window.M.cfg.sesskey) {
-                return window.M.cfg.sesskey;
-            }
-            return "";
+    function hashString(input) {
+        let h = 0;
+        for (let i = 0; i < input.length; i++) {
+            h = (h * 31 + input.charCodeAt(i)) >>> 0;
         }
-
-        function hashString(input) {
-            // Lightweight non-crypto hash (deterministic).
-            let h = 0;
-            let i;
-            for (i = 0; i < input.length; i++) {
-                h = (h * 31 + input.charCodeAt(i)) >>> 0;
-            }
-            return h.toString(16);
-        }
-
-        function buildBaseline() {
-            let fetchSig = "";
-            let timeoutSig = "";
-            let addEvSig = "";
-
-            try {
-                fetchSig = String(window.fetch).slice(0, 80);
-            } catch (e) {
-                fetchSig = "no_fetch";
-            }
-
-            try {
-                timeoutSig = String(window.setTimeout).slice(0, 80);
-            } catch (e2) {
-                timeoutSig = "no_settimeout";
-            }
-
-            try {
-                addEvSig = String(document.addEventListener).slice(0, 80);
-            } catch (e3) {
-                addEvSig = "no_addev";
-            }
-
-            return {
-                fetchSig: fetchSig,
-                timeoutSig: timeoutSig,
-                addEvSig: addEvSig,
-                userAgent: navigator.userAgent || "",
-            };
-        }
-
-        function postLog(url, payload) {
-            if (!url) {
-                return;
-            }
-
-            $.ajax({
-                url: url,
-                method: "POST",
-                data: JSON.stringify(payload),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                xhrFields: {
-                    withCredentials: true
-                }
-            });
-        }
-
-        function startPolicy(ctx, cfg) {
-            let component = "proctoringpolicy_securitysignals";
-
-            let cmid = Number(ctx.cmid || 0);
-            let attemptid = Number(ctx.attemptid || 0);
-
-            let pulseMs = Number(cfg.pulsems || 8) * 1000;
-
-            let baseline = buildBaseline();
-            let clientToken = hashString([
-                String(Date.now()),
-                baseline.userAgent,
-                String(screen.width) + "x" + String(screen.height)
-            ].join("|"));
-
-            let lastSentAt = 0;
-
-            function shouldSendNow() {
-                let now = Date.now();
-                if ((now - lastSentAt) < 1500) {
-                    return false;
-                }
-                lastSentAt = now;
-                return true;
-            }
-
-            function checkIntegrity() {
-                let current = buildBaseline();
-                if (
-                    current.fetchSig !== baseline.fetchSig ||
-                    current.timeoutSig !== baseline.timeoutSig ||
-                    current.addEvSig !== baseline.addEvSig
-                ) {
-                    return {
-                        integrityok: 0,
-                        reason: "integrity_changed"
-                    };
-                }
-                return {
-                    integrityok: 1,
-                    reason: ""
-                };
-            }
-
-            function pulse() {
-                let integrity = checkIntegrity();
-
-                // Only report when something is suspicious.
-                if (integrity.integrityok === 1) {
-                    return;
-                }
-
-                if (!shouldSendNow()) {
-                    return;
-                }
-
-                let payload = {
-                    cmid: cmid,
-                    attemptid: attemptid,
-                    action: "securitysignals_pulse",
-                    actionvalue: JSON.stringify({
-                        integrityok: integrity.integrityok,
-                        integrityreason: integrity.reason,
-                        token: clientToken
-                    }),
-                    sesskey: getSesskey(),
-                    ts: Date.now()
-                };
-
-                postLog(`${M.cfg.wwwroot}/local/kopere_proctoring/save-image.php`, payload);
-
-                // Optional UI hint (lightweight).
-                if (integrity.integrityok === 0) {
-                    // Avoid blocking UI here; other policies can decide to lock.
-                    // This is just a hint.
-                    // eslint-disable-next-line no-console
-                    console.warn(M.util.get_string("js_warn_integrity", "proctoringpolicy_securitysignals"));
-                }
-            }
-
-            setInterval(pulse, pulseMs);
-        }
-
-        function init(ctx, cfg) {
-            ctx = ctx || {};
-            cfg = cfg || {};
-
-            if (ctx.api && typeof ctx.api.registerStartCallback === "function") {
-                ctx.api.registerStartCallback(function () {
-                    startPolicy(ctx, cfg);
-                });
-                return;
-            }
-
-            startPolicy(ctx, cfg);
-        }
-
-        return {
-            init: init
-        };
+        return h.toString(16);
     }
-);
+    function buildBaseline() {
+        let fetchSig = "";
+        let timeoutSig = "";
+        let addEvSig = "";
+        try { fetchSig = String(window.fetch).slice(0, 80); } catch (e) { fetchSig = "no_fetch"; }
+        try { timeoutSig = String(window.setTimeout).slice(0, 80); } catch (e2) { timeoutSig = "no_settimeout"; }
+        try { addEvSig = String(document.addEventListener).slice(0, 80); } catch (e3) { addEvSig = "no_addev"; }
+        return {fetchSig: fetchSig, timeoutSig: timeoutSig, addEvSig: addEvSig, userAgent: navigator.userAgent || ""};
+    }
+    function postLog(payload) {
+        return Ajax.call([{methodname: "local_kopere_proctoring_save_log", args: payload}])[0];
+    }
+    function startPolicy(ctx, cfg) {
+        let cmid = Number(ctx.cmid || 0);
+        let attemptid = Number(ctx.attemptid || 0);
+        let pulseMs = Number(cfg.pulsems || 8) * 1000;
+        let baseline = buildBaseline();
+        let clientToken = hashString([String(Date.now()), baseline.userAgent,
+            String(screen.width) + "x" + String(screen.height)].join("|"));
+        let lastSentAt = 0;
+
+        function shouldSendNow() {
+            let now = Date.now();
+            if ((now - lastSentAt) < 1500) { return false; }
+            lastSentAt = now;
+            return true;
+        }
+        function checkIntegrity() {
+            let current = buildBaseline();
+            if (current.fetchSig !== baseline.fetchSig ||
+                    current.timeoutSig !== baseline.timeoutSig ||
+                    current.addEvSig !== baseline.addEvSig) {
+                return {integrityok: 0, reason: "integrity_changed"};
+            }
+            return {integrityok: 1, reason: ""};
+        }
+        function pulse() {
+            let integrity = checkIntegrity();
+            if (integrity.integrityok === 1 || !shouldSendNow()) { return; }
+            postLog({
+                cmid: cmid,
+                attemptid: attemptid,
+                screenresolution: String(screen.width || 0) + "x" + String(screen.height || 0),
+                actionvalue: JSON.stringify({
+                    integrityok: integrity.integrityok,
+                    integrityreason: integrity.reason,
+                    token: clientToken
+                }),
+                image: ""
+            });
+            if (integrity.integrityok === 0) {
+                console.warn(M.util.get_string("js_warn_integrity", "proctoringpolicy_securitysignals"));
+            }
+        }
+        setInterval(pulse, pulseMs);
+    }
+    function init(ctx, cfg) {
+        ctx = ctx || {};
+        cfg = cfg || {};
+        if (ctx.api && typeof ctx.api.registerStartCallback === "function") {
+            ctx.api.registerStartCallback(function () { startPolicy(ctx, cfg); });
+            return;
+        }
+        startPolicy(ctx, cfg);
+    }
+    return {init: init};
+});

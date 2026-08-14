@@ -15,21 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * version.php
+ * services.php
  *
- * @package   proctoringpolicy_contract
+ * @package   local_kopere_proctoring
  * @copyright 2026 Eduardo Kraus {@link https://eduardokraus.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2026081400;
-$plugin->release = "1.0.2";
-$plugin->requires = 2022041900;
-$plugin->maturity = MATURITY_STABLE;
-$plugin->component = "proctoringpolicy_contract";
-
-$plugin->dependencies = [
-    "local_kopere_proctoring" => 2026011500,
+$functions = [
+    'local_kopere_proctoring_save_log' => [
+        'classname' => 'local_kopere_proctoring\\external\\save_log',
+        'methodname' => 'execute',
+        'description' => 'Store a proctoring log entry and optional evidence image.',
+        'type' => 'write',
+        'ajax' => true,
+    ],
 ];
