@@ -35,7 +35,21 @@
         <h3 class="mb-3">{{#str}}start_title, local_kopere_proctoring{{/str}}</h3>
 
         <div class="kopere-proctoring-description mb-3"
-             data-kopere-proctoring="description"></div>
+             data-kopere-proctoring="description">
+            <div class="alert alert-success mb-0"
+                 data-kopere-proctoring-description-ready
+                 style="display:none;">
+                {{#str}}description_ready, local_kopere_proctoring{{/str}}
+            </div>
+            <div class="alert alert-warning mb-0"
+                 data-kopere-proctoring-description-pending
+                 style="display:none;">
+                <div class="mb-2">
+                    <strong>{{#str}}description_pending, local_kopere_proctoring{{/str}}</strong>
+                </div>
+                <ul class="mb-0 pl-3" data-kopere-proctoring-description-list></ul>
+            </div>
+        </div>
 
         <div class="kopere-proctoring-policies mb-4"
              data-kopere-proctoring="policies">
@@ -82,4 +96,37 @@
          style="display:none;">
     </div>
 
+</div>
+<div id="kopere-proctoring-runtime-messages"
+     class="kopere-proctoring-runtime-messages mb-3"
+     data-kopere-proctoring="messages"
+     aria-live="polite"
+     style="display:none;">
+    <div class="alert alert-danger kopere-proctoring-popup mb-0"
+         data-kopere-proctoring-violation>
+        <div class="kopere-proctoring-popup__title">
+            {{#str}}locked_title, local_kopere_proctoring{{/str}}
+        </div>
+        <div class="kopere-proctoring-popup__content"
+             data-kopere-proctoring-violation-content></div>
+    </div>
+</div>
+
+<div id="kopere-proctoring-reload-popup"
+     role="alertdialog"
+     aria-modal="true"
+     style="display:none;">
+    <div style="max-width:520px;width:100%;background:#fff;color:#1f2937;border-radius:12px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.45);font-family:Arial,sans-serif;text-align:left;">
+        <h3 style="margin:0 0 12px 0;font-size:22px;line-height:1.25;color:#b91c1c;">
+            {{#str}}reload_required_title, local_kopere_proctoring{{/str}}
+        </h3>
+        <p style="margin:0 0 18px 0;font-size:16px;line-height:1.45;">
+            {{#str}}reload_required_message, local_kopere_proctoring{{/str}}
+        </p>
+        <button type="button"
+                data-kopere-proctoring-reload-button="1"
+                style="display:inline-block;border:0;border-radius:6px;background:#0f6cbf;color:#fff;padding:10px 16px;font-size:15px;cursor:pointer;">
+            {{#str}}reload_required_button, local_kopere_proctoring{{/str}}
+        </button>
+    </div>
 </div>
