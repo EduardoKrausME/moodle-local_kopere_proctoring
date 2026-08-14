@@ -351,8 +351,10 @@ class contract_service {
         $att->contract = 1;
         $att->contract_ip = (string)($payload['ip'] ?? '');
         $att->contract_useragent = substr((string)($payload['useragent'] ?? ''), 0, 255);
-        $att->contract_screenresolution = substr((string)($payload['screenresolution'] ?? ''), 0, 255);
-        $att->contract_geo = substr((string)($payload['geo'] ?? ''), 0, 255);
+        $screenresolution = clean_param((string)($payload['screenresolution'] ?? ''), PARAM_TEXT);
+        $geo = clean_param((string)($payload['geo'] ?? ''), PARAM_TEXT);
+        $att->contract_screenresolution = substr($screenresolution, 0, 255);
+        $att->contract_geo = substr($geo, 0, 255);
         $att->contract_time = (int)($payload['time'] ?? time());
 
         $DB->update_record('local_kopere_proctoring_att', $att);

@@ -54,8 +54,8 @@ if ($action === 'status') {
 }
 
 if ($action === 'accept') {
-    $screenresolution = optional_param('screenresolution', '', PARAM_RAW_TRIMMED);
-    $geo = optional_param('geo', '', PARAM_RAW_TRIMMED);
+    $screenresolution = optional_param('screenresolution', '', PARAM_TEXT);
+    $geo = optional_param('geo', '', PARAM_TEXT);
 
     $att = contract_service::accept($att, [
         'ip' => getremoteaddr(),
