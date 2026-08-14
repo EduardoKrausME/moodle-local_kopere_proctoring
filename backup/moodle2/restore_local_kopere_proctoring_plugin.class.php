@@ -27,14 +27,28 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/backup/moodle2/restore_local_plugin.class.php');
 
+/**
+ * Class restore_local_kopere_proctoring_plugin
+ */
 class restore_local_kopere_proctoring_plugin extends restore_local_plugin {
 
+    /**
+     * define_module_plugin_structure
+     *
+     * @return restore_path_element[]
+     */
     protected function define_module_plugin_structure(): array {
         return [
             new restore_path_element($this->get_namefor('config'), $this->get_pathfor('/config')),
         ];
     }
 
+    /**
+     * process_local_kopere_proctoring_config
+     *
+     * @param array $data
+     * @return void
+     */
     public function process_local_kopere_proctoring_config(array $data): void {
         $name = (string) ($data['name'] ?? '');
         if (!preg_match('/^(?:kopere_proctoring_enabled|policy_[a-z0-9_]+)_\\d+$/', $name)) {

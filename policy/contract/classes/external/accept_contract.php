@@ -36,8 +36,16 @@ use external_single_structure;
 use external_value;
 use proctoringpolicy_contract\contract_service;
 
+/**
+ * Class accept_contract
+ */
 class accept_contract extends external_api {
 
+    /**
+     * execute_parameters
+     *
+     * @return external_function_parameters
+     */
     public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters([
             'cmid' => new external_value(PARAM_INT, 'Course module id'),
@@ -47,6 +55,20 @@ class accept_contract extends external_api {
         ]);
     }
 
+    /**
+     * execute
+     *
+     * @param int $cmid
+     * @param int $attemptid
+     * @param string $screenresolution
+     * @param string $geo
+     * @return array
+     * @throws \coding_exception
+     * @throws \core_external\restricted_context_exception
+     * @throws \dml_exception
+     * @throws \invalid_parameter_exception
+     * @throws \required_capability_exception
+     */
     public static function execute(
         int $cmid,
         int $attemptid,
@@ -91,6 +113,11 @@ class accept_contract extends external_api {
         ];
     }
 
+    /**
+     * execute_returns
+     *
+     * @return external_single_structure
+     */
     public static function execute_returns(): external_single_structure {
         return new external_single_structure([
             'accepted' => new external_value(PARAM_BOOL, 'Whether the contract is accepted'),

@@ -27,8 +27,17 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/backup/moodle2/backup_local_plugin.class.php');
 
+/**
+ * Class backup_local_kopere_proctoring_plugin
+ */
 class backup_local_kopere_proctoring_plugin extends backup_local_plugin {
 
+    /**
+     * define_module_plugin_structure
+     *
+     * @return void
+     * @throws base_element_struct_exception
+     */
     protected function define_module_plugin_structure(): void {
         global $DB;
 
