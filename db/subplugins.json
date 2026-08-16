@@ -1,6 +1,6 @@
 {
   "subplugintypes": {
-    "proctoring_policy": "policy"
+    "proctoringpolicy": "policy"
   },
   "plugintypes": {
     "proctoringpolicy": "local/kopere_proctoring/policy"
