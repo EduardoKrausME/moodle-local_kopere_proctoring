@@ -1,592 +1,661 @@
 @charset "UTF-8";
 #kopere-proctoring-modal {
-  position: fixed;
-  inset: 0;
-  z-index: 2147483000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 32px;
-  box-sizing: border-box;
-  isolation: isolate;
+    position: fixed;
+    inset: 0;
+    z-index: 2147483000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    box-sizing: border-box;
+    isolation: isolate;
 }
+
 #kopere-proctoring-modal::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background: rgba(241, 244, 249, 0.76);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  z-index: 0;
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(241, 244, 249, 0.76);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 0;
 }
+
 #kopere-proctoring-modal .kopere-proctoring-start,
 #kopere-proctoring-modal .kopere-proctoring-locked,
 #kopere-proctoring-modal .kopere-proctoring-running {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  max-width: 1180px;
-  max-height: calc(100vh - 64px);
-  overflow: auto;
-  background: #ffffff;
-  border: 1px solid #dfe4ec;
-  border-radius: 28px;
-  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.18);
-  padding: 48px 52px 40px;
-  box-sizing: border-box;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 1180px;
+    max-height: calc(100vh - 64px);
+    overflow: auto;
+    background: #ffffff;
+    border: 1px solid #dfe4ec;
+    border-radius: 28px;
+    box-shadow: 0 24px 80px rgba(15, 23, 42, 0.18);
+    padding: 48px 52px 40px;
+    box-sizing: border-box;
 }
+
 #kopere-proctoring-modal .kopere-proctoring-start > h3,
 #kopere-proctoring-modal .kopere-proctoring-locked > h3,
 #kopere-proctoring-modal .kopere-proctoring-running > h3 {
-  margin: 0 0 18px;
-  text-align: center;
-  font-size: 64px;
-  line-height: 1.04;
-  font-weight: 800;
-  color: #172133;
-  letter-spacing: -0.03em;
+    margin: 0 0 18px;
+    text-align: center;
+    font-size: 64px;
+    line-height: 1.04;
+    font-weight: 800;
+    color: #172133;
+    letter-spacing: -0.03em;
 }
+
 #kopere-proctoring-modal .kopere-proctoring-locked-message {
-  max-width: 860px;
-  margin: 0 auto 28px;
-  text-align: center;
-  font-size: 27px;
-  line-height: 1.42;
-  font-weight: 400;
-  color: #2c3444;
+    max-width: 860px;
+    margin: 0 auto 28px;
+    text-align: center;
+    font-size: 27px;
+    line-height: 1.42;
+    font-weight: 400;
+    color: #2c3444;
 }
+
 #kopere-proctoring-modal .kopere-proctoring-messages {
-  max-width: 1040px;
-  margin: 0 auto 32px;
-  padding: 24px 28px;
-  border: 2px dashed #d5dbe5;
-  border-radius: 18px;
-  background: linear-gradient(180deg, #fafbfd 0%, #f4f7fb 100%);
-  text-align: center;
-  font-size: 20px;
-  line-height: 1.5;
-  color: #293244;
-  box-sizing: border-box;
-  min-height: 88px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    max-width: 1040px;
+    margin: 0 auto 32px;
+    padding: 24px 28px;
+    border: 2px dashed #d5dbe5;
+    border-radius: 18px;
+    background: linear-gradient(180deg, #fafbfd 0%, #f4f7fb 100%);
+    text-align: center;
+    font-size: 20px;
+    line-height: 1.5;
+    color: #293244;
+    box-sizing: border-box;
+    min-height: 88px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
+
 #kopere-proctoring-modal .kopere-proctoring-policies {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  max-width: 1040px;
-  margin: 0 auto 34px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-width: 1040px;
+    margin: 0 auto 34px;
 }
+
 #kopere-proctoring-modal .kopere-proctoring-policies > *,
 #kopere-proctoring-modal .kopere-proctoring-policies h4,
 #kopere-proctoring-modal .kopere-proctoring-policies strong {
-  color: #172133;
+    color: #172133;
 }
+
 #kopere-proctoring-modal .kopere-proctoring-policies h4 {
-  margin: 0 0 14px;
-  font-size: 28px;
-  line-height: 1.25;
-  font-weight: 800;
+    margin: 0 0 14px;
+    font-size: 28px;
+    line-height: 1.25;
+    font-weight: 800;
 }
+
 #kopere-proctoring-modal .kopere-proctoring-policies p,
 #kopere-proctoring-modal .kopere-proctoring-policies div,
 #kopere-proctoring-modal .kopere-proctoring-policies label,
 #kopere-proctoring-modal .kopere-proctoring-policies span {
-  font-size: 18px;
-  line-height: 1.55;
+    font-size: 18px;
+    line-height: 1.55;
 }
+
 #kopere-proctoring-modal .kopere-proctoring-policies input[type=text],
 #kopere-proctoring-modal .kopere-proctoring-policies input[type=password],
 #kopere-proctoring-modal .kopere-proctoring-policies input[type=email],
 #kopere-proctoring-modal .kopere-proctoring-policies textarea,
 #kopere-proctoring-modal .kopere-proctoring-policies select {
-  width: 100%;
-  min-height: 64px;
-  padding: 14px 18px;
-  border: 2px solid #cfd6e2;
-  border-radius: 14px;
-  background: #ffffff;
-  box-shadow: none;
-  font-size: 22px;
-  color: #1f2937;
-  box-sizing: border-box;
+    width: 100%;
+    min-height: 64px;
+    padding: 14px 18px;
+    border: 2px solid #cfd6e2;
+    border-radius: 14px;
+    background: #ffffff;
+    box-shadow: none;
+    font-size: 22px;
+    color: #1f2937;
+    box-sizing: border-box;
 }
+
 #kopere-proctoring-modal .kopere-proctoring-policies input[type=text]:focus,
 #kopere-proctoring-modal .kopere-proctoring-policies input[type=password]:focus,
 #kopere-proctoring-modal .kopere-proctoring-policies input[type=email]:focus,
 #kopere-proctoring-modal .kopere-proctoring-policies textarea:focus,
 #kopere-proctoring-modal .kopere-proctoring-policies select:focus {
-  outline: 0;
-  border-color: #8fb3db;
-  box-shadow: 0 0 0 4px rgba(143, 179, 219, 0.2);
+    outline: 0;
+    border-color: #8fb3db;
+    box-shadow: 0 0 0 4px rgba(143, 179, 219, 0.2);
 }
+
 #kopere-proctoring-modal .kopere-proctoring-policies input[type=checkbox] {
-  width: 30px;
-  height: 30px;
-  margin-right: 12px;
-  vertical-align: middle;
-  accent-color: #198754;
+    width: 30px;
+    height: 30px;
+    margin-right: 12px;
+    vertical-align: middle;
+    accent-color: #198754;
 }
+
 #kopere-proctoring-modal .kopere-proctoring-policies button,
 #kopere-proctoring-modal .kopere-proctoring-policies .btn {
-  min-height: 60px;
-  padding: 0 26px;
-  border-radius: 14px;
-  border: 2px solid #d0d6e0;
-  background: #ffffff;
-  color: #2d3647;
-  font-size: 18px;
-  font-weight: 700;
-  box-shadow: none;
-  transition: all 0.18s ease;
+    min-height: 60px;
+    padding: 0 26px;
+    border-radius: 14px;
+    border: 2px solid #d0d6e0;
+    background: #ffffff;
+    color: #2d3647;
+    font-size: 18px;
+    font-weight: 700;
+    box-shadow: none;
+    transition: all 0.18s ease;
 }
+
 #kopere-proctoring-modal .kopere-proctoring-policies button:hover,
 #kopere-proctoring-modal .kopere-proctoring-policies .btn:hover {
-  border-color: #b9c3d2;
-  background: #f8fafc;
+    border-color: #b9c3d2;
+    background: #f8fafc;
 }
+
 #kopere-proctoring-modal .kopere-proctoring-policies .btn-primary {
-  border-color: #8faed2;
-  background: linear-gradient(180deg, #c7d9ef 0%, #abc4e0 100%);
-  color: #1d3650;
+    border-color: #8faed2;
+    background: linear-gradient(180deg, #c7d9ef 0%, #abc4e0 100%);
+    color: #1d3650;
 }
+
 #kopere-proctoring-modal .kopere-proctoring-policies .btn-secondary {
-  background: #ffffff;
-  color: #2d3647;
+    background: #ffffff;
+    color: #2d3647;
 }
+
 #kopere-proctoring-modal .kopere-proctoring-policies #auth-password-field {
-  --code-border: #cbd5e1;
-  --code-border-focus: #2563eb;
-  --code-bg: #ffffff;
-  --code-text: #111827;
-  position: relative;
-  display: inline-flex;
-  gap: 10px;
-  width: calc(338px + 58px + 17px);
-  height: 48px;
-  overflow: hidden;
-  cursor: text;
+    --code-border: #cbd5e1;
+    --code-border-focus: #2563eb;
+    --code-bg: #ffffff;
+    --code-text: #111827;
+    position: relative;
+    display: inline-flex;
+    gap: 10px;
+    width: calc(338px + 58px + 17px);
+    height: 48px;
+    overflow: hidden;
+    cursor: text;
 }
+
 #kopere-proctoring-modal .kopere-proctoring-policies #auth-password-field .box-password- {
-  position: relative;
-  z-index: 1;
-  display: block;
-  box-sizing: border-box;
-  width: 48px;
-  height: 48px;
-  border: 1px solid var(--code-border);
-  border-radius: 10px;
-  background: var(--code-bg);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    position: relative;
+    z-index: 1;
+    display: block;
+    box-sizing: border-box;
+    width: 48px;
+    height: 48px;
+    border: 1px solid var(--code-border);
+    border-radius: 10px;
+    background: var(--code-bg);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
+
 #kopere-proctoring-modal .kopere-proctoring-policies #auth-password-field:focus-within {
-  --code-border: var(--code-border-focus);
+    --code-border: var(--code-border-focus);
 }
+
 #kopere-proctoring-modal .kopere-proctoring-policies #auth-password-field:focus-within .box-password- {
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
+
 #kopere-proctoring-modal .kopere-proctoring-policies #auth-password-field input[data-kppass=password] {
-  position: absolute;
-  z-index: 2;
-  top: 0;
-  left: 0;
-  box-sizing: content-box;
-  width: calc(338px + 58px);
-  height: 48px;
-  min-height: 48px;
-  padding: 0;
-  padding-left: calc((48px - 1ch) / 2);
-  border: 0;
-  outline: 0;
-  box-shadow: none;
-  background: transparent;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 48px;
-  color: var(--code-text);
-  letter-spacing: calc(48px + 10px - 1ch);
-  caret-color: var(--code-border-focus);
-  appearance: none;
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: 0;
+    box-sizing: content-box;
+    width: calc(338px + 58px);
+    height: 48px;
+    min-height: 48px;
+    padding: 0;
+    padding-left: calc((48px - 1ch) / 2);
+    border: 0;
+    outline: 0;
+    box-shadow: none;
+    background: transparent;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 48px;
+    color: var(--code-text);
+    letter-spacing: calc(48px + 10px - 1ch);
+    caret-color: var(--code-border-focus);
+    appearance: none;
 }
+
 #kopere-proctoring-modal .kopere-proctoring-policies #auth-password-field input[data-kppass=password]::placeholder {
-  color: transparent;
+    color: transparent;
 }
+
 #kopere-proctoring-modal .kopere-proctoring-policies #auth-password-field input[data-kppass=password]:focus {
-  outline: 0;
-  box-shadow: none;
+    outline: 0;
+    box-shadow: none;
 }
+
 #kopere-proctoring-modal .kopere-password-policy {
-  background: #ffffff;
-  border: 2px solid #d9dee8;
-  border-radius: 18px;
-  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
-  padding: 28px 30px;
-  margin: 0;
-  color: #212938;
+    background: #ffffff;
+    border: 2px solid #d9dee8;
+    border-radius: 18px;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+    padding: 28px 30px;
+    margin: 0;
+    color: #212938;
 }
+
 #kopere-proctoring-modal .kopere-proctoring-actions {
-  display: flex;
-  justify-content: center;
-  margin-top: 18px;
+    display: flex;
+    justify-content: center;
+    margin-top: 18px;
 }
+
 #kopere-proctoring-modal #kopere-proctoring-start-button,
 #kopere-proctoring-modal [data-kopere-proctoring=start-button] {
-  min-width: 280px;
-  min-height: 74px;
-  padding: 0 34px;
-  border: 0;
-  border-radius: 16px;
-  font-size: 26px;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+    min-width: 280px;
+    min-height: 74px;
+    padding: 0 34px;
+    border: 0;
+    border-radius: 16px;
+    font-size: 26px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
 }
+
 #kopere-proctoring-modal #kopere-proctoring-start-button:hover,
 #kopere-proctoring-modal [data-kopere-proctoring=start-button]:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 20px 36px rgba(107, 145, 187, 0.34);
+    transform: translateY(-1px);
+    box-shadow: 0 20px 36px rgba(107, 145, 187, 0.34);
 }
+
 #kopere-proctoring-modal #kopere-proctoring-start-button:disabled,
 #kopere-proctoring-modal [data-kopere-proctoring=start-button]:disabled {
-  opacity: 0.88;
-  cursor: not-allowed;
-  filter: grayscale(0.06);
+    opacity: 0.88;
+    cursor: not-allowed;
+    filter: grayscale(0.06);
 }
+
 #kopere-proctoring-modal .text-danger,
 #kopere-proctoring-modal .kopere-proctoring-error {
-  color: #b94b4b !important;
-  font-weight: 700;
+    color: #b94b4b !important;
+    font-weight: 700;
 }
+
 #kopere-proctoring-modal .kopere-proctoring-dialog {
-  width: 100%;
-  background: #ffffff;
-  border-radius: 22px;
-  border: 1px solid #dbe1ea;
-  box-shadow: 0 24px 72px rgba(15, 23, 42, 0.22);
+    width: 100%;
+    background: #ffffff;
+    border-radius: 22px;
+    border: 1px solid #dbe1ea;
+    box-shadow: 0 24px 72px rgba(15, 23, 42, 0.22);
 }
+
 #kopere-proctoring-modal .kopere-proctoring-header,
 #kopere-proctoring-modal .kopere-proctoring-footer {
-  padding-left: 16px;
-  padding-right: 16px;
-  margin: 0 -18px -15px;
+    padding-left: 16px;
+    padding-right: 16px;
+    margin: 0 -18px -15px;
 }
+
 #kopere-proctoring-modal .kopere-proctoring-header {
-  padding-top: 16px;
-  padding-bottom: 6px;
-  border-bottom: 1px solid #e6ebf2;
-  margin: -22px -18px 12px;
+    padding-top: 16px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #e6ebf2;
+    margin: -22px -18px 12px;
 }
+
 #kopere-proctoring-modal .kopere-proctoring-body p:last-child {
-  margin-bottom: 0;
+    margin-bottom: 0;
 }
+
 #kopere-proctoring-modal .kopere-proctoring-footer {
-  margin-top: 8px;
-  padding: 18px 1rem;
-  border-top: 1px solid #e6ebf2;
-  border-radius: 0.95rem;
-  transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+    margin-top: 8px;
+    padding: 18px 1rem;
+    border-top: 1px solid #e6ebf2;
+    border-radius: 0.95rem;
+    transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
 }
+
 #kopere-proctoring-modal .kopere-proctoring-footer .kopere-proctoring-accept {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-  font-size: 18px;
-  line-height: 1.4;
-  color: #263041;
-  margin: 0;
-  padding: 0.7rem 0.95rem;
-  border-radius: 0.85rem;
-  border: 1px solid rgba(108, 117, 125, 0.2);
-  background: #ffffff;
-  cursor: pointer;
-}
-#kopere-proctoring-modal .kopere-proctoring-footer .kopere-proctoring-accept span {
-  color: #198754;
-  font-weight: 700;
-}
-#kopere-proctoring-modal .kopere-proctoring-footer.is-pending {
-  border: 1px solid rgba(176, 42, 55, 0.28);
-  background: rgba(176, 42, 55, 0.05);
-  box-shadow: 0 0 0 0.35rem rgba(176, 42, 55, 0.08);
-}
-#kopere-proctoring-modal .kopere-proctoring-footer.is-pending .kopere-proctoring-accept span {
-  color: #b02a37;
-}
-#kopere-proctoring-modal .kopere-proctoring-title {
-  margin: 0;
-  font-size: 32px;
-  line-height: 1.2;
-  font-weight: 800;
-  color: #172133;
-}
-#kopere-proctoring-modal .kopere-proctoring-actions {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-top: 22px;
-}
-@media (max-width: 991px) {
-  #kopere-proctoring-modal {
-    padding: 18px;
-  }
-  #kopere-proctoring-modal .kopere-proctoring-start,
-  #kopere-proctoring-modal .kopere-proctoring-locked,
-  #kopere-proctoring-modal .kopere-proctoring-running {
-    padding: 28px 22px 24px;
-    border-radius: 20px;
-  }
-  #kopere-proctoring-modal .kopere-proctoring-start > h3,
-  #kopere-proctoring-modal .kopere-proctoring-locked > h3,
-  #kopere-proctoring-modal .kopere-proctoring-running > h3 {
-    font-size: 42px;
-  }
-  #kopere-proctoring-modal .kopere-proctoring-locked-message {
-    font-size: 21px;
-  }
-  #kopere-proctoring-modal .kopere-proctoring-messages {
-    min-height: 72px;
-    padding: 18px;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
     font-size: 18px;
-  }
-  #kopere-proctoring-modal .kopere-proctoring-policies > *,
-  #kopere-proctoring-modal .kopere-password-policy {
-    padding: 22px 18px;
-  }
-  #kopere-proctoring-modal #kopere-proctoring-start-button,
-  #kopere-proctoring-modal [data-kopere-proctoring=start-button] {
-    width: 100%;
-    min-width: 0;
-    font-size: 22px;
-  }
+    line-height: 1.4;
+    color: #263041;
+    margin: 0;
+    padding: 0.7rem 0.95rem;
+    border-radius: 0.85rem;
+    border: 1px solid rgba(108, 117, 125, 0.2);
+    background: #ffffff;
+    cursor: pointer;
+}
+
+#kopere-proctoring-modal .kopere-proctoring-footer .kopere-proctoring-accept span {
+    color: #198754;
+    font-weight: 700;
+}
+
+#kopere-proctoring-modal .kopere-proctoring-footer.is-pending {
+    border: 1px solid rgba(176, 42, 55, 0.28);
+    background: rgba(176, 42, 55, 0.05);
+    box-shadow: 0 0 0 0.35rem rgba(176, 42, 55, 0.08);
+}
+
+#kopere-proctoring-modal .kopere-proctoring-footer.is-pending .kopere-proctoring-accept span {
+    color: #b02a37;
+}
+
+#kopere-proctoring-modal .kopere-proctoring-title {
+    margin: 0;
+    font-size: 32px;
+    line-height: 1.2;
+    font-weight: 800;
+    color: #172133;
+}
+
+#kopere-proctoring-modal .kopere-proctoring-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 22px;
+}
+
+@media (max-width: 991px) {
+    #kopere-proctoring-modal {
+        padding: 18px;
+    }
+
+    #kopere-proctoring-modal .kopere-proctoring-start,
+    #kopere-proctoring-modal .kopere-proctoring-locked,
+    #kopere-proctoring-modal .kopere-proctoring-running {
+        padding: 28px 22px 24px;
+        border-radius: 20px;
+    }
+
+    #kopere-proctoring-modal .kopere-proctoring-start > h3,
+    #kopere-proctoring-modal .kopere-proctoring-locked > h3,
+    #kopere-proctoring-modal .kopere-proctoring-running > h3 {
+        font-size: 42px;
+    }
+
+    #kopere-proctoring-modal .kopere-proctoring-locked-message {
+        font-size: 21px;
+    }
+
+    #kopere-proctoring-modal .kopere-proctoring-messages {
+        min-height: 72px;
+        padding: 18px;
+        font-size: 18px;
+    }
+
+    #kopere-proctoring-modal .kopere-proctoring-policies > *,
+    #kopere-proctoring-modal .kopere-password-policy {
+        padding: 22px 18px;
+    }
+
+    #kopere-proctoring-modal #kopere-proctoring-start-button,
+    #kopere-proctoring-modal [data-kopere-proctoring=start-button] {
+        width: 100%;
+        min-width: 0;
+        font-size: 22px;
+    }
 }
 
 body:has(#kopere-proctoring) {
-  overflow: hidden !important;
+    overflow: hidden !important;
 }
+
 body:has(#kopere-proctoring) .drawer,
 body:has(#kopere-proctoring) #mod_quiz_navblock,
 body:has(#kopere-proctoring) .quizattempt .que,
 body:has(#kopere-proctoring) .quizattempt .submitbtns,
 body:has(#kopere-proctoring) .othernav {
-  pointer-events: none !important;
-  user-select: none !important;
+    pointer-events: none !important;
+    user-select: none !important;
 }
 
 #start-area {
-  position: fixed;
-  top: 0;
-  right: 0;
-  left: 0;
-  bottom: 0;
-  z-index: 9999999;
-  padding-bottom: 100px;
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 9999999;
+    padding-bottom: 100px;
 }
 
 .contract-tosign {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 15px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 15px 0;
 }
+
 .contract-tosign .contract-wrapper .check {
-  --size: 40px;
-  position: relative;
-  background: linear-gradient(90deg, #00b2ff, #0f6cbf);
-  line-height: 0;
-  perspective: 400px;
-  font-size: var(--size);
+    --size: 40px;
+    position: relative;
+    background: linear-gradient(90deg, #00b2ff, #0f6cbf);
+    line-height: 0;
+    perspective: 400px;
+    font-size: var(--size);
 }
+
 .contract-tosign .contract-wrapper .check input[type=checkbox],
 .contract-tosign .contract-wrapper .check label,
 .contract-tosign .contract-wrapper .check label::before,
 .contract-tosign .contract-wrapper .check label::after, .contract-tosign .contract-wrapper .check {
-  appearance: none;
-  display: inline-block;
-  border-radius: var(--size);
-  border: 0;
-  transition: 0.35s ease-in-out;
-  box-sizing: border-box;
-  cursor: pointer;
+    appearance: none;
+    display: inline-block;
+    border-radius: var(--size);
+    border: 0;
+    transition: 0.35s ease-in-out;
+    box-sizing: border-box;
+    cursor: pointer;
 }
+
 .contract-tosign .contract-wrapper .check label {
-  width: calc(2.2 * var(--size));
-  height: var(--size);
-  background: #d7d7d7;
-  overflow: hidden;
-  margin: 0;
+    width: calc(2.2 * var(--size));
+    height: var(--size);
+    background: #d7d7d7;
+    overflow: hidden;
+    margin: 0;
 }
+
 .contract-tosign .contract-wrapper .check input[type=checkbox] {
-  position: absolute;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1;
-  width: calc(0.8 * var(--size));
-  height: calc(0.8 * var(--size));
-  top: calc(0.1 * var(--size));
-  left: calc(0.1 * var(--size));
-  background: linear-gradient(45deg, #dedede, #ffffff);
-  outline: none;
-  margin: 0;
-  box-shadow: 0 0 0 0.12rem rgba(220, 53, 69, 0.12);
-  animation: kopereProctoringContractPulse 1.25s infinite;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+    width: calc(0.8 * var(--size));
+    height: calc(0.8 * var(--size));
+    top: calc(0.1 * var(--size));
+    left: calc(0.1 * var(--size));
+    background: linear-gradient(45deg, #dedede, #ffffff);
+    outline: none;
+    margin: 0;
+    box-shadow: 0 0 0 0.12rem rgba(220, 53, 69, 0.12);
+    animation: kopereProctoringContractPulse 1.25s infinite;
 }
+
 @keyframes kopereProctoringContractPulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.38);
-    transform: scale(1);
-  }
-  70% {
-    box-shadow: 0 0 0 0.55rem rgba(220, 53, 69, 0);
-    transform: scale(1.02);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
-    transform: scale(1);
-  }
+    0% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.38);
+        transform: scale(1);
+    }
+    70% {
+        box-shadow: 0 0 0 0.55rem rgba(220, 53, 69, 0);
+        transform: scale(1.02);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+        transform: scale(1);
+    }
 }
+
 .contract-tosign .contract-wrapper .check input[type=checkbox]:checked {
-  left: calc(1.3 * var(--size));
+    left: calc(1.3 * var(--size));
 }
+
 .contract-tosign .contract-wrapper .check input[type=checkbox]:checked + label {
-  background: transparent;
+    background: transparent;
 }
+
 .contract-tosign .contract-wrapper .check input[type=checkbox]:checked + label::before, .contract-tosign .contract-wrapper .check input[type=checkbox]:checked + label::after {
-  left: calc(1.55 * var(--size));
-  top: calc(0.4 * var(--size));
-  line-height: calc(0.1 * var(--size));
-  transform: rotateY(360deg);
+    left: calc(1.55 * var(--size));
+    top: calc(0.4 * var(--size));
+    line-height: calc(0.1 * var(--size));
+    transform: rotateY(360deg);
 }
+
 .contract-tosign .contract-wrapper .check input[type=checkbox]:checked + label::after {
-  height: calc(0.16 * var(--size));
-  top: calc(0.55 * var(--size));
-  left: calc(1.6 * var(--size));
-  font-size: calc(0.6 * var(--size));
-  line-height: 0;
+    height: calc(0.16 * var(--size));
+    top: calc(0.55 * var(--size));
+    left: calc(1.6 * var(--size));
+    font-size: calc(0.6 * var(--size));
+    line-height: 0;
 }
+
 .contract-tosign .contract-wrapper .check label::before,
 .contract-tosign .contract-wrapper .check label::after {
-  content: "· ·";
-  position: absolute;
-  overflow: hidden;
-  left: calc(0.15 * var(--size));
-  top: calc(0.5 * var(--size));
-  height: var(--size);
-  letter-spacing: calc(-0.04 * var(--size));
-  color: #9b9b9b;
-  font-family: "Times New Roman", serif;
-  z-index: 2;
-  font-size: calc(0.6 * var(--size));
-  border-radius: 0;
-  transform-origin: 0 0 calc(-0.5 * var(--size));
-  backface-visibility: hidden;
+    content: "· ·";
+    position: absolute;
+    overflow: hidden;
+    left: calc(0.15 * var(--size));
+    top: calc(0.5 * var(--size));
+    height: var(--size);
+    letter-spacing: calc(-0.04 * var(--size));
+    color: #9b9b9b;
+    font-family: "Times New Roman", serif;
+    z-index: 2;
+    font-size: calc(0.6 * var(--size));
+    border-radius: 0;
+    transform-origin: 0 0 calc(-0.5 * var(--size));
+    backface-visibility: hidden;
 }
+
 .contract-tosign .contract-wrapper .check label::after {
-  content: "●";
-  top: calc(0.65 * var(--size));
-  left: calc(0.2 * var(--size));
-  height: calc(0.1 * var(--size));
-  width: calc(0.35 * var(--size));
-  font-size: calc(0.2 * var(--size));
-  transform-origin: 0 0 calc(-0.4 * var(--size));
+    content: "●";
+    top: calc(0.65 * var(--size));
+    left: calc(0.2 * var(--size));
+    height: calc(0.1 * var(--size));
+    width: calc(0.35 * var(--size));
+    font-size: calc(0.2 * var(--size));
+    transform-origin: 0 0 calc(-0.4 * var(--size));
 }
 
 .qtext .clearfix::after {
-  display: none;
+    display: none;
 }
 
 body.path-mod-quiz fieldset#id_seb {
-  display: none;
+    display: none;
 }
 
 fieldset.proctoring-block {
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 6px;
-  padding: 1.25rem 1.25rem 1.5rem;
-  margin: 1.5rem 0;
-  background-color: rgba(132, 134, 135, 0.0509803922);
-  max-height: 5000px;
-  opacity: 1;
-  transition: all 0.35s ease;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 6px;
+    padding: 1.25rem 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+    background-color: rgba(132, 134, 135, 0.0509803922);
+    max-height: 5000px;
+    opacity: 1;
+    transition: all 0.35s ease;
 }
+
 fieldset.proctoring-block legend {
-  width: auto;
-  padding: 0 0.75rem;
-  float: unset;
+    width: auto;
+    padding: 0 0.75rem;
+    float: unset;
 }
+
 fieldset.proctoring-block .form-group,
 fieldset.proctoring-block .fitem {
-  margin-bottom: 1rem;
+    margin-bottom: 1rem;
 }
+
 fieldset.proctoring-block .fitem_fcheckbox {
-  margin-bottom: 0.75rem;
+    margin-bottom: 0.75rem;
 }
+
 fieldset.proctoring-block .helptooltip {
-  margin-left: 0.25rem;
+    margin-left: 0.25rem;
 }
+
 fieldset.proctoring-block:has(> [id$=_enabled][hidden]), fieldset.proctoring-block:has(> [id$=_enabled][hidden]) * {
-  max-height: 0;
-  opacity: 0;
-  margin: 0;
-  padding: 0;
-  border-width: 0;
+    max-height: 0;
+    opacity: 0;
+    margin: 0;
+    padding: 0;
+    border-width: 0;
 }
 
 .kopere-proctoring-popup {
-  border-radius: 0.9rem;
-  box-shadow: 0 0.85rem 2rem rgba(0, 0, 0, 0.16);
-  border: 1px solid rgba(220, 53, 69, 0.2);
+    border-radius: 0.9rem;
+    box-shadow: 0 0.85rem 2rem rgba(0, 0, 0, 0.16);
+    border: 1px solid rgba(220, 53, 69, 0.2);
 }
+
 .kopere-proctoring-popup__title {
-  font-size: 1rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
 }
 
 #kopere-password-admin-popover {
-  position: fixed;
-  right: 20px;
-  bottom: 20px;
-  z-index: 1050;
-  width: min(360px, 100vw - 40px);
-  border-radius: 0.5rem;
-  padding: 1rem;
-  background: #ffc107;
-  border: 1px solid rgba(255, 152, 0, 0.68);
-  box-shadow: 0 0.5rem 1rem rgba(255, 87, 34, 0.48);
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 1050;
+    width: min(360px, 100vw - 40px);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    background: #ffc107;
+    border: 1px solid rgba(255, 152, 0, 0.68);
+    box-shadow: 0 0.5rem 1rem rgba(255, 87, 34, 0.48);
 }
+
 #kopere-password-admin-popover .kopere-password-admin-popover-title {
-  font-weight: 700;
-  margin-bottom: 0.35rem;
+    font-weight: 700;
+    margin-bottom: 0.35rem;
 }
+
 #kopere-password-admin-popover .kopere-password-admin-popover-body {
-  margin-bottom: 0.75rem;
+    margin-bottom: 0.75rem;
 }
+
 #kopere-password-admin-popover .kopere-password-admin-popover-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
 }
 
 #kopere-password-quiz-pending {
-  clear: both;
+    clear: both;
 }
 
 body.proctoring-start, body.proctoring-start * {
-  pointer-events: none !important;
-  user-select: none;
+    pointer-events: none !important;
+    user-select: none;
 }
+
 body.proctoring-start::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background: rgba(241, 244, 249, 0.76);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  z-index: 9999999999999;
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(241, 244, 249, 0.76);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 9999999999999;
 }
 
 /*# sourceMappingURL=styles.css.map */
