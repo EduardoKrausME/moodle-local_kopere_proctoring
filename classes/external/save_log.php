@@ -98,7 +98,7 @@ class save_log extends external_api {
             'userid' => $USER->id,
         ], 'id', MUST_EXIST);
 
-        $record = (object) [
+        $record = (object)[
             'attemptid' => $params['attemptid'],
             'userid' => $USER->id,
             'ip' => getremoteaddr(),
@@ -110,10 +110,10 @@ class save_log extends external_api {
         $logid = $DB->insert_record('local_kopere_proctoring_log', $record);
 
         if ($params['image'] !== '') {
-            self::save_image($context, (int) $logid, $params['image']);
+            self::save_image($context, (int)$logid, $params['image']);
         }
 
-        return ['logid' => (int) $logid, 'saved' => true];
+        return ['logid' => (int)$logid, 'saved' => true];
     }
 
     /**

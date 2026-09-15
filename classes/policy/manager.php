@@ -176,7 +176,7 @@ class manager {
     public static function get_sorted_policy_names(): array {
         $policies = array_keys(core_component::get_plugin_list("proctoringpolicy"));
 
-        usort($policies, static function(string $a, string $b): int {
+        usort($policies, static function (string $a, string $b): int {
             return self::compare_policy_names($a, $b);
         });
 
@@ -191,7 +191,7 @@ class manager {
      * @throws dml_exception
      */
     public static function sort_policy_list(array $policies): array {
-        uksort($policies, static function(string $a, string $b): int {
+        uksort($policies, static function (string $a, string $b): int {
             return self::compare_policy_names($a, $b);
         });
 
@@ -303,7 +303,7 @@ class manager {
 
         /** @var policy_interface $classname */
         foreach (self::get_policy_classes(true) as $classname) {
-            $classname::add_module_form($formwrapper, $mform, (int) $cmid);
+            $classname::add_module_form($formwrapper, $mform, (int)$cmid);
         }
 
         $formwrapper->set_data([
@@ -438,7 +438,7 @@ class manager {
                 $pluginsordered = array_values(
                     array_filter(
                         self::get_sorted_policy_names(),
-                        static function(string $policyname): bool {
+                        static function (string $policyname): bool {
                             return self::is_policy_sortable($policyname);
                         }
                     )
@@ -471,7 +471,7 @@ class manager {
             redirect(new moodle_url($urlbase, $paramsbase));
         }
 
-        $mustachedata = (object) [
+        $mustachedata = (object)[
             "headers" => [
                 get_string("plugin"),
                 get_string("status", "local_kopere_proctoring"),
@@ -498,14 +498,14 @@ class manager {
             ];
         }
 
-        uksort($plugins, static function(string $a, string $b): int {
+        uksort($plugins, static function (string $a, string $b): int {
             return self::compare_policy_names($a, $b);
         });
 
         $sortableplugins = array_values(
             array_filter(
                 array_keys($plugins),
-                static function(string $policyname): bool {
+                static function (string $policyname): bool {
                     return self::is_policy_sortable($policyname);
                 }
             )

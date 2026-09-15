@@ -298,7 +298,7 @@ class provider implements policy_interface {
         $message = cm_config::get("focus", "message", $cmid, get_config("proctoringpolicy_focus", "message_default"));
 
         return $OUTPUT->render_from_template("proctoringpolicy_focus/start", [
-            "limit" => (int) $limit,
+            "limit" => (int)$limit,
             "start_message" => $startmessage,
             "message" => $message,
         ]);

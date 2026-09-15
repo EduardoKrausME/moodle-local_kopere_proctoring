@@ -84,7 +84,7 @@ class get_status extends external_api {
         ], 'id', MUST_EXIST);
 
         $att = contract_service::get_att_by_attemptid($params['attemptid']);
-        if ((int) $att->userid !== (int) $USER->id) {
+        if ((int)$att->userid !== (int)$USER->id) {
             throw new \required_capability_exception($context, 'mod/quiz:attempt', 'nopermissions', '');
         }
 

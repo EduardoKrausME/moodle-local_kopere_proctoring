@@ -47,11 +47,11 @@ $contracthtml = contract_service::get_contract_html($att, $user);
 $contractexcerpt = contract_service::get_contract_excerpt($contracthtml, 700);
 $sitecode = contract_service::get_site_shortname();
 $sitename = contract_service::get_site_fullname();
-$issueat = contract_service::format_issue_datetime((int) $att->contract_time);
-$acceptedat = contract_service::format_datetime((int) $att->contract_time);
+$issueat = contract_service::format_issue_datetime((int)$att->contract_time);
+$acceptedat = contract_service::format_datetime((int)$att->contract_time);
 $hash = contract_service::get_unique_hash($att);
 $maskedidnumber = contract_service::get_masked_idnumber($user);
-$ipline = trim((string) ($att->contract_ip ?? ''));
+$ipline = trim((string)($att->contract_ip ?? ''));
 if (!empty($att->contract_geo)) {
     $ipline .= " ({$att->contract_geo})";
 }
@@ -130,7 +130,7 @@ $pdf->Cell(
 $pdf->SetFont('helvetica', 'B', 10.6);
 $pdf->Cell(18, 5.5, get_string('pdf_email', 'proctoringpolicy_contract'), 0, 0, 'L');
 $pdf->SetFont('helvetica', '', 10.6);
-$pdf->Cell(0, 5.5, (string) $user->email, 0, 1, 'L');
+$pdf->Cell(0, 5.5, (string)$user->email, 0, 1, 'L');
 $pdf->Ln(4);
 
 $boxx = $left;
@@ -149,7 +149,7 @@ $pdf->SetX($boxx + 2.5);
 $pdf->SetFont('helvetica', 'B', 10.2);
 $pdf->Cell(21, 5, get_string('pdf_useragent', 'proctoringpolicy_contract'), 0, 0, 'L');
 $pdf->SetFont('helvetica', '', 10.2);
-$pdf->MultiCell($boxw - 26, 5, (string) ($att->contract_useragent ?? '-'), 0, 'L');
+$pdf->MultiCell($boxw - 26, 5, (string)($att->contract_useragent ?? '-'), 0, 'L');
 
 $pdf->SetX($boxx + 2.5);
 $pdf->SetFont('helvetica', 'B', 10.2);

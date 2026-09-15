@@ -313,7 +313,7 @@ class provider implements policy_interface {
         );
 
         return $OUTPUT->render_from_template("proctoringpolicy_fullscreen/start", [
-            "limit" => (int) $limit,
+            "limit" => (int)$limit,
             "start_message" => $startmessage,
             "message" => $message,
         ]);

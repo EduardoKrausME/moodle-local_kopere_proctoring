@@ -49,7 +49,7 @@ class attempt {
             return;
         }
 
-        $attemptid = (int) $event->get_data()["objectid"];
+        $attemptid = (int)$event->get_data()["objectid"];
         $userid = $event->userid ?? 0;
 
         if (!$attemptid || !$userid) {

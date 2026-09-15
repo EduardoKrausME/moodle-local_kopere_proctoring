@@ -47,7 +47,7 @@ class backup_local_kopere_proctoring_plugin extends backup_local_plugin {
         $plugin->add_child($wrapper);
         $wrapper->add_child($config);
 
-        $cmid = (int) $this->task->get_moduleid();
+        $cmid = (int)$this->task->get_moduleid();
         $pattern = $DB->sql_like_escape('policy_') . '%' . $DB->sql_like_escape('_' . $cmid);
         $like = $DB->sql_like('name', ':policypattern', false);
         $config->set_source_sql(

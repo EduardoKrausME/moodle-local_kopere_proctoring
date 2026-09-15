@@ -46,7 +46,7 @@ $templatedata = [
 if ($valid) {
     $templatedata += [
         'documentcode' => contract_service::get_document_code($att),
-        'acceptancedate' => contract_service::format_datetime((int) $att->contract_time),
+        'acceptancedate' => contract_service::format_datetime((int)$att->contract_time),
         'uniquehash' => contract_service::get_unique_hash($att),
     ];
 } else {

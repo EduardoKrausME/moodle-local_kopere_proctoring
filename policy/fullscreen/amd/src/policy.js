@@ -142,7 +142,7 @@ define(["jquery"], function ($) {
         setPendingState($footer, $button, active);
 
         if (!state.inexam) {
-            setStatus($status, active ? "success" : "warning", active ? M.util.get_string("fullscreen_ready", "proctoringpolicy_fullscreen") :M.util.get_string("fullscreen_required", "proctoringpolicy_fullscreen"));
+            setStatus($status, active ? "success" : "warning", active ? M.util.get_string("fullscreen_ready", "proctoringpolicy_fullscreen") : M.util.get_string("fullscreen_required", "proctoringpolicy_fullscreen"));
         }
 
         return active;

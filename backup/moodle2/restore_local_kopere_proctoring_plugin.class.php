@@ -50,11 +50,11 @@ class restore_local_kopere_proctoring_plugin extends restore_local_plugin {
      * @return void
      */
     public function process_local_kopere_proctoring_config(array $data): void {
-        $name = (string) ($data['name'] ?? '');
+        $name = (string)($data['name'] ?? '');
         if (!preg_match('/^(?:kopere_proctoring_enabled|policy_[a-z0-9_]+)_\\d+$/', $name)) {
             return;
         }
-        $newcmid = (int) $this->task->get_moduleid();
+        $newcmid = (int)$this->task->get_moduleid();
         $newname = preg_replace('/_\\d+$/', '_' . $newcmid, $name);
         if ($newname === null || $newname === '') {
             return;

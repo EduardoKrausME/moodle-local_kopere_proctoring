@@ -31,18 +31,33 @@ define(["jquery", "core/ajax"], function ($, Ajax) {
         }
         return h.toString(16);
     }
+
     function buildBaseline() {
         let fetchSig = "";
         let timeoutSig = "";
         let addEvSig = "";
-        try { fetchSig = String(window.fetch).slice(0, 80); } catch (e) { fetchSig = "no_fetch"; }
-        try { timeoutSig = String(window.setTimeout).slice(0, 80); } catch (e2) { timeoutSig = "no_settimeout"; }
-        try { addEvSig = String(document.addEventListener).slice(0, 80); } catch (e3) { addEvSig = "no_addev"; }
+        try {
+            fetchSig = String(window.fetch).slice(0, 80);
+        } catch (e) {
+            fetchSig = "no_fetch";
+        }
+        try {
+            timeoutSig = String(window.setTimeout).slice(0, 80);
+        } catch (e2) {
+            timeoutSig = "no_settimeout";
+        }
+        try {
+            addEvSig = String(document.addEventListener).slice(0, 80);
+        } catch (e3) {
+            addEvSig = "no_addev";
+        }
         return {fetchSig: fetchSig, timeoutSig: timeoutSig, addEvSig: addEvSig, userAgent: navigator.userAgent || ""};
     }
+
     function postLog(payload) {
         return Ajax.call([{methodname: "local_kopere_proctoring_save_log", args: payload}])[0];
     }
+
     function startPolicy(ctx, cfg) {
         let cmid = Number(ctx.cmid || 0);
         let attemptid = Number(ctx.attemptid || 0);
@@ -54,22 +69,28 @@ define(["jquery", "core/ajax"], function ($, Ajax) {
 
         function shouldSendNow() {
             let now = Date.now();
-            if ((now - lastSentAt) < 1500) { return false; }
+            if ((now - lastSentAt) < 1500) {
+                return false;
+            }
             lastSentAt = now;
             return true;
         }
+
         function checkIntegrity() {
             let current = buildBaseline();
             if (current.fetchSig !== baseline.fetchSig ||
-                    current.timeoutSig !== baseline.timeoutSig ||
-                    current.addEvSig !== baseline.addEvSig) {
+                current.timeoutSig !== baseline.timeoutSig ||
+                current.addEvSig !== baseline.addEvSig) {
                 return {integrityok: 0, reason: "integrity_changed"};
             }
             return {integrityok: 1, reason: ""};
         }
+
         function pulse() {
             let integrity = checkIntegrity();
-            if (integrity.integrityok === 1 || !shouldSendNow()) { return; }
+            if (integrity.integrityok === 1 || !shouldSendNow()) {
+                return;
+            }
             postLog({
                 cmid: cmid,
                 attemptid: attemptid,
@@ -85,16 +106,21 @@ define(["jquery", "core/ajax"], function ($, Ajax) {
                 console.warn(M.util.get_string("js_warn_integrity", "proctoringpolicy_securitysignals"));
             }
         }
+
         setInterval(pulse, pulseMs);
     }
+
     function init(ctx, cfg) {
         ctx = ctx || {};
         cfg = cfg || {};
         if (ctx.api && typeof ctx.api.registerStartCallback === "function") {
-            ctx.api.registerStartCallback(function () { startPolicy(ctx, cfg); });
+            ctx.api.registerStartCallback(function () {
+                startPolicy(ctx, cfg);
+            });
             return;
         }
         startPolicy(ctx, cfg);
     }
+
     return {init: init};
 });
