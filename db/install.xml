@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/kopere_proctoring/db" VERSION="20141018" COMMENT=""
+<XMLDB PATH="local/kopere_proctoring/db" VERSION="20141018" COMMENT="XMLDB file for local_kopere_proctoring"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
     <TABLES>
@@ -22,8 +22,6 @@
                 <KEY NAME="fk_user" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
             </KEYS>
             <INDEXES>
-                <INDEX NAME="attemptid_ix" UNIQUE="false" FIELDS="attemptid"/>
-                <INDEX NAME="userid_ix" UNIQUE="false" FIELDS="userid"/>
                 <INDEX NAME="time_ix" UNIQUE="false" FIELDS="time"/>
                 <INDEX NAME="attemptidtime_ix" UNIQUE="false" FIELDS="attemptid, time"/>
             </INDEXES>
@@ -46,8 +44,6 @@
                 <KEY NAME="fk_user" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
             </KEYS>
             <INDEXES>
-                <INDEX NAME="attemptid_ix" UNIQUE="false" FIELDS="attemptid"/>
-                <INDEX NAME="userid_ix" UNIQUE="false" FIELDS="userid"/>
                 <INDEX NAME="time_ix" UNIQUE="false" FIELDS="time"/>
                 <INDEX NAME="attemptidtime_ix" UNIQUE="false" FIELDS="attemptid, time"/>
                 <INDEX NAME="actionvalue_ix" UNIQUE="false" FIELDS="actionvalue"/>
