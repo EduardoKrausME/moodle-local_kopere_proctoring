@@ -56,9 +56,9 @@ class backup_local_kopere_proctoring_plugin extends backup_local_plugin {
               WHERE plugin = :plugin
                 AND (name = :enabledname OR {$like})",
             [
-                'plugin' => 'local_kopere_proctoring',
-                'enabledname' => "kopere_proctoring_enabled_{$cmid}",
-                'policypattern' => $pattern,
+                'plugin' => ['sqlparam' => 'local_kopere_proctoring'],
+                'enabledname' => ['sqlparam' => "kopere_proctoring_enabled_{$cmid}"],
+                'policypattern' => ['sqlparam' => $pattern],
             ]
         );
     }
