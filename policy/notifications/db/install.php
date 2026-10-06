@@ -34,7 +34,9 @@ function xmldb_proctoringpolicy_notifications_install() {
     set_config("sortorder", 80, "proctoringpolicy_notifications");
 
     set_config("moment_default", "none", "proctoringpolicy_notifications");
-    set_config("recipients_default", $CFG->supportemail, "proctoringpolicy_notifications");
+    if (isset($CFG->supportemail)) {
+        set_config("recipients_default", $CFG->supportemail, "proctoringpolicy_notifications");
+    }
     set_config("subject_default", "[{coursename}] {event}", "proctoringpolicy_notifications");
 
     $default = get_string("body_default_text", "proctoringpolicy_notifications");
