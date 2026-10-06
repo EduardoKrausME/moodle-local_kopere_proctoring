@@ -57,6 +57,7 @@ class manager {
             "copy" => 40,
             "password" => 50,
             "securitysignals" => 60,
+            "authorship" => 65,
             "evidence" => 70,
             "notifications" => 80,
         ];
