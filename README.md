@@ -22,6 +22,7 @@ During the attempt, certain actions may be recorded as incidents. Depending on t
 * **Copy and paste protection:** blocks actions such as copying, cutting, pasting, printing, and using the right mouse button during the exam.
 * **Notifications:** people responsible for the assessment can receive email notifications when certain events occur, such as suspicious activity, exam blocking, or completion of the attempt.
 * **Security signals:** monitors signs of unusual browser changes during the assessment and records signals that may help when reviewing suspicious behavior.
+* **Authorship process analysis:** records how textual answers are constructed, including active writing time, aggregated typing and deletion activity, paste operations, significant changes, periodic answer snapshots and temporal reconstruction for human review.
 
 ## Students know what is happening
 
@@ -44,6 +45,8 @@ Kopere Proctoring stores information that helps explain how each attempt took pl
 These records help the person responsible for the assessment review the context of an attempt whenever there is a question or behavior outside what was expected.
 
 An incident record should not automatically be considered proof of cheating. A loss of focus, for example, can have several causes. The data is intended to support the institution's analysis and decision-making process.
+
+When the Authorship policy is enabled, Kopere Proctoring can also preserve evidence about the writing process of textual Quiz responses. This can show facts such as how long the student actively wrote, how much text was typed or pasted, when large changes occurred, how the answer evolved over time, and whether a paste happened shortly after a focus transition. Paste, focus loss, rapid writing, or any other isolated signal is not automatically fraud and is not evidence by itself that Artificial Intelligence was used. The purpose of this information is to support transparent human review, not to produce an automatic accusation.
 
 ## Agreement with proof of acceptance
 
