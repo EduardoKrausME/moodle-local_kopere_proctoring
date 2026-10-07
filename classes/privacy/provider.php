@@ -89,10 +89,11 @@ class provider implements
     /**
      * Get the list of contexts which contain user data for the specified user.
      *
-     * @param contextlist $contextlist
+     * @param int $userid The user ID.
+     * @return contextlist
      */
-    public static function get_contexts_for_userid(contextlist $contextlist): void {
-        global $DB;
+    public static function get_contexts_for_userid(int $userid): contextlist {
+        $contextlist = new contextlist();
 
         // Module contexts (quiz) inferred via quiz_attempts.id stored as attemptid.
         $sql = "
@@ -117,11 +118,13 @@ class provider implements
 
         $params = [
             'contextmodule' => CONTEXT_MODULE,
-            'userid1' => $contextlist->get_userid(),
-            'userid2' => $contextlist->get_userid(),
+            'userid1' => $userid,
+            'userid2' => $userid,
         ];
 
         $contextlist->add_from_sql($sql, $params);
+
+        return $contextlist;
     }
 
     /**
