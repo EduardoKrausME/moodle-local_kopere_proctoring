@@ -27,7 +27,7 @@ use local_mcp\extension\read_provider_interface;
 use local_mcp\extension\write_provider_interface;
 
 /**
- * * Detected by local_mcp via classes/mcp/provider.php; no hooks or callbacks needed.
+ * Detected by local_mcp via classes/mcp/provider.php; no hooks or callbacks needed.
  */
 final class provider implements read_provider_interface, write_provider_interface {
     /**

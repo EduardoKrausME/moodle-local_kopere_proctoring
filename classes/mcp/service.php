@@ -29,7 +29,7 @@ use local_kopere_proctoring\policy\cm_config;
 use local_kopere_proctoring\policy\manager;
 
 /**
- * * Reuse existing plugin configuration keys, without exposing policy messages or passwords.
+ * Reuse existing plugin configuration keys, without exposing policy messages or passwords.
  */
 final class service {
     /**

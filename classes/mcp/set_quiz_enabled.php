@@ -29,7 +29,7 @@ use local_mcp\security\authenticated_identity;
 use local_mcp\write\tool\base_tool;
 
 /**
- * * Enable or disable monitoring while preserving individual policy settings.
+ * Enable or disable monitoring while preserving individual policy settings.
  */
 final class set_quiz_enabled extends base_tool {
     /**
