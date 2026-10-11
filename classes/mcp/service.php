@@ -8,11 +8,11 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Shared, read-only Moodle quiz and proctoring state.
@@ -29,7 +29,7 @@ use local_kopere_proctoring\policy\cm_config;
 use local_kopere_proctoring\policy\manager;
 
 /**
- * Reuse existing plugin configuration keys, without exposing policy messages or passwords.
+ * * Reuse existing plugin configuration keys, without exposing policy messages or passwords.
  */
 final class service {
     /**

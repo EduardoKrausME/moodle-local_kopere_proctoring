@@ -8,11 +8,11 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Change Kopere Proctoring enablement on a quiz via MCP.
@@ -29,27 +29,43 @@ use local_mcp\security\authenticated_identity;
 use local_mcp\write\tool\base_tool;
 
 /**
- * Enable or disable monitoring while preserving individual policy settings.
+ * * Enable or disable monitoring while preserving individual policy settings.
  */
 final class set_quiz_enabled extends base_tool {
-    /** @return string */
+    /**
+     * Return the MCP tool identifier.
+     *
+     * @return string
+     */
     public function get_name(): string {
         return 'kopere_proctoring_set_quiz_enabled';
     }
 
-    /** @return string */
+    /**
+     * Return the human-readable tool title.
+     *
+     * @return string
+     */
     public function get_title(): string {
         return 'Enable or disable quiz proctoring';
     }
 
-    /** @return string */
+    /**
+     * Describe the MCP tool.
+     *
+     * @return string
+     */
     public function get_description(): string {
         return 'Change proctoring enablement for one quiz. As in the quiz settings form, '
             . 'enabling also sets questionsperpage to 50. Requires confirmation and supports '
             . 'dry-run previews and an optional state_hash to detect concurrent edits.';
     }
 
-    /** @return array */
+    /**
+     * Return the JSON schema for tool arguments.
+     *
+     * @return array
+     */
     public function get_input_schema(): array {
         return $this->object_schema([
             'cmid' => ['type' => 'integer', 'minimum' => 1],
@@ -59,12 +75,18 @@ final class set_quiz_enabled extends base_tool {
         ], ['cmid', 'enabled']);
     }
 
-    /** @return string */
+    /**
+     * Return the required Moodle capability.
+     *
+     * @return string
+     */
     public function get_required_capability(): string {
         return 'mod/quiz:manage';
     }
 
     /**
+     * Resolve the quiz or system context.
+     *
      * @param array $arguments MCP input.
      * @return context
      */
@@ -73,12 +95,18 @@ final class set_quiz_enabled extends base_tool {
         return $context;
     }
 
-    /** @return bool */
+    /**
+     * Indicate support for dry-run previews.
+     *
+     * @return bool
+     */
     public function supports_dry_run(): bool {
         return true;
     }
 
     /**
+     * Validate the proposed change.
+     *
      * @param array $arguments MCP input.
      * @return array
      */
@@ -96,6 +124,8 @@ final class set_quiz_enabled extends base_tool {
     }
 
     /**
+     * Preview the proposed change.
+     *
      * @param array $arguments MCP input.
      * @param authenticated_identity $identity Connected user.
      * @return array
@@ -115,6 +145,8 @@ final class set_quiz_enabled extends base_tool {
     }
 
     /**
+     * Execute the authorized MCP operation.
+     *
      * @param array $arguments MCP input.
      * @param authenticated_identity $identity Connected user.
      * @return array

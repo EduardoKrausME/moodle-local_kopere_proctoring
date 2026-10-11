@@ -8,11 +8,11 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Get quiz proctoring settings via MCP.
@@ -25,25 +25,43 @@ namespace local_kopere_proctoring\mcp;
 
 use local_mcp\security\authenticated_identity;
 
-/** Read enabled state and installed policy flags for one quiz. */
+/**
+ * Read enabled state and installed policy flags for one quiz.
+ */
 final class get_quiz extends quiz_read_tool {
-    /** @return string */
+    /**
+     * Return the MCP tool identifier.
+     *
+     * @return string
+     */
     public function get_name(): string {
         return 'kopere_proctoring_get_quiz';
     }
 
-    /** @return string */
+    /**
+     * Return the human-readable tool title.
+     *
+     * @return string
+     */
     public function get_title(): string {
         return 'Read quiz proctoring settings';
     }
 
-    /** @return string */
+    /**
+     * Describe the MCP tool.
+     *
+     * @return string
+     */
     public function get_description(): string {
         return 'Read proctoring enablement, active policy flags and a concurrency state_hash '
             . 'for a quiz course module. Does not disclose private policy texts or credentials.';
     }
 
-    /** @return array */
+    /**
+     * Return the JSON schema for tool arguments.
+     *
+     * @return array
+     */
     public function get_input_schema(): array {
         return [
             'type' => 'object',
@@ -54,6 +72,8 @@ final class get_quiz extends quiz_read_tool {
     }
 
     /**
+     * Execute the authorized MCP operation.
+     *
      * @param array $arguments MCP input.
      * @param authenticated_identity $identity Connected user.
      * @return array

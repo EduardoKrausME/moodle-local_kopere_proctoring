@@ -8,11 +8,11 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Shared permission context for quiz reporting tools.
@@ -26,14 +26,22 @@ namespace local_kopere_proctoring\mcp;
 use context;
 use local_mcp\read\tool_interface;
 
-/** Restrict proctoring records to users allowed to view quiz reports. */
+/**
+ * Restrict proctoring records to users allowed to view quiz reports.
+ */
 abstract class quiz_read_tool implements tool_interface {
-    /** @return string */
+    /**
+     * Return the required Moodle capability.
+     *
+     * @return string
+     */
     public function get_required_capability(): string {
         return 'mod/quiz:viewreports';
     }
 
     /**
+     * Resolve the quiz or system context.
+     *
      * @param array $arguments MCP tool input.
      * @return context
      */

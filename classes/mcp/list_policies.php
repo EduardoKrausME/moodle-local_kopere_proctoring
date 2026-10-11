@@ -8,11 +8,11 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * List installed Kopere Proctoring policies via MCP.
@@ -29,34 +29,58 @@ use local_kopere_proctoring\policy\manager;
 use local_mcp\read\tool_interface;
 use local_mcp\security\authenticated_identity;
 
-/** Describe only installed policies and their global status. */
+/**
+ * Describe only installed policies and their global status.
+ */
 final class list_policies implements tool_interface {
-    /** @return string */
+    /**
+     * Return the MCP tool identifier.
+     *
+     * @return string
+     */
     public function get_name(): string {
         return 'kopere_proctoring_list_policies';
     }
 
-    /** @return string */
+    /**
+     * Return the human-readable tool title.
+     *
+     * @return string
+     */
     public function get_title(): string {
         return 'List installed proctoring policies';
     }
 
-    /** @return string */
+    /**
+     * Describe the MCP tool.
+     *
+     * @return string
+     */
     public function get_description(): string {
         return 'List policy plugins, their global enablement and display order; site administrators only.';
     }
 
-    /** @return array */
+    /**
+     * Return the JSON schema for tool arguments.
+     *
+     * @return array
+     */
     public function get_input_schema(): array {
         return ['type' => 'object', 'properties' => (object)[], 'additionalProperties' => false];
     }
 
-    /** @return string */
+    /**
+     * Return the required Moodle capability.
+     *
+     * @return string
+     */
     public function get_required_capability(): string {
         return 'moodle/site:config';
     }
 
     /**
+     * Resolve the quiz or system context.
+     *
      * @param array $arguments MCP input.
      * @return context
      */
@@ -65,6 +89,8 @@ final class list_policies implements tool_interface {
     }
 
     /**
+     * Execute the authorized MCP operation.
+     *
      * @param array $arguments MCP input.
      * @param authenticated_identity $identity Connected user.
      * @return array

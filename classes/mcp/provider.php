@@ -8,11 +8,11 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Auto-discovered MCP tools for Kopere Proctoring.
@@ -27,10 +27,14 @@ use local_mcp\extension\read_provider_interface;
 use local_mcp\extension\write_provider_interface;
 
 /**
- * Detected by local_mcp via classes/mcp/provider.php; no hooks or callbacks needed.
+ * * Detected by local_mcp via classes/mcp/provider.php; no hooks or callbacks needed.
  */
 final class provider implements read_provider_interface, write_provider_interface {
-    /** @return \local_mcp\read\tool_interface[] */
+    /**
+     * Return the auto-discovered read tools.
+     *
+     * @return \local_mcp\read\tool_interface[]
+     */
     public function get_read_tools(): array {
         return [
             new list_policies(),
@@ -40,7 +44,11 @@ final class provider implements read_provider_interface, write_provider_interfac
         ];
     }
 
-    /** @return \local_mcp\write\tool_interface[] */
+    /**
+     * Return the auto-discovered write tools.
+     *
+     * @return \local_mcp\write\tool_interface[]
+     */
     public function get_write_tools(): array {
         return [new set_quiz_enabled()];
     }

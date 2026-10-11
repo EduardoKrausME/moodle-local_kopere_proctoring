@@ -8,11 +8,11 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * Read proctoring events for a quiz attempt via MCP.
@@ -25,25 +25,43 @@ namespace local_kopere_proctoring\mcp;
 
 use local_mcp\security\authenticated_identity;
 
-/** Events are observations and must not be treated as proof of misconduct. */
+/**
+ * Events are observations and must not be treated as proof of misconduct.
+ */
 final class get_attempt_logs extends quiz_read_tool {
-    /** @return string */
+    /**
+     * Return the MCP tool identifier.
+     *
+     * @return string
+     */
     public function get_name(): string {
         return 'kopere_proctoring_get_attempt_logs';
     }
 
-    /** @return string */
+    /**
+     * Return the human-readable tool title.
+     *
+     * @return string
+     */
     public function get_title(): string {
         return 'Read proctoring attempt events';
     }
 
-    /** @return string */
+    /**
+     * Describe the MCP tool.
+     *
+     * @return string
+     */
     public function get_description(): string {
         return 'Read a bounded page of raw proctoring events for an attempt belonging to '
             . 'the specified quiz. Technical browser/IP data is omitted unless explicitly requested.';
     }
 
-    /** @return array */
+    /**
+     * Return the JSON schema for tool arguments.
+     *
+     * @return array
+     */
     public function get_input_schema(): array {
         return [
             'type' => 'object',
@@ -61,6 +79,8 @@ final class get_attempt_logs extends quiz_read_tool {
     }
 
     /**
+     * Execute the authorized MCP operation.
+     *
      * @param array $arguments MCP input.
      * @param authenticated_identity $identity Connected user.
      * @return array
