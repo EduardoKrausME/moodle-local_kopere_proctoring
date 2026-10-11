@@ -15,21 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version file
+ * Version file.
  *
  * @package   local_kopere_proctoring
- * @copyright 2025 Eduardo Kraus {@link https://eduardokraus.com}
+ * @copyright 2026 Eduardo Kraus {@link https://eduardokraus.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->version = 2026100700;
-$plugin->release = '4.0.10';
+$plugin->version = 2026101100;
+$plugin->release = '4.0.11';
 $plugin->requires = 2021041900;
 $plugin->maturity = MATURITY_STABLE;
-$plugin->component = "local_kopere_proctoring";
+$plugin->component = 'local_kopere_proctoring';
 
 $plugin->dependencies = [
-    "local_kopere_dashboard" => 2025030300,
+    'local_kopere_dashboard' => 2025030300,
 ];
