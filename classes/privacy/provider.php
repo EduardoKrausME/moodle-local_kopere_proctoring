@@ -77,9 +77,10 @@ class provider implements
             'privacy:metadata:local_kopere_proctoring_log'
         );
 
-        $collection->add_files_area(
-            'local_kopere_proctoring',
-            'snapshot',
+        // Snapshot evidence is stored in the Moodle file subsystem.
+        $collection->add_subsystem_link(
+            'core_files',
+            [],
             'privacy:metadata:local_kopere_proctoring:files_snapshot'
         );
 
