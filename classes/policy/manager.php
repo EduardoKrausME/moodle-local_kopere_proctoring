@@ -254,6 +254,8 @@ class manager {
         );
 
         if (\local_kopere_proctoring\mcp_banner::should_show()) {
+            global $PAGE;
+            $PAGE->requires->css(new \moodle_url("/local/kopere_proctoring/styles.css"));
             $page->add(new \admin_setting_heading(
                 "local_kopere_proctoring/mcp_banner",
                 "",
