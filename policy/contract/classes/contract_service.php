@@ -68,7 +68,7 @@ class contract_service {
      * @return string
      */
     public static function get_site_shortname_token(): string {
-        $token = \core_text::strtoupper(self::get_site_shortname());
+        $token = strtoupper(self::get_site_shortname());
         $token = preg_replace('/[^A-Z0-9]+/', '', $token);
 
         if ($token === '') {
@@ -115,7 +115,7 @@ class contract_service {
         }
 
         $expectedtoken = self::get_site_shortname_token();
-        if (\core_text::strtoupper($matches[1]) !== $expectedtoken) {
+        if (strtoupper($matches[1]) !== $expectedtoken) {
             return null;
         }
 
@@ -265,11 +265,11 @@ class contract_service {
             return '';
         }
 
-        if (\core_text::strlen($text) <= $limit) {
+        if (strlen($text) <= $limit) {
             return $text;
         }
 
-        return rtrim(\core_text::substr($text, 0, $limit - 3)) . '...';
+        return rtrim(substr($text, 0, $limit - 3)) . '...';
     }
 
     /**
