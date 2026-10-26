@@ -38,6 +38,7 @@ final class provider implements read_provider_interface, write_provider_interfac
     public function get_read_tools(): array {
         return [
             new list_policies(),
+            new get_admin_settings(),
             new get_quiz(),
             new list_attempts(),
             new get_attempt_logs(),
@@ -50,6 +51,11 @@ final class provider implements read_provider_interface, write_provider_interfac
      * @return \local_mcp\write\tool_interface[]
      */
     public function get_write_tools(): array {
-        return [new set_quiz_enabled()];
+        return [
+            new set_quiz_enabled(),
+            new set_policy_enabled(),
+            new set_policy_default(),
+            new move_policy(),
+        ];
     }
 }
