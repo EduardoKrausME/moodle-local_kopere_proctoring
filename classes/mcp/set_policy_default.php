@@ -30,14 +30,29 @@ use local_mcp\write\tool\base_tool;
 
 /** Changes a single allowlisted policy default, never per-quiz overrides. */
 final class set_policy_default extends base_tool {
+    /**
+     * Return the MCP identifier.
+     *
+     * @return string
+     */
     public function get_name(): string {
         return 'kopere_proctoring_set_policy_default';
     }
 
+    /**
+     * Return the tool display title.
+     *
+     * @return string
+     */
     public function get_title(): string {
         return 'Change Proctoring policy default';
     }
 
+    /**
+     * Describe the operation and its safeguards.
+     *
+     * @return string
+     */
     public function get_description(): string {
         return 'Update one global default in the Proctoring admin settings, such as HTML '
             . 'instructions, incident limits, notification email subject, recipients or body. '
@@ -45,6 +60,11 @@ final class set_policy_default extends base_tool {
             . 'Existing quiz-specific settings are retained. Requires confirmation.';
     }
 
+    /**
+     * Declare the validated JSON input schema.
+     *
+     * @return array
+     */
     public function get_input_schema(): array {
         return $this->object_schema([
             'policy' => ['type' => 'string', 'pattern' => '^[a-z][a-z0-9_]*$'],
@@ -54,14 +74,30 @@ final class set_policy_default extends base_tool {
         ], ['policy', 'setting', 'value']);
     }
 
+    /**
+     * Require administrator access for this operation.
+     *
+     * @return string
+     */
     public function get_required_capability(): string {
         return 'moodle/site:config';
     }
 
+    /**
+     * Resolve the Moodle system context.
+     *
+     * @param array $arguments Tool arguments.
+     * @return context
+     */
     public function resolve_context(array $arguments): context {
         return context_system::instance();
     }
 
+    /**
+     * Allow a dry-run preview.
+     *
+     * @return bool
+     */
     public function supports_dry_run(): bool {
         return true;
     }
@@ -79,6 +115,13 @@ final class set_policy_default extends base_tool {
         return [$before, $value];
     }
 
+    /**
+     * Describe the requested update without modifying configuration.
+     *
+     * @param array $arguments Tool arguments.
+     * @param authenticated_identity $identity Authorized Moodle user.
+     * @return array
+     */
     public function preview(array $arguments, authenticated_identity $identity): array {
         [$before, $value] = self::prepare($arguments);
         return [
@@ -91,6 +134,13 @@ final class set_policy_default extends base_tool {
         ];
     }
 
+    /**
+     * Apply the authorized and confirmed update.
+     *
+     * @param array $arguments Tool arguments.
+     * @param authenticated_identity $identity Authorized Moodle user.
+     * @return array
+     */
     public function execute(array $arguments, authenticated_identity $identity): array {
         [$before, $value] = self::prepare($arguments);
         admin_settings_service::save_setting($before['policy'], $arguments['setting'], $value);
