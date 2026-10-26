@@ -146,6 +146,15 @@ class provider implements policy_interface {
      * @return void
      */
     public static function save_module_form(stdClass $data, int $cmid): void {
+        // No module fields are currently rendered for this policy. Preserve values
+        // configured through MCP when an unrelated Quiz form is saved.
+        if (!isset($data->kopere_policy_notifications_enabled) &&
+                !isset($data->kopere_policy_notifications_moment) &&
+                !isset($data->kopere_policy_notifications_recipients) &&
+                !isset($data->kopere_policy_notifications_subject) &&
+                !isset($data->kopere_policy_notifications_body)) {
+            return;
+        }
         $enabled = ($data->kopere_policy_notifications_enabled ?? 0);
         $moment = ($data->kopere_policy_notifications_moment ?? "none");
         $recipients = ($data->kopere_policy_notifications_recipients ?? "");
