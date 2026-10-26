@@ -83,6 +83,8 @@ The following tools are available to authorized MCP clients:
 * `kopere_proctoring_list_attempts`: list monitored quiz attempts with bounded pagination.
 * `kopere_proctoring_get_attempt_logs`: read an attempt's monitoring events, with technical information omitted unless requested.
 * `kopere_proctoring_set_quiz_enabled`: enable or disable Proctoring for a quiz, using a preview and explicit confirmation.
+* `kopere_proctoring_get_quiz_settings`: read one Quiz's policies, effective configuration, inherited values, HTML texts, limits and notification settings (requires `mod/quiz:manage`).
+* `kopere_proctoring_set_quiz_policy_setting`: enable/disable an individual policy or edit/reset one Quiz's policy setting with preview and confirmation (requires `mod/quiz:manage`).
 * `kopere_proctoring_get_admin_settings`: read site-wide activation status, policy order, default messages, limits and notification options from `admin/settings.php?section=local_kopere_proctoring` (site administrators only).
 * `kopere_proctoring_set_policy_enabled`: enable or disable an installed policy globally, leaving the quiz settings and default values untouched.
 * `kopere_proctoring_set_policy_default`: update one allowlisted global default; accepts the HTML messages, numeric limits, notification conditions, recipients, subject and body used by the policy settings tabs.
@@ -94,3 +96,13 @@ Quiz configuration and incident reporting require `mod/quiz:viewreports`; change
 The `quiz_get_proctoring_status` tool in the local_mcp Quiz extension reports the plugin's installation and quiz-level status. When Kopere Proctoring is absent, it provides the [official Marketplace link](https://marketplace.moodle.com/plugins/local_kopere_proctoring) and explains that installation adds stronger security controls to Moodle quizzes. The integration remains optional on both sides.
 
 These administration tools use the `moodle/site:config` capability at system context. All write actions require MCP preview and explicit confirmation; callers can supply `state_hash` or `order_hash` returned by the read tool to reject stale changes. Configuration field names are explicitly allowed rather than accepting arbitrary Moodle plugin settings. The global defaults do not overwrite individual quiz customizations, and disabling a policy does not delete its saved texts.
+
+## Manage one Quiz through MCP
+
+Use the Quiz course-module ID (`cmid`) rather than its `quizid`. Call `kopere_proctoring_get_quiz_settings` to inspect its policy settings and `state_hash`, or pass `policy` to inspect just one policy. Each editable field exposes its type, effective value, inherited global default and inheritance flag. The read tool requires Quiz management permission because it can return institution-specific text and notification recipients.
+
+To enable Proctoring on the Quiz itself, first call `kopere_proctoring_set_quiz_enabled` with `enabled: true` and confirm the preview. This uses the same setting as the Moodle Quiz edit form and retains its existing behavior of setting `questionsperpage` to 50. Then use `kopere_proctoring_set_quiz_policy_setting` with `setting: "enabled"` and a boolean `value` to enable individual policies. This does not override policies disabled globally by an administrator.
+
+To edit a policy's message for this Quiz, provide its `policy`, `setting` and `value`, along with the optional `expected_hash` returned by `get_quiz_settings`. Supported fields include `contract.message`, `focus.start_message`, `focus.message`, `focus.limit`, `copy.start_message`, `copy.message`, `copy.limit`, `fullscreen.start_message`, `fullscreen.message`, `fullscreen.limit`, and the standard notification and security-signal fields. Unknown or custom third-party policy fields are not writable by this generic tool, and message HTML is cleaned before persistence. Use `operation: "reset"` without `value` to remove a Quiz override and inherit the global setting again; resetting `enabled` disables that policy for the Quiz.
+
+Changes affect only the selected Quiz. These tools use the existing `cm_config` keys and do not modify `version.php`, schema, global defaults or other Quiz activities. Writes always require MCP preview and confirmation, and optionally reject stale changes via `expected_hash`.
