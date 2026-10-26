@@ -83,7 +83,14 @@ The following tools are available to authorized MCP clients:
 * `kopere_proctoring_list_attempts`: list monitored quiz attempts with bounded pagination.
 * `kopere_proctoring_get_attempt_logs`: read an attempt's monitoring events, with technical information omitted unless requested.
 * `kopere_proctoring_set_quiz_enabled`: enable or disable Proctoring for a quiz, using a preview and explicit confirmation.
+* `kopere_proctoring_get_admin_settings`: read site-wide activation status, policy order, default messages, limits and notification options from `admin/settings.php?section=local_kopere_proctoring` (site administrators only).
+* `kopere_proctoring_set_policy_enabled`: enable or disable an installed policy globally, leaving the quiz settings and default values untouched.
+* `kopere_proctoring_set_policy_default`: update one allowlisted global default; accepts the HTML messages, numeric limits, notification conditions, recipients, subject and body used by the policy settings tabs.
+* `kopere_proctoring_move_policy`: move a sortable policy one position up or down, respecting fixed policy ordering.
+
 
 Quiz configuration and incident reporting require `mod/quiz:viewreports`; changes require `mod/quiz:manage` and MCP write confirmation. Each quiz is addressed by its course-module ID (`cmid`). Monitoring signals are observations for human review, not automatic evidence of misconduct.
 
 The `quiz_get_proctoring_status` tool in the local_mcp Quiz extension reports the plugin's installation and quiz-level status. When Kopere Proctoring is absent, it provides the [official Marketplace link](https://marketplace.moodle.com/plugins/local_kopere_proctoring) and explains that installation adds stronger security controls to Moodle quizzes. The integration remains optional on both sides.
+
+These administration tools use the `moodle/site:config` capability at system context. All write actions require MCP preview and explicit confirmation; callers can supply `state_hash` or `order_hash` returned by the read tool to reject stale changes. Configuration field names are explicitly allowed rather than accepting arbitrary Moodle plugin settings. The global defaults do not overwrite individual quiz customizations, and disabling a policy does not delete its saved texts.
