@@ -184,6 +184,33 @@ final class mcp_integration_test extends advanced_testcase {
     }
 
     /**
+     * Reordering previews do not mutate the page, and preserve unsortable policies.
+     */
+    public function test_global_policy_move_requires_confirmation(): void {
+        if (get_config('local_mcp', 'version') === false) {
+            $this->markTestSkipped('Optional local_mcp is not installed.');
+        }
+        global $USER;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $before = \local_kopere_proctoring\mcp\admin_settings_service::sortable_names();
+        if (count($before) < 2) {
+            $this->markTestSkipped('At least two sortable policies are needed.');
+        }
+        $identity = new \local_mcp\security\authenticated_identity($USER->id, 'test', ['mcp:write']);
+        $move = new \local_kopere_proctoring\mcp\move_policy();
+        $args = ['policy' => $before[1], 'direction' => 'up',
+            'expected_hash' => \local_kopere_proctoring\mcp\admin_settings_service::order_hash()];
+        $preview = $move->preview($args, $identity);
+        $this->assertTrue($preview['changed']);
+        $this->assertSame($before, \local_kopere_proctoring\mcp\admin_settings_service::sortable_names());
+        $this->assertTrue($move->execute($args, $identity)['success']);
+        $after = \local_kopere_proctoring\mcp\admin_settings_service::sortable_names();
+        $this->assertSame($before[1], $after[0]);
+        $this->assertSame($before[0], $after[1]);
+    }
+
+    /**
      * The schema never permits writing arbitrary admin configuration keys.
      */
     public function test_unlisted_global_field_is_rejected(): void {
