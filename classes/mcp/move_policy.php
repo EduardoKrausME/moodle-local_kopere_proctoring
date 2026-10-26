@@ -32,19 +32,39 @@ use local_mcp\write\tool\base_tool;
 
 /** Mirror the ordering controls on the administrator's policy page. */
 final class move_policy extends base_tool {
+    /**
+     * Return the MCP identifier.
+     *
+     * @return string
+     */
     public function get_name(): string {
         return 'kopere_proctoring_move_policy';
     }
 
+    /**
+     * Return the tool display title.
+     *
+     * @return string
+     */
     public function get_title(): string {
         return 'Reorder Proctoring policy';
     }
 
+    /**
+     * Describe the operation and its safeguards.
+     *
+     * @return string
+     */
     public function get_description(): string {
         return 'Move an installed sortable Proctoring policy one position up or down. '
             . 'Non-sortable policies remain in their fixed order. Requires confirmation.';
     }
 
+    /**
+     * Declare the validated JSON input schema.
+     *
+     * @return array
+     */
     public function get_input_schema(): array {
         return $this->object_schema([
             'policy' => ['type' => 'string', 'pattern' => '^[a-z][a-z0-9_]*$'],
@@ -53,14 +73,30 @@ final class move_policy extends base_tool {
         ], ['policy', 'direction']);
     }
 
+    /**
+     * Require administrator access for this operation.
+     *
+     * @return string
+     */
     public function get_required_capability(): string {
         return 'moodle/site:config';
     }
 
+    /**
+     * Resolve the Moodle system context.
+     *
+     * @param array $arguments Tool arguments.
+     * @return context
+     */
     public function resolve_context(array $arguments): context {
         return context_system::instance();
     }
 
+    /**
+     * Allow a dry-run preview.
+     *
+     * @return bool
+     */
     public function supports_dry_run(): bool {
         return true;
     }
@@ -87,6 +123,13 @@ final class move_policy extends base_tool {
         return [$before, $after];
     }
 
+    /**
+     * Describe the requested update without modifying configuration.
+     *
+     * @param array $arguments Tool arguments.
+     * @param authenticated_identity $identity Authorized Moodle user.
+     * @return array
+     */
     public function preview(array $arguments, authenticated_identity $identity): array {
         [$before, $after] = self::prepare($arguments);
         return [
@@ -97,6 +140,13 @@ final class move_policy extends base_tool {
         ];
     }
 
+    /**
+     * Apply the authorized and confirmed update.
+     *
+     * @param array $arguments Tool arguments.
+     * @param authenticated_identity $identity Authorized Moodle user.
+     * @return array
+     */
     public function execute(array $arguments, authenticated_identity $identity): array {
         global $DB;
         [$before, $after] = self::prepare($arguments);
