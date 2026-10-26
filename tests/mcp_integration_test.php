@@ -76,8 +76,8 @@ final class mcp_integration_test extends advanced_testcase {
 
         $read = $provider->get_read_tools();
         $write = $provider->get_write_tools();
-        $this->assertCount(5, $read);
-        $this->assertCount(4, $write);
+        $this->assertCount(6, $read);
+        $this->assertCount(5, $write);
 
         $names = [];
         foreach (array_merge($read, $write) as $tool) {
@@ -86,11 +86,13 @@ final class mcp_integration_test extends advanced_testcase {
         }
         $this->assertCount(count($names), array_unique($names));
         $this->assertContains('kopere_proctoring_get_quiz', $names);
+        $this->assertContains('kopere_proctoring_get_quiz_settings', $names);
         $this->assertContains('kopere_proctoring_get_admin_settings', $names);
         $this->assertContains('kopere_proctoring_list_attempts', $names);
         $this->assertContains('kopere_proctoring_get_attempt_logs', $names);
         $this->assertContains('kopere_proctoring_list_policies', $names);
         $this->assertContains('kopere_proctoring_set_quiz_enabled', $names);
+        $this->assertContains('kopere_proctoring_set_quiz_policy_setting', $names);
         $this->assertContains('kopere_proctoring_set_policy_enabled', $names);
         $this->assertContains('kopere_proctoring_set_policy_default', $names);
         $this->assertContains('kopere_proctoring_move_policy', $names);
@@ -100,12 +102,18 @@ final class mcp_integration_test extends advanced_testcase {
                 'kopere_proctoring_list_policies', 'kopere_proctoring_get_admin_settings',
             ], true)
                 ? 'moodle/site:config' : 'mod/quiz:viewreports';
+            if ($tool->get_name() === 'kopere_proctoring_get_quiz_settings') {
+                $expected = 'mod/quiz:manage';
+            }
             $this->assertSame($expected, $tool->get_required_capability());
         }
         $this->assertSame('mod/quiz:manage', $write[0]->get_required_capability());
         $this->assertTrue($write[0]->requires_confirmation());
         $this->assertTrue($write[0]->supports_dry_run());
-        foreach (array_slice($write, 1) as $tool) {
+        $this->assertSame('mod/quiz:manage', $write[1]->get_required_capability());
+        $this->assertTrue($write[1]->requires_confirmation());
+        $this->assertTrue($write[1]->supports_dry_run());
+        foreach (array_slice($write, 2) as $tool) {
             $this->assertSame('moodle/site:config', $tool->get_required_capability());
             $this->assertTrue($tool->requires_confirmation());
             $this->assertTrue($tool->supports_dry_run());
@@ -208,6 +216,125 @@ final class mcp_integration_test extends advanced_testcase {
         $after = \local_kopere_proctoring\mcp\admin_settings_service::sortable_names();
         $this->assertSame($before[1], $after[0]);
         $this->assertSame($before[0], $after[1]);
+    }
+
+    /**
+     * Verify that Quiz texts inherit global defaults and override only one Quiz.
+     */
+    public function test_quiz_specific_policy_text_and_limit_inheritance(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course();
+        $quiz1 = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
+        $quiz2 = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
+        $cmid1 = (int)$quiz1->cmid;
+        $cmid2 = (int)$quiz2->cmid;
+
+        set_config('start_message_default', '<p>Focus default</p>', 'proctoringpolicy_focus');
+        set_config('limit_default', 3, 'proctoringpolicy_focus');
+        $before = \local_kopere_proctoring\mcp\quiz_settings_service::policy($cmid1, 'focus');
+        $this->assertTrue($before['settings']['start_message']['inherited']);
+        $this->assertSame('<p>Focus default</p>', $before['settings']['start_message']['value']);
+        $this->assertSame(3, $before['settings']['limit']['value']);
+
+        \local_kopere_proctoring\mcp\quiz_settings_service::save(
+            $cmid1, 'focus', 'start_message', '<p>Instructions for this exam</p>');
+        \local_kopere_proctoring\mcp\quiz_settings_service::save($cmid1, 'focus', 'limit', 5);
+        \local_kopere_proctoring\mcp\quiz_settings_service::save($cmid1, 'focus', 'enabled', 1);
+        $after = \local_kopere_proctoring\mcp\quiz_settings_service::policy($cmid1, 'focus');
+        $this->assertFalse($after['settings']['start_message']['inherited']);
+        $this->assertSame('<p>Instructions for this exam</p>', $after['settings']['start_message']['value']);
+        $this->assertSame(5, $after['settings']['limit']['value']);
+        $this->assertTrue($after['quiz_enabled']);
+        $this->assertFalse($after['effective_enabled']); // Whole Quiz Proctoring remains off.
+        $this->assertNotSame($before['state_hash'], $after['state_hash']);
+
+        $other = \local_kopere_proctoring\mcp\quiz_settings_service::policy($cmid2, 'focus');
+        $this->assertSame('<p>Focus default</p>', $other['settings']['start_message']['value']);
+        $this->assertSame(3, $other['settings']['limit']['value']);
+
+        \local_kopere_proctoring\mcp\quiz_settings_service::reset($cmid1, 'focus', 'start_message');
+        $inherited = \local_kopere_proctoring\mcp\quiz_settings_service::policy($cmid1, 'focus');
+        $this->assertTrue($inherited['settings']['start_message']['inherited']);
+        $this->assertSame('<p>Focus default</p>', $inherited['settings']['start_message']['value']);
+        $this->assertSame(5, $inherited['settings']['limit']['value']);
+    }
+
+    /**
+     * Read and write tools expose previews and reject stale Quiz policy changes.
+     */
+    public function test_quiz_policy_mcp_read_preview_write_and_reset(): void {
+        if (get_config('local_mcp', 'version') === false) {
+            $this->markTestSkipped('Optional local_mcp is not installed.');
+        }
+        global $USER;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course();
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
+        $cmid = (int)$quiz->cmid;
+        $identity = new \local_mcp\security\authenticated_identity($USER->id, 'test', ['mcp:read', 'mcp:write']);
+        set_config('message_default', '<p>Global message</p>', 'proctoringpolicy_contract');
+
+        $read = new \local_kopere_proctoring\mcp\get_quiz_settings();
+        $before = $read->execute(['cmid' => $cmid, 'policy' => 'contract'], $identity);
+        $this->assertSame('<p>Global message</p>', $before['policies'][0]['settings']['message']['value']);
+
+        $tool = new \local_kopere_proctoring\mcp\set_quiz_policy_setting();
+        $args = ['cmid' => $cmid, 'policy' => 'contract', 'setting' => 'message',
+            'value' => '<p>Quiz commitment</p>', 'expected_hash' => $before['policies'][0]['state_hash']];
+        $preview = $tool->preview($args, $identity);
+        $this->assertTrue($preview['requires_confirmation']);
+        $this->assertSame('<p>Global message</p>',
+            \local_kopere_proctoring\mcp\quiz_settings_service::policy($cmid, 'contract')['settings']['message']['value']);
+        $saved = $tool->execute($args, $identity);
+        $this->assertTrue($saved['success']);
+        $this->assertSame('<p>Quiz commitment</p>', $saved['current']['settings']['message']['value']);
+
+        try {
+            $tool->preview($args, $identity);
+            $this->fail('Stale state_hash should be rejected.');
+        } catch (\local_mcp\exception\api_exception $expected) {
+            $this->assertSame('proctoring_settings_changed', $expected->machinecode);
+        }
+
+        $reset = ['cmid' => $cmid, 'policy' => 'contract', 'setting' => 'message',
+            'operation' => 'reset', 'expected_hash' => $saved['current']['state_hash']];
+        $this->assertTrue($tool->preview($reset, $identity)['requires_confirmation']);
+        $result = $tool->execute($reset, $identity);
+        $this->assertTrue($result['current']['settings']['message']['inherited']);
+        $this->assertSame('<p>Global message</p>', $result['current']['settings']['message']['value']);
+    }
+
+    /**
+     * Students cannot read or write Quiz-specific policy messages.
+     */
+    public function test_quiz_policy_text_access_restricted_to_manager(): void {
+        if (get_config('local_mcp', 'version') === false) {
+            $this->markTestSkipped('Optional local_mcp is not installed.');
+        }
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
+        $student = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($student->id, $course->id, 'student');
+        $this->setUser($student);
+        $identity = new \local_mcp\security\authenticated_identity($student->id, 'test', ['mcp:read']);
+        $tool = new \local_kopere_proctoring\mcp\get_quiz_settings();
+        $this->expectException(\local_mcp\exception\api_exception::class);
+        $tool->execute(['cmid' => $quiz->cmid], $identity);
+    }
+
+    /**
+     * A write cannot target settings not supported by an installed policy.
+     */
+    public function test_quiz_policy_blocks_unknown_field(): void {
+        if (get_config('local_mcp', 'version') === false) {
+            $this->markTestSkipped('Optional local_mcp is not installed.');
+        }
+        $this->expectException(\local_mcp\exception\api_exception::class);
+        \local_kopere_proctoring\mcp\quiz_settings_service::validate_setting(
+            'focus', 'admin_password', 'not allowed');
     }
 
     /**
