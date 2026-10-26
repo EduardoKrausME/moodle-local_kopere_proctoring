@@ -112,6 +112,12 @@ class provider implements policy_interface {
      * @return void
      */
     public static function save_module_form(stdClass $data, int $cmid): void {
+        // Do not overwrite MCP-managed settings while the Quiz form has no inputs
+        // for this policy; other policy saves must not reset its configuration.
+        if (!isset($data->kopere_policy_securitysignals_enabled) &&
+                !isset($data->kopere_policy_securitysignals_pulsems)) {
+            return;
+        }
         $enabled = ($data->kopere_policy_securitysignals_enabled ?? 0);
         $pulsems = ($data->kopere_policy_securitysignals_pulsems ?? 8000);
 
