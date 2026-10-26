@@ -30,22 +30,47 @@ use local_mcp\security\authenticated_identity;
 
 /** Read the global policy flags and default messages. */
 final class get_admin_settings implements tool_interface {
+    /**
+     * Return the MCP identifier.
+     *
+     * @return string
+     */
     public function get_name(): string {
         return 'kopere_proctoring_get_admin_settings';
     }
 
+    /**
+     * Return the tool display title.
+     *
+     * @return string
+     */
     public function get_title(): string {
         return 'Read Proctoring administration settings';
     }
 
+    /**
+     * Describe the operation and its safeguards.
+     *
+     * @return string
+     */
     public function get_description(): string {
         return 'List global policy activation, default messages, limits and notification settings for the administrator.';
     }
 
+    /**
+     * Require administrator access for this operation.
+     *
+     * @return string
+     */
     public function get_required_capability(): string {
         return 'moodle/site:config';
     }
 
+    /**
+     * Declare the validated JSON input schema.
+     *
+     * @return array
+     */
     public function get_input_schema(): array {
         return [
             'type' => 'object',
@@ -54,10 +79,23 @@ final class get_admin_settings implements tool_interface {
         ];
     }
 
+    /**
+     * Resolve the Moodle system context.
+     *
+     * @param array $arguments Tool arguments.
+     * @return context
+     */
     public function resolve_context(array $arguments): context {
         return context_system::instance();
     }
 
+    /**
+     * Apply the authorized and confirmed update.
+     *
+     * @param array $arguments Tool arguments.
+     * @param authenticated_identity $identity Authorized Moodle user.
+     * @return array
+     */
     public function execute(array $arguments, authenticated_identity $identity): array {
         return admin_settings_service::snapshot($arguments['policy'] ?? null);
     }
