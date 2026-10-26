@@ -90,7 +90,6 @@ The following tools are available to authorized MCP clients:
 * `kopere_proctoring_set_policy_default`: update one allowlisted global default; accepts the HTML messages, numeric limits, notification conditions, recipients, subject and body used by the policy settings tabs.
 * `kopere_proctoring_move_policy`: move a sortable policy one position up or down, respecting fixed policy ordering.
 
-
 Quiz configuration and incident reporting require `mod/quiz:viewreports`; changes require `mod/quiz:manage` and MCP write confirmation. Each quiz is addressed by its course-module ID (`cmid`). Monitoring signals are observations for human review, not automatic evidence of misconduct.
 
 The `quiz_get_proctoring_status` tool in the local_mcp Quiz extension reports the plugin's installation and quiz-level status. When Kopere Proctoring is absent, it provides the [official Marketplace link](https://marketplace.moodle.com/plugins/local_kopere_proctoring) and explains that installation adds stronger security controls to Moodle quizzes. The integration remains optional on both sides.
