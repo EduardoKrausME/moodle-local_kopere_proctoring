@@ -338,6 +338,28 @@ final class mcp_integration_test extends advanced_testcase {
     }
 
     /**
+     * A Quiz edit without notification or signal inputs must not erase MCP values.
+     */
+    public function test_quiz_form_does_not_clear_mcp_only_policy_configuration(): void {
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
+        $cmid = (int)$quiz->cmid;
+        \local_kopere_proctoring\policy\cm_config::set('notifications', 'body', $cmid,
+            '<p>Important notification</p>');
+        \local_kopere_proctoring\policy\cm_config::set('notifications', 'enabled', $cmid, 1);
+        \local_kopere_proctoring\policy\cm_config::set('securitysignals', 'pulsems', $cmid, 9000);
+        \proctoringpolicy_notifications\provider::save_module_form((object)[], $cmid);
+        \proctoringpolicy_securitysignals\provider::save_module_form((object)[], $cmid);
+        $this->assertSame('<p>Important notification</p>',
+            \local_kopere_proctoring\policy\cm_config::get('notifications', 'body', $cmid));
+        $this->assertEquals(1,
+            \local_kopere_proctoring\policy\cm_config::get('notifications', 'enabled', $cmid));
+        $this->assertEquals(9000,
+            \local_kopere_proctoring\policy\cm_config::get('securitysignals', 'pulsems', $cmid));
+    }
+
+    /**
      * The schema never permits writing arbitrary admin configuration keys.
      */
     public function test_unlisted_global_field_is_rejected(): void {
