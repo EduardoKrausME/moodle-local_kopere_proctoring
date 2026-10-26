@@ -31,20 +31,40 @@ use local_mcp\write\tool\base_tool;
 
 /** Change the same global flag used by the policy administration page. */
 final class set_policy_enabled extends base_tool {
+    /**
+     * Return the MCP identifier.
+     *
+     * @return string
+     */
     public function get_name(): string {
         return 'kopere_proctoring_set_policy_enabled';
     }
 
+    /**
+     * Return the tool display title.
+     *
+     * @return string
+     */
     public function get_title(): string {
         return 'Enable or disable global Proctoring policy';
     }
 
+    /**
+     * Describe the operation and its safeguards.
+     *
+     * @return string
+     */
     public function get_description(): string {
         return 'Activate or deactivate one installed Proctoring policy globally. '
             . 'Does not erase policy defaults or change individual quiz settings. '
             . 'Requires preview and explicit confirmation.';
     }
 
+    /**
+     * Declare the validated JSON input schema.
+     *
+     * @return array
+     */
     public function get_input_schema(): array {
         return $this->object_schema([
             'policy' => ['type' => 'string', 'pattern' => '^[a-z][a-z0-9_]*$'],
@@ -53,14 +73,30 @@ final class set_policy_enabled extends base_tool {
         ], ['policy', 'enabled']);
     }
 
+    /**
+     * Require administrator access for this operation.
+     *
+     * @return string
+     */
     public function get_required_capability(): string {
         return 'moodle/site:config';
     }
 
+    /**
+     * Resolve the Moodle system context.
+     *
+     * @param array $arguments Tool arguments.
+     * @return context
+     */
     public function resolve_context(array $arguments): context {
         return context_system::instance();
     }
 
+    /**
+     * Allow a dry-run preview.
+     *
+     * @return bool
+     */
     public function supports_dry_run(): bool {
         return true;
     }
@@ -78,6 +114,13 @@ final class set_policy_enabled extends base_tool {
         return $before;
     }
 
+    /**
+     * Describe the requested update without modifying configuration.
+     *
+     * @param array $arguments Tool arguments.
+     * @param authenticated_identity $identity Authorized Moodle user.
+     * @return array
+     */
     public function preview(array $arguments, authenticated_identity $identity): array {
         $before = self::prepare($arguments);
         return [
@@ -90,6 +133,13 @@ final class set_policy_enabled extends base_tool {
         ];
     }
 
+    /**
+     * Apply the authorized and confirmed update.
+     *
+     * @param array $arguments Tool arguments.
+     * @param authenticated_identity $identity Authorized Moodle user.
+     * @return array
+     */
     public function execute(array $arguments, authenticated_identity $identity): array {
         $before = self::prepare($arguments);
         set_config('active', (int)$arguments['enabled'], 'proctoringpolicy_' . $before['policy']);
