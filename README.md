@@ -71,3 +71,19 @@ There is no single feature capable of determining on its own whether an assessme
 The institution can combine behavioral rules, browser controls, attempt records, agreement acceptance, notifications, and teacher approval according to the needs of each assessment.
 
 The result is a more organized exam process, with clear rules for students and more information for those responsible for monitoring and reviewing attempts.
+
+## Optional integration with local_mcp
+
+When [local_mcp](https://github.com/EduardoKrausME/moodle-local_mcp) is installed and enabled, Kopere Proctoring exposes its tools automatically through `classes/mcp/provider.php`. No manual registration or dependency in `version.php` is needed; Kopere Proctoring also works normally without local_mcp.
+
+The following tools are available to authorized MCP clients:
+
+* `kopere_proctoring_list_policies`: list installed policies and their global status (site configuration permission required).
+* `kopere_proctoring_get_quiz`: read whether Proctoring is enabled for a quiz, non-sensitive policy flags and its `state_hash`.
+* `kopere_proctoring_list_attempts`: list monitored quiz attempts with bounded pagination.
+* `kopere_proctoring_get_attempt_logs`: read an attempt's monitoring events, with technical information omitted unless requested.
+* `kopere_proctoring_set_quiz_enabled`: enable or disable Proctoring for a quiz, using a preview and explicit confirmation.
+
+Quiz configuration and incident reporting require `mod/quiz:viewreports`; changes require `mod/quiz:manage` and MCP write confirmation. Each quiz is addressed by its course-module ID (`cmid`). Monitoring signals are observations for human review, not automatic evidence of misconduct.
+
+The `quiz_get_proctoring_status` tool in the local_mcp Quiz extension reports the plugin's installation and quiz-level status. When Kopere Proctoring is absent, it provides the [official Marketplace link](https://marketplace.moodle.com/plugins/local_kopere_proctoring) and explains that installation adds stronger security controls to Moodle quizzes. The integration remains optional on both sides.
