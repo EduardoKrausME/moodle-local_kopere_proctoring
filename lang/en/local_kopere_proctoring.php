@@ -43,7 +43,15 @@ $string['mcp_banner_dismiss'] = 'Do not show this again';
 $string['mcp_banner_title'] = 'Bring Kopere Proctoring into ChatGPT';
 $string['movedownplugin'] = 'Move plugin down';
 $string['moveupplugin'] = 'Move plugin up';
+$string['privacy:metadata:local_kopere_proctoring_att:focuscount'] = 'Number of focus-loss incidents for the attempt.';
+$string['privacy:metadata:local_kopere_proctoring_att:fullscreencount'] = 'Number of fullscreen-exit incidents for the attempt.';
+$string['privacy:metadata:local_kopere_proctoring_att:blocked'] = 'Whether the attempt is blocked by a proctoring policy.';
+$string['privacy:metadata:local_kopere_proctoring_att:blockedreason'] = 'Policy that caused the attempt lock.';
+$string['privacy:metadata:local_kopere_proctoring_log:eventid'] = 'Deduplication identifier of an incident reported by the browser.';
 $string['pluginname'] = 'Kopere Proctoring';
+$string['attemptblocked'] = 'This attempt has been blocked by proctoring. Contact your teacher for review.';
+$string['policy_load_failed'] = 'A required proctoring policy could not be loaded. Reload the page and contact support if this continues.';
+$string['record_failed'] = 'The incident could not be recorded. The exam was paused for safety; contact your teacher.';
 $string['pluginstatus_activate'] = 'Activate';
 $string['pluginstatus_active'] = 'Active';
 $string['pluginstatus_deactivate'] = 'Desactivate';
@@ -67,9 +75,7 @@ $string['privacy:metadata:local_kopere_proctoring_log:screenresolution'] = 'The 
 $string['privacy:metadata:local_kopere_proctoring_log:time'] = 'The time when the event was recorded.';
 $string['privacy:metadata:local_kopere_proctoring_log:useragent'] = 'The browser user agent recorded for the event.';
 $string['privacy:metadata:local_kopere_proctoring_log:userid'] = 'The user identifier.';
-$string['proctoring_warning'] = '<p>When <strong>Proctoring</strong> is enabled, the quiz layout will be automatically adjusted so that <strong>all questions are displayed on a single page</strong>.</p>
-<p>This change prevents the student from having to navigate between pages during the attempt, reducing the risk of interruptions, page reloads, or improper termination of the Proctoring session.</p>
-<p>To achieve this, the Quiz <code>Layout</code> setting will be automatically changed, ensuring that the quiz is presented on a single page while Proctoring is active.</p>';
+$string['proctoring_warning'] = '<p>Kopere Proctoring does not modify quiz pagination automatically. When a single-page assessment is required, configure the Moodle quiz layout before opening the exam and verify existing question page breaks.</p>';
 $string['reload_required_button'] = 'Reload page';
 $string['reload_required_message'] = 'The exam monitoring interface was hidden or removed. Reload the page to continue securely.';
 $string['reload_required_title'] = 'Reload the page';

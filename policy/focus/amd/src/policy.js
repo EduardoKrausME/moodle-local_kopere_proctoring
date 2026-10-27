@@ -82,7 +82,6 @@ define(["jquery"], function ($) {
         }
 
 
-        let count = 0;
         let departed = false;
         let namespace = ".kopere_proctoring_focus";
 
@@ -92,19 +91,20 @@ define(["jquery"], function ($) {
                 return;
             }
             departed = true;
-            count++;
-            showViolationMessage(ctx);
-
-            if (typeof ctx.sendEvent === "function") {
-                ctx.sendEvent("focus_" + kind, {
-                    count: count,
-                    detail: detail || ""
-                });
+            if (!ctx.api || typeof ctx.api.recordViolation !== "function") {
+                ctx.lock("service", M.util.get_string("record_failed", "local_kopere_proctoring"));
+                return;
             }
 
-            if (limit > 0 && count > limit && typeof ctx.lock === "function") {
-                ctx.lock("focus", getViolationHtml());
-            }
+            ctx.api.recordViolation("focus", kind).done(function (result) {
+                if (result.blocked) {
+                    ctx.lock("focus", getViolationHtml());
+                } else {
+                    showViolationMessage(ctx);
+                }
+            }).fail(function () {
+                ctx.lock("service", M.util.get_string("record_failed", "local_kopere_proctoring"));
+            });
         }
 
         function restoreFocus() {

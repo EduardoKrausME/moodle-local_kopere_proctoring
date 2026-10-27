@@ -339,10 +339,6 @@ class manager {
         if (isset($data->kopere_proctoring_enabled)) {
             set_config("kopere_proctoring_enabled_{$cmid}", $data->kopere_proctoring_enabled, "local_kopere_proctoring");
 
-            if ($data->kopere_proctoring_enabled) {
-                $DB->set_field("quiz", "questionsperpage", 50, ["id" => $data->instance]);
-            }
-
             /** @var policy_interface $classname */
             foreach (self::get_policy_classes(true) as $classname) {
                 $classname::save_module_form($data, $cmid);

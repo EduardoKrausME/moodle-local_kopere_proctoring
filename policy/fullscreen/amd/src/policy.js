@@ -161,23 +161,27 @@ define(["jquery"], function ($) {
             "mozfullscreenchange.kopere_proctoring_fullscreen " +
             "MSFullscreenChange.kopere_proctoring_fullscreen",
             function () {
+                let wasactive = state.fullscreenentered;
                 let active = refreshFullscreenRequirement(ctx, cfg, state, $status, $footer, $button);
 
-                if (!state.inexam || active) {
+                // Ignore duplicate vendor events: one true -> false transition = one exit.
+                if (!state.inexam || active || !wasactive) {
+                    return;
+                }
+                if (!ctx.api || typeof ctx.api.recordViolation !== "function") {
+                    ctx.lock("service", M.util.get_string("record_failed", "local_kopere_proctoring"));
                     return;
                 }
 
-                state.exits = state.exits + 1;
-                emitLog(ctx, "fullscreen_exit", String(state.exits));
-                showViolationMessage(ctx);
-
-                if (state.limit > 0 && state.exits > state.limit) {
-                    warnStatus(ctx, "Fullscreen limit exceeded.");
-                    emitLog(ctx, "fullscreen_blocked", "limit");
-                    if (typeof ctx.lock === "function") {
+                ctx.api.recordViolation("fullscreen", "exit").done(function (result) {
+                    if (result.blocked) {
                         ctx.lock("fullscreen", getViolationHtml());
+                    } else {
+                        showViolationMessage(ctx);
                     }
-                }
+                }).fail(function () {
+                    ctx.lock("service", M.util.get_string("record_failed", "local_kopere_proctoring"));
+                });
             }
         );
     }
@@ -273,13 +277,11 @@ define(["jquery"], function ($) {
             if (ctx.api && typeof ctx.api.registerStartCallback === "function") {
                 ctx.api.registerStartCallback(function () {
                     state.inexam = true;
-                    emitLog(ctx, "fullscreen_policy_started", state.fullscreenentered ? "fullscreen" : "");
                 });
                 return;
             }
 
             state.inexam = true;
-            emitLog(ctx, "fullscreen_policy_started", "");
         }
     };
 });
