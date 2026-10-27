@@ -81,20 +81,17 @@ define(["jquery"], function ($) {
             limit = 3;
         }
 
+
         let count = 0;
+        let departed = false;
         let namespace = ".kopere_proctoring_focus";
 
-        /**
-         * Register one focus-loss event.
-         *
-         * @param {String} kind
-         * @param {String} detail
-         */
+        // A single tab switch may emit both blur and visibilitychange.
         function registerEvent(kind, detail) {
-            if (!isExamActive(ctx)) {
+            if (departed || !isExamActive(ctx)) {
                 return;
             }
-
+            departed = true;
             count++;
             showViolationMessage(ctx);
 
@@ -110,16 +107,23 @@ define(["jquery"], function ($) {
             }
         }
 
+        function restoreFocus() {
+            if (!document.hidden && document.hasFocus()) {
+                departed = false;
+            }
+        }
+
         $(window).off(namespace);
         $(document).off(namespace);
-
         $(window).on("blur" + namespace, function () {
             registerEvent("blur", "window");
         });
-
+        $(window).on("focus" + namespace, restoreFocus);
         $(document).on("visibilitychange" + namespace, function () {
             if (document.hidden) {
                 registerEvent("visibilitychange", "hidden");
+            } else {
+                restoreFocus();
             }
         });
     }
