@@ -148,10 +148,9 @@ class hook_callbacks {
 
         $context = context_module::instance($PAGE->cm->id);
         $path = $PAGE->url ? $PAGE->url->get_path() : '';
-        $isattemptpage = strpos($path, '/mod/quiz/attempt.php') !== false ||
-            strpos($path, '/mod/quiz/summary.php') !== false;
+        $isattemptpage = strpos($path, '/mod/quiz/attempt.php') !== false;
 
-        // Only attempt/summary pages need persisted-lock enforcement.
+        // Only attempt pages need the proctoring start UI.
         if (!$isattemptpage) {
             return;
         }
@@ -181,11 +180,6 @@ class hook_callbacks {
         ]);
         if (!$attempt) {
             return;
-        }
-
-        // Persisted lock survives page reloads. Review pages are not blocked.
-        if (!empty($attempt->blocked)) {
-            throw new \moodle_exception('attemptblocked', 'local_kopere_proctoring');
         }
 
         $PAGE->add_body_class("proctoring-start");
