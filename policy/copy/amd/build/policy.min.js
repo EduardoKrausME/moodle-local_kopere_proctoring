@@ -87,8 +87,8 @@ define(["jquery", "core/ajax"], function ($, Ajax) {
 
     function showWarning(context) {
         if (isExamActive(context) && context.api &&
-                typeof context.api.showViolationMessage === "function") {
-            context.api.showViolationMessage("copy", violationMessage());
+                typeof context.api.showPolicyAlert === "function") {
+            context.api.showPolicyAlert("copy", violationMessage());
         }
     }
 

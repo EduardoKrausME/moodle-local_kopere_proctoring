@@ -60,8 +60,8 @@ define(["jquery"], function ($) {
             return;
         }
 
-        if (ctx.api && typeof ctx.api.showViolationMessage === "function") {
-            ctx.api.showViolationMessage("focus", html);
+        if (ctx.api && typeof ctx.api.showPolicyAlert === "function") {
+            ctx.api.showPolicyAlert("focus", html);
         }
     }
 
