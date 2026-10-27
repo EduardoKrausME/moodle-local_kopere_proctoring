@@ -26,9 +26,13 @@ namespace local_kopere_proctoring\mcp;
 use local_kopere_proctoring\policy\manager;
 use local_mcp\exception\api_exception;
 
-/** Map the policy admin interface to safely readable configuration data. */
+/**
+ * Safely expose global Proctoring policy configuration to MCP.
+ */
 final class admin_settings_service {
     /**
+     * Read an installed policy's defaults and current state hash.
+     *
      * @param string $policy Installed policy.
      * @return array
      */
@@ -65,6 +69,8 @@ final class admin_settings_service {
     }
 
     /**
+     * Build the global configuration snapshot for installed policies.
+     *
      * @param string|null $policy Optional policy filter.
      * @return array
      */
@@ -81,6 +87,8 @@ final class admin_settings_service {
     }
 
     /**
+     * List the policies that support administrative reordering.
+     *
      * @return array Ordered keys which the administrative page allows to move.
      */
     public static function sortable_names(): array {
@@ -91,6 +99,8 @@ final class admin_settings_service {
     }
 
     /**
+     * Calculate a concurrency fingerprint for the policy order.
+     *
      * @return string Snapshot of the global ordering.
      */
     public static function order_hash(): string {
@@ -102,6 +112,8 @@ final class admin_settings_service {
     }
 
     /**
+     * Validate an allowed global policy setting and its value.
+     *
      * @param mixed $value Proposed value.
      * @param string $policy Installed policy.
      * @param string $field Setting name.
@@ -132,6 +144,8 @@ final class admin_settings_service {
     }
 
     /**
+     * Persist a validated global Proctoring policy setting.
+     *
      * @param string $policy Policy key.
      * @param string $field Global setting.
      * @param string|int $value Validated value.
@@ -143,6 +157,8 @@ final class admin_settings_service {
     }
 
     /**
+     * Reject an update when the expected global state is stale.
+     *
      * @param string $actual Actual state hash.
      * @param mixed $expected Expected state hash or null.
      * @return void
@@ -155,6 +171,8 @@ final class admin_settings_service {
     }
 
     /**
+     * Generate a stable hash of the global configuration snapshot.
+     *
      * @param array $data Snapshot.
      * @return string
      */

@@ -28,7 +28,9 @@ use context_system;
 use local_mcp\security\authenticated_identity;
 use local_mcp\write\tool\base_tool;
 
-/** Changes a single allowlisted policy default, never per-quiz overrides. */
+/**
+ * Change one global Proctoring policy default exposed through MCP.
+ */
 final class set_policy_default extends base_tool {
     /**
      * Return the MCP identifier.
@@ -103,6 +105,8 @@ final class set_policy_default extends base_tool {
     }
 
     /**
+     * Validate the proposed default and reject stale configuration updates.
+     *
      * @param array $arguments Proposed update.
      * @return array Current policy and validated proposed value.
      */

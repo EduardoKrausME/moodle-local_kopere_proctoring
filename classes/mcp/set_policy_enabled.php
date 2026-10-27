@@ -29,7 +29,9 @@ use local_mcp\exception\api_exception;
 use local_mcp\security\authenticated_identity;
 use local_mcp\write\tool\base_tool;
 
-/** Change the same global flag used by the policy administration page. */
+/**
+ * Enable or disable an installed policy globally through MCP.
+ */
 final class set_policy_enabled extends base_tool {
     /**
      * Return the MCP identifier.
@@ -102,6 +104,8 @@ final class set_policy_enabled extends base_tool {
     }
 
     /**
+     * Validate the enabled-state change and reject stale updates.
+     *
      * @param array $arguments Validated MCP arguments.
      * @return array
      */

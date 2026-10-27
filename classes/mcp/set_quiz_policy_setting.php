@@ -34,6 +34,8 @@ use local_mcp\write\tool\base_tool;
  */
 final class set_quiz_policy_setting extends base_tool {
     /**
+     * Return the identifier for the Quiz policy write tool.
+     *
      * @return string MCP tool name.
      */
     public function get_name(): string {
@@ -41,6 +43,8 @@ final class set_quiz_policy_setting extends base_tool {
     }
 
     /**
+     * Return the display title for the Quiz policy write tool.
+     *
      * @return string Tool title.
      */
     public function get_title(): string {
@@ -48,6 +52,8 @@ final class set_quiz_policy_setting extends base_tool {
     }
 
     /**
+     * Describe the supported edits and confirmation requirements.
+     *
      * @return string Tool description.
      */
     public function get_description(): string {
@@ -58,6 +64,8 @@ final class set_quiz_policy_setting extends base_tool {
     }
 
     /**
+     * Declare the validated Quiz policy write arguments.
+     *
      * @return array Validated arguments.
      */
     public function get_input_schema(): array {
@@ -76,6 +84,8 @@ final class set_quiz_policy_setting extends base_tool {
     }
 
     /**
+     * Require Quiz management permission for policy edits.
+     *
      * @return string Moodle capability.
      */
     public function get_required_capability(): string {
@@ -83,6 +93,8 @@ final class set_quiz_policy_setting extends base_tool {
     }
 
     /**
+     * Resolve the Quiz context for permission checks.
+     *
      * @param array $arguments MCP arguments.
      * @return context Moodle module context.
      */
@@ -92,6 +104,8 @@ final class set_quiz_policy_setting extends base_tool {
     }
 
     /**
+     * Allow a policy update to be previewed before confirmation.
+     *
      * @return bool Supports dry-run.
      */
     public function supports_dry_run(): bool {
@@ -136,6 +150,8 @@ final class set_quiz_policy_setting extends base_tool {
     }
 
     /**
+     * Preview the requested policy change without persisting it.
+     *
      * @param array $arguments MCP arguments.
      * @param authenticated_identity $identity Connected user.
      * @return array Preview without persistence.
@@ -158,6 +174,8 @@ final class set_quiz_policy_setting extends base_tool {
     }
 
     /**
+     * Persist the confirmed Quiz policy setting change.
+     *
      * @param array $arguments MCP arguments.
      * @param authenticated_identity $identity Connected user.
      * @return array Persisted state.

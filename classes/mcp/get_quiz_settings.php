@@ -31,6 +31,8 @@ use local_mcp\security\authenticated_identity;
  */
 final class get_quiz_settings extends quiz_read_tool {
     /**
+     * Return the identifier for the Quiz policy read tool.
+     *
      * @return string MCP tool name.
      */
     public function get_name(): string {
@@ -38,6 +40,8 @@ final class get_quiz_settings extends quiz_read_tool {
     }
 
     /**
+     * Return the display title for the Quiz policy read tool.
+     *
      * @return string Tool title.
      */
     public function get_title(): string {
@@ -45,6 +49,8 @@ final class get_quiz_settings extends quiz_read_tool {
     }
 
     /**
+     * Describe the Quiz policy information exposed by the tool.
+     *
      * @return string Tool description.
      */
     public function get_description(): string {
@@ -54,6 +60,8 @@ final class get_quiz_settings extends quiz_read_tool {
     }
 
     /**
+     * Require Quiz management permission to inspect policy settings.
+     *
      * @return string Moodle permission needed for reading texts.
      */
     public function get_required_capability(): string {
@@ -61,6 +69,8 @@ final class get_quiz_settings extends quiz_read_tool {
     }
 
     /**
+     * Declare the accepted Quiz policy query arguments.
+     *
      * @return array Input schema.
      */
     public function get_input_schema(): array {
@@ -76,6 +86,8 @@ final class get_quiz_settings extends quiz_read_tool {
     }
 
     /**
+     * Retrieve the requested Quiz policy settings for an authorized user.
+     *
      * @param array $arguments Tool arguments.
      * @param authenticated_identity $identity Connected user.
      * @return array Per-Quiz policy configuration.

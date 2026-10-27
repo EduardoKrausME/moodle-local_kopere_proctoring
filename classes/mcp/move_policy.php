@@ -30,7 +30,9 @@ use local_mcp\exception\api_exception;
 use local_mcp\security\authenticated_identity;
 use local_mcp\write\tool\base_tool;
 
-/** Mirror the ordering controls on the administrator's policy page. */
+/**
+ * Reorder installed Proctoring policies using the admin ordering rules.
+ */
 final class move_policy extends base_tool {
     /**
      * Return the MCP identifier.
@@ -102,6 +104,8 @@ final class move_policy extends base_tool {
     }
 
     /**
+     * Validate a proposed move against the existing policy order.
+     *
      * @param array $arguments Proposed change.
      * @return array Previous order and proposed order.
      */

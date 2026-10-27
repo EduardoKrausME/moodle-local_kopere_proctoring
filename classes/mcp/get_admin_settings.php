@@ -28,7 +28,9 @@ use context_system;
 use local_mcp\read\tool_interface;
 use local_mcp\security\authenticated_identity;
 
-/** Read the global policy flags and default messages. */
+/**
+ * Read allowed global Proctoring settings through the MCP interface.
+ */
 final class get_admin_settings implements tool_interface {
     /**
      * Return the MCP identifier.

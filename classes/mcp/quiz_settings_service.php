@@ -126,7 +126,7 @@ final class quiz_settings_service {
                     }
                     $stored = get_config('local_kopere_proctoring',
                         cm_config::key($name, $field, $cmid));
-                    // cm_config::get uses global default for missing or empty values.
+                    // The cm_config::get helper inherits defaults for missing or empty values.
                     $inherited = $stored === false || $stored === null || $stored === '';
                     $value = $inherited ? $default : $stored;
                     if ($definition['type'] === 'integer') {
@@ -233,6 +233,8 @@ final class quiz_settings_service {
     }
 
     /**
+     * Reject a Quiz policy update if its expected state is stale.
+     *
      * @param string $actual Current state hash.
      * @param mixed $expected Optional concurrency hash.
      * @return void
@@ -245,6 +247,8 @@ final class quiz_settings_service {
     }
 
     /**
+     * Generate a stable hash from the current Quiz policy settings.
+     *
      * @param array $data State components.
      * @return string
      */

@@ -33,6 +33,8 @@ use local_kopere_proctoring\mcp\service;
 final class mcp_integration_test extends advanced_testcase {
     /**
      * Snapshot reports the quiz configuration without exposing private policy content.
+     *
+     * @covers \local_kopere_proctoring\mcp\service
      */
     public function test_quiz_proctoring_snapshot_and_state_hash(): void {
         $this->resetAfterTest();
@@ -63,6 +65,8 @@ final class mcp_integration_test extends advanced_testcase {
 
     /**
      * An installed local_mcp discovers the existing proctoring provider contracts.
+     *
+     * @covers \local_kopere_proctoring\mcp\provider
      */
     public function test_mcp_provider_registers_permission_scoped_tools(): void {
         if (get_config('local_mcp', 'version') === false ||
@@ -122,6 +126,8 @@ final class mcp_integration_test extends advanced_testcase {
 
     /**
      * Read the same global defaults as the settings page, retaining quiz overrides.
+     *
+     * @covers \local_kopere_proctoring\mcp\admin_settings_service
      */
     public function test_global_policy_admin_snapshot(): void {
         $this->resetAfterTest();
@@ -155,6 +161,9 @@ final class mcp_integration_test extends advanced_testcase {
 
     /**
      * Writes must match the admin policy setting types and use confirmation previews.
+     *
+     * @covers \local_kopere_proctoring\mcp\set_policy_enabled
+     * @covers \local_kopere_proctoring\mcp\set_policy_default
      */
     public function test_mcp_global_policy_write_preview_and_update(): void {
         if (get_config('local_mcp', 'version') === false) {
@@ -193,6 +202,8 @@ final class mcp_integration_test extends advanced_testcase {
 
     /**
      * Reordering previews do not mutate the page, and preserve unsortable policies.
+     *
+     * @covers \local_kopere_proctoring\mcp\move_policy
      */
     public function test_global_policy_move_requires_confirmation(): void {
         if (get_config('local_mcp', 'version') === false) {
@@ -220,6 +231,8 @@ final class mcp_integration_test extends advanced_testcase {
 
     /**
      * Verify that Quiz texts inherit global defaults and override only one Quiz.
+     *
+     * @covers \local_kopere_proctoring\mcp\quiz_settings_service
      */
     public function test_quiz_specific_policy_text_and_limit_inheritance(): void {
         $this->resetAfterTest();
@@ -262,6 +275,9 @@ final class mcp_integration_test extends advanced_testcase {
 
     /**
      * Read and write tools expose previews and reject stale Quiz policy changes.
+     *
+     * @covers \local_kopere_proctoring\mcp\get_quiz_settings
+     * @covers \local_kopere_proctoring\mcp\set_quiz_policy_setting
      */
     public function test_quiz_policy_mcp_read_preview_write_and_reset(): void {
         if (get_config('local_mcp', 'version') === false) {
@@ -308,6 +324,8 @@ final class mcp_integration_test extends advanced_testcase {
 
     /**
      * Students cannot read or write Quiz-specific policy messages.
+     *
+     * @covers \local_kopere_proctoring\mcp\get_quiz_settings
      */
     public function test_quiz_policy_text_access_restricted_to_manager(): void {
         if (get_config('local_mcp', 'version') === false) {
@@ -327,6 +345,8 @@ final class mcp_integration_test extends advanced_testcase {
 
     /**
      * A write cannot target settings not supported by an installed policy.
+     *
+     * @covers \local_kopere_proctoring\mcp\quiz_settings_service
      */
     public function test_quiz_policy_blocks_unknown_field(): void {
         if (get_config('local_mcp', 'version') === false) {
@@ -339,6 +359,8 @@ final class mcp_integration_test extends advanced_testcase {
 
     /**
      * A Quiz edit without notification or signal inputs must not erase MCP values.
+     *
+     * @covers \local_kopere_proctoring\policy\cm_config
      */
     public function test_quiz_form_does_not_clear_mcp_only_policy_configuration(): void {
         $this->resetAfterTest();
@@ -361,6 +383,8 @@ final class mcp_integration_test extends advanced_testcase {
 
     /**
      * The schema never permits writing arbitrary admin configuration keys.
+     *
+     * @covers \local_kopere_proctoring\mcp\admin_settings_service
      */
     public function test_unlisted_global_field_is_rejected(): void {
         if (get_config('local_mcp', 'version') === false) {

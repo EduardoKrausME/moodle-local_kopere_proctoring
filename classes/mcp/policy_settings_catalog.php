@@ -26,7 +26,9 @@ namespace local_kopere_proctoring\mcp;
 use core_component;
 use local_mcp\exception\api_exception;
 
-/** Prevent arbitrary site configuration reads and writes through MCP. */
+/**
+ * Define global Proctoring settings that MCP may read or change.
+ */
 final class policy_settings_catalog {
     /** @var array Official global settings and their defaults. */
     private const FIELDS = [
@@ -61,6 +63,8 @@ final class policy_settings_catalog {
     ];
 
     /**
+     * Ensure the requested Proctoring policy is installed.
+     *
      * @param string $policy Policy key.
      * @return void
      */
@@ -71,6 +75,8 @@ final class policy_settings_catalog {
     }
 
     /**
+     * Return the allowed global settings for an installed policy.
+     *
      * @param string $policy Installed policy.
      * @return array
      */
@@ -80,6 +86,8 @@ final class policy_settings_catalog {
     }
 
     /**
+     * Return the definition of a single allowed global setting.
+     *
      * @param string $policy Installed policy.
      * @param string $field Global setting.
      * @return array
