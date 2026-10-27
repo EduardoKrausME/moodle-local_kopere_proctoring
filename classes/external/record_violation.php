@@ -26,6 +26,7 @@ use external_function_parameters;
 use external_single_structure;
 use external_value;
 use local_kopere_proctoring\policy\cm_config;
+use local_kopere_proctoring\policy\manager;
 
 /**
  * Records policy violations with an idempotency key, per-attempt counters and persisted blocking.
@@ -71,9 +72,8 @@ class record_violation extends external_api {
         }
 
         $policy = $params['policy'];
-        $active = get_config('proctoringpolicy_' . $policy, 'active');
         if (!cm_config::get($policy, 'enabled', $cm->id, 0) ||
-                ($active !== false && !$active)) {
+                !manager::get_policy_active($policy)) {
             throw new \invalid_parameter_exception('This proctoring policy is disabled.');
         }
 

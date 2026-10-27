@@ -182,7 +182,7 @@ class hook_callbacks {
 
         // Persisted lock survives page reloads. Review pages are not blocked.
         if (!empty($attempt->blocked)) {
-            throw new \\moodle_exception('attemptblocked', 'local_kopere_proctoring');
+            throw new \moodle_exception('attemptblocked', 'local_kopere_proctoring');
         }
 
         $PAGE->add_body_class("proctoring-start");
