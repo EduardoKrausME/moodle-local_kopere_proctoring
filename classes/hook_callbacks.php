@@ -108,6 +108,8 @@ class hook_callbacks {
             'description_ready',
             'locked_title',
             'locked_default_message',
+            'policy_load_failed',
+            'record_failed',
         ], 'local_kopere_proctoring');
 
         // Require assets in the normal render flow.

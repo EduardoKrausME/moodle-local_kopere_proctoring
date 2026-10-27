@@ -18,6 +18,7 @@ namespace local_kopere_proctoring\external;
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
 require_once($CFG->libdir . '/externallib.php');
 
 use context_module;
