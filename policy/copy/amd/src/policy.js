@@ -21,20 +21,25 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(["jquery"], function ($) {
+define(["jquery", "core/ajax"], function ($, Ajax) {
     "use strict";
 
-    function getViolationHtml() {
-        return $.trim($("#proctoringpolicy_copy-message").html() || "");
-    }
+    // Handlers on the Moodle document cannot receive keyboard or clipboard events
+    // fired inside the iframe used by TinyMCE's classic editor.
+    let unbindPrevious = null;
 
     function isExamActive(context) {
-        return !!(
-            context &&
-            context.api &&
-            typeof context.api.isExamActive === "function" &&
-            context.api.isExamActive()
-        );
+        return !!(context && context.api &&
+            typeof context.api.isExamActive === "function" && context.api.isExamActive());
+    }
+
+    function violationMessage() {
+        let html = $.trim($("#proctoringpolicy_copy-message").html() || "");
+        if (!html) {
+            // Custom policy messages can be empty. Still show a usable warning.
+            html = M.util.get_string("message_default_text", "proctoringpolicy_copy");
+        }
+        return html;
     }
 
     function bindPendingState() {
@@ -45,128 +50,219 @@ define(["jquery"], function ($) {
 
         let $footer = $checkbox.closest(".kopere-proctoring-footer");
         let $error = $footer.find("[data-kopere-policy-ack-error]");
-
-        function refreshPendingState() {
+        function refresh() {
             updatePendingState($footer, $checkbox, $error, $checkbox.is(":checked"));
         }
-
-        refreshPendingState();
-        $checkbox.off("change.kopere_proctoring_copy_pending");
-        $checkbox.on("change.kopere_proctoring_copy_pending", refreshPendingState);
+        refresh();
+        $checkbox.off("change.kopere_proctoring_copy_pending")
+            .on("change.kopere_proctoring_copy_pending", refresh);
     }
 
-    function showWarning(context) {
-        let html = getViolationHtml();
-        if (!html || !isExamActive(context)) {
+    function recordAction(context, action) {
+        if (!context.cmid || !context.attemptid) {
             return;
         }
 
-        if (context.api && typeof context.api.showViolationMessage === "function") {
-            context.api.showViolationMessage("copy", html);
+        // The warning itself must not depend on an AJAX round trip.
+        try {
+            let request = Ajax.call([{
+                methodname: "local_kopere_proctoring_save_log",
+                args: {
+                    cmid: Number(context.cmid),
+                    attemptid: Number(context.attemptid),
+                    actionvalue: "copy_" + action,
+                    screenresolution: "",
+                    image: ""
+                }
+            }])[0];
+            if (request && typeof request.catch === "function") {
+                request.catch(function () {});
+            } else if (request && typeof request.fail === "function") {
+                request.fail(function () {});
+            }
+        } catch (error) {
+            // Network failures must never allow the blocked clipboard operation.
         }
     }
 
-    /**
-     * Attach handlers to block copy, paste, cut and context menu.
-     *
-     * @param {Object} context Contains cmid, attemptid, etc.
-     * @param {Object} cfg Policy config {limit, message}.
-     */
-    function initCopyPolicy(context, cfg) {
-        let limit = cfg && cfg.limit ? parseInt(cfg.limit, 10) : 0;
-        if (isNaN(limit)) {
-            limit = 0;
+    function showWarning(context) {
+        if (isExamActive(context) && context.api &&
+                typeof context.api.showViolationMessage === "function") {
+            context.api.showViolationMessage("copy", violationMessage());
         }
+    }
 
-        let warningsCount = 0;
+    function shortcutAction(event) {
+        let key = String(event.key || "").toLowerCase();
+        let code = String(event.code || "").toLowerCase();
+        if (!key || key === "unidentified") {
+            key = code.indexOf("key") === 0 ? code.slice(3) : code;
+        }
+        if (event.altKey || !(event.ctrlKey || event.metaKey)) {
+            return "";
+        }
+        let actions = {c: "copy", v: "paste", x: "cut", a: "selectall", p: "print"};
+        return actions[key] || "";
+    }
 
-        function registerWarning() {
+    function initCopyPolicy(context) {
+        if (unbindPrevious) {
+            unbindPrevious();
+        }
+        let registered = new Map();
+        let lastShortcut = {action: "", timestamp: 0, ownerDocument: null};
+        let observer = null;
+        let scanner = null;
+        let tinyManager = null;
+        let tinyHandler = null;
+        let iframeLoads = new Map();
+
+        function intercept(event, action, source) {
             if (!isExamActive(context)) {
                 return;
             }
 
-            if (limit > 0 && warningsCount >= limit) {
-                return;
+            event.preventDefault();
+            event.stopPropagation();
+            if (typeof event.stopImmediatePropagation === "function") {
+                event.stopImmediatePropagation();
             }
 
-            warningsCount++;
+            // A keydown can be followed by a copy/paste/cut event for the same
+            // action. Count and warn once, but never drop another keydown.
+            let owner = event.target && event.target.ownerDocument || document;
+            if (source === "clipboard" && lastShortcut.action === action &&
+                    lastShortcut.ownerDocument === owner &&
+                    Date.now() - lastShortcut.timestamp < 400) {
+                return;
+            }
+            if (source === "keydown") {
+                lastShortcut = {action: action, timestamp: Date.now(), ownerDocument: owner};
+                if (event.repeat) {
+                    return;
+                }
+            }
             showWarning(context);
+            recordAction(context, action);
         }
 
-        function isBlockedKeyEvent(e) {
-            let key = e.key ? e.key.toLowerCase() : "";
-            let ctrlOrCmd = e.ctrlKey || e.metaKey;
-
-            if (!ctrlOrCmd) {
-                return false;
+        function onKeydown(event) {
+            let action = shortcutAction(event);
+            if (action) {
+                intercept(event, action, "keydown");
             }
-
-            if (key === "c" || key === "v" || key === "x" || key === "a" || key === "p") {
-                return true;
-            }
-
-            return false;
         }
 
-        function handleKeydown(e) {
-            if (!isExamActive(context) || !isBlockedKeyEvent(e)) {
+        function onClipboard(event) {
+            intercept(event, event.type, "clipboard");
+        }
+
+        function onContextmenu(event) {
+            intercept(event, "contextmenu", "contextmenu");
+        }
+
+        function addDocument(doc) {
+            if (!doc || registered.has(doc) || typeof doc.addEventListener !== "function") {
                 return;
             }
-
-            e.preventDefault();
-            e.stopPropagation();
-            registerWarning();
+            let listeners = [
+                ["keydown", onKeydown],
+                ["copy", onClipboard],
+                ["paste", onClipboard],
+                ["cut", onClipboard],
+                ["contextmenu", onContextmenu]
+            ];
+            listeners.forEach(function (pair) {
+                doc.addEventListener(pair[0], pair[1], true);
+            });
+            registered.set(doc, listeners);
         }
 
-        function handleClipboardEvent(e) {
-            if (!isExamActive(context)) {
-                return;
+        function bindIframe(iframe) {
+            if (!iframe || !iframeLoads.has(iframe)) {
+                // Attach a load listener for newly initialised / reloaded editors.
+                let reload = function () { scanEditors(); };
+                iframe.addEventListener("load", reload);
+                iframeLoads.set(iframe, reload);
             }
-
-            e.preventDefault();
-            e.stopPropagation();
-            registerWarning();
-        }
-
-        function handleContextmenu(e) {
-            if (!isExamActive(context)) {
-                return;
+            try {
+                addDocument(iframe.contentDocument);
+            } catch (error) {
+                // Cross-origin iframes are intentionally not accessible.
             }
-
-            e.preventDefault();
-            e.stopPropagation();
-            registerWarning();
         }
 
-        $(document).off(".local_kopere_proctoring_copy");
-        $(document).on("keydown.local_kopere_proctoring_copy", handleKeydown);
-        $(document).on("copy.local_kopere_proctoring_copy", handleClipboardEvent);
-        $(document).on("cut.local_kopere_proctoring_copy", handleClipboardEvent);
-        $(document).on("paste.local_kopere_proctoring_copy", handleClipboardEvent);
-        $(document).on("contextmenu.local_kopere_proctoring_copy", handleContextmenu);
+        function scanEditors() {
+            // TinyMCE may start after the proctoring policy becomes active, or
+            // be recreated when question elements are updated by Moodle.
+            if (typeof document.querySelectorAll === "function") {
+                document.querySelectorAll(
+                    ".tox-edit-area iframe, iframe.tox-edit-area__iframe, iframe[id$='_ifr']"
+                ).forEach(bindIframe);
+            }
+            let tiny = window.tinymce || window.tinyMCE;
+            if (tiny && Array.isArray(tiny.editors)) {
+                tiny.editors.forEach(function (editor) {
+                    if (!editor || typeof editor.getDoc !== "function") {
+                        return;
+                    }
+                    try {
+                        addDocument(editor.getDoc());
+                    } catch (error) {
+                        // Editor may not yet have finished initialising.
+                    }
+                });
+            }
+            if (tiny && tiny !== tinyManager && typeof tiny.on === "function") {
+                if (tinyManager && tinyHandler && typeof tinyManager.off === "function") {
+                    tinyManager.off("AddEditor", tinyHandler);
+                }
+                tinyManager = tiny;
+                tinyHandler = function () { window.setTimeout(scanEditors, 0); };
+                tinyManager.on("AddEditor", tinyHandler);
+            }
+        }
+
+        addDocument(document);
+        scanEditors();
+        if (typeof MutationObserver !== "undefined" && document.body) {
+            observer = new MutationObserver(scanEditors);
+            observer.observe(document.body, {childList: true, subtree: true});
+        }
+        scanner = window.setInterval(scanEditors, 1500);
+
+        unbindPrevious = function () {
+            if (scanner !== null) {
+                window.clearInterval(scanner);
+            }
+            if (observer) {
+                observer.disconnect();
+            }
+            if (tinyManager && tinyHandler && typeof tinyManager.off === "function") {
+                tinyManager.off("AddEditor", tinyHandler);
+            }
+            iframeLoads.forEach(function (listener, iframe) {
+                iframe.removeEventListener("load", listener);
+            });
+            registered.forEach(function (listeners, doc) {
+                listeners.forEach(function (pair) {
+                    doc.removeEventListener(pair[0], pair[1], true);
+                });
+            });
+            registered.clear();
+            iframeLoads.clear();
+        };
     }
 
     return {
-        /**
-         * Public AMD entrypoint.
-         *
-         * @param {Object} context Shared context from main proctoring start module.
-         * @param {Object} cfg Policy-specific config.
-         */
-        init: function (context, cfg) {
+        init: function (context) {
             context = context || {};
-            cfg = cfg || {};
-
             bindPendingState();
-
             if (context.api && typeof context.api.registerStartCallback === "function") {
-                context.api.registerStartCallback(function () {
-                    initCopyPolicy(context, cfg);
-                });
+                context.api.registerStartCallback(function () { initCopyPolicy(context); });
                 return;
             }
-
-            initCopyPolicy(context, cfg);
+            initCopyPolicy(context);
         }
     };
 });

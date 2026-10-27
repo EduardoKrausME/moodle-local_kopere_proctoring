@@ -36,7 +36,7 @@ $string['message_default'] = 'Default violation message';
 $string['message_default_desc'] = 'Message shown only when the user tries to copy, cut, paste, or right-click.';
 $string['message_default_text'] = '<h2>Copy/paste attempt blocked.</h2>
 <p><strong>During the exam, copying, cutting, pasting, selecting all content, printing, or using the right mouse button is not allowed.</strong></p>
-<p>This action was recorded and may be reviewed by the responsible team.</p>';
+<p>This attempt may be reviewed by the responsible team.</p>';
 $string['pluginname'] = 'Copy and paste';
 $string['requirement_label'] = 'Understand the copy and paste policy';
 $string['start_message_cm'] = 'Initial message shown before the exam starts';
