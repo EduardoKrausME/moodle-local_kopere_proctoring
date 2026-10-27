@@ -292,8 +292,13 @@ define(["jquery"], function ($) {
             $("#kopere-proctoring-reload-popup").remove();
         }
 
-        function getMessagesContainer() {
-            return $("#kopere-proctoring-runtime-messages");
+function getMessagesContainer() {
+            // Keep the overlay outside footer/page stacking contexts.
+            let $overlay = $("#kopere-proctoring-runtime-messages");
+            if ($overlay.length && !$overlay.parent().is("body")) {
+                $overlay.appendTo(document.body);
+            }
+            return $overlay;
         }
 
         function runStartCallbacks() {
