@@ -8,6 +8,10 @@
                 <FIELD NAME="id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="true"/>
                 <FIELD NAME="attemptid" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="userid" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="focuscount" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="fullscreencount" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="blocked" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="blockedreason" TYPE="char" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="contract" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="contract_ip" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="contract_useragent" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
@@ -36,6 +40,7 @@
                 <FIELD NAME="useragent" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="screenresolution" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="actionvalue" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="eventid" TYPE="char" LENGTH="36" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="time" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
             </FIELDS>
             <KEYS>
@@ -47,6 +52,7 @@
                 <INDEX NAME="time_ix" UNIQUE="false" FIELDS="time"/>
                 <INDEX NAME="attemptidtime_ix" UNIQUE="false" FIELDS="attemptid, time"/>
                 <INDEX NAME="actionvalue_ix" UNIQUE="false" FIELDS="actionvalue"/>
+                <INDEX NAME="attempt_eventid_uix" UNIQUE="true" FIELDS="attemptid, eventid"/>
             </INDEXES>
         </TABLE>
 
