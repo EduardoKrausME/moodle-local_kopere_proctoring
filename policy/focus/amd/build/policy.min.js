@@ -76,11 +76,6 @@ define(["jquery"], function ($) {
             return;
         }
 
-        let limit = parseInt(cfg.limit || 0, 10);
-        if (isNaN(limit) || limit < 0) {
-            limit = 3;
-        }
-
 
         let departed = false;
         let namespace = ".kopere_proctoring_focus";

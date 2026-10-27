@@ -248,13 +248,10 @@ define(["jquery"], function ($) {
         init: function (ctx, cfg) {
             cfg = cfg || {};
 
-            let parsedlimit = Number(cfg.limit || 0);
             let state = {
                 inexam: false,
                 fullscreenentered: false,
-                bound: false,
-                exits: 0,
-                limit: isNaN(parsedlimit) ? 0 : parsedlimit
+                bound: false
             };
 
             let $policy = $("[data-kopere-fullscreen=\"container\"]");

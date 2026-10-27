@@ -332,7 +332,6 @@ class manager {
      * @throws dml_exception
      */
     public static function save_module_form(stdClass $data): void {
-        global $DB;
 
         $cmid = $data->coursemodule;
 

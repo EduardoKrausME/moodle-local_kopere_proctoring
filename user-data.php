@@ -47,8 +47,8 @@ $PAGE->set_heading(fullname($user));
 $PAGE->navbar->add(get_string('pluginname', 'local_kopere_proctoring'));
 $PAGE->navbar->add(get_string('userdata_nav', 'local_kopere_proctoring'));
 
-$attempts = user_data_repository::get_attempts($this->user->id);
-$logsbyattempt = user_data_repository::get_logs_grouped_by_attempt($this->user->id);
+$attempts = user_data_repository::get_attempts($user->id);
+$logsbyattempt = user_data_repository::get_logs_grouped_by_attempt($user->id);
 
 $rows = [];
 $acceptedcontracts = 0;
@@ -77,6 +77,10 @@ foreach ($attempts as $attempt) {
         'attemptid' => $attempt->attemptid,
         'attemptnumber' => $attempt->attemptnumber,
         'attemptstate' => user_data_repository::format_attempt_state($attempt->attemptstate),
+        'focuscount' => (int)$attempt->focuscount,
+        'fullscreencount' => (int)$attempt->fullscreencount,
+        'blockedlabel' => !empty($attempt->blocked) ? get_string('yes') : get_string('no'),
+        'blockedreason' => !empty($attempt->blocked) ? (string)$attempt->blockedreason : '-',
         'coursename' => format_string($attempt->coursename, true, ['context' => context_course::instance($attempt->courseid)]),
         'quizname' => format_string($attempt->quizname, true, ['context' => context_course::instance($attempt->courseid)]),
         'quizurl' => user_data_repository::get_quiz_url($attempt)->out(false),
@@ -101,9 +105,9 @@ foreach ($attempts as $attempt) {
 }
 
 $mustacedata = [
-    'title' => get_string('userdata_heading', 'local_kopere_proctoring', fullname($this->user)),
-    'userpicture' => $OUTPUT->user_picture($this->user, ['size' => 100, 'link' => false]),
-    'userfullname' => fullname($this->user),
+    'title' => get_string('userdata_heading', 'local_kopere_proctoring', fullname($user)),
+    'userpicture' => $OUTPUT->user_picture($user, ['size' => 100, 'link' => false]),
+    'userfullname' => fullname($user),
     'summary_attempts' => count($rows),
     'summary_contracts' => $acceptedcontracts,
     'summary_logs' => $totallogs,
