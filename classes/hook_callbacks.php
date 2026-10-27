@@ -148,9 +148,10 @@ class hook_callbacks {
 
         $context = context_module::instance($PAGE->cm->id);
         $path = $PAGE->url ? $PAGE->url->get_path() : '';
-        $isattemptpage = strpos($path, '/mod/quiz/attempt.php') !== false;
+        $isattemptpage = strpos($path, '/mod/quiz/attempt.php') !== false ||
+            strpos($path, '/mod/quiz/summary.php') !== false;
 
-        // Only attempt/review pages need the proctoring overlay.
+        // Only attempt/summary pages need persisted-lock enforcement.
         if (!$isattemptpage) {
             return;
         }
