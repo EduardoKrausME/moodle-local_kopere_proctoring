@@ -679,3 +679,62 @@ body.proctoring-start::before {
 [data-bs-theme="dark"] .mcp-promo h3,[data-bs-theme="dark"] .mcp-promo__badge,[data-bs-theme="dark"] .mcp-promo ul {color:#e2edf8}
 [data-bs-theme="dark"] .mcp-promo p {color:#bfcedb}
 @media(max-width:576px) {.mcp-promo {gap:.75rem;padding:1rem 2.8rem 1rem 1rem}.mcp-promo__icon {display:none}}
+
+
+/* Policy warnings belong to an overlay, not below the Moodle quiz content. */
+#kopere-proctoring-runtime-messages {
+    position: fixed;
+    inset: 0;
+    z-index: 2147483500;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(20, 30, 44, 0.62);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+#kopere-proctoring-runtime-messages .kopere-proctoring-runtime-dialog {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 740px;
+    max-height: calc(100dvh - 48px);
+    overflow: auto;
+    padding: 36px 40px;
+    background: #fff;
+    color: #263041;
+    border: 1px solid #d9dee8;
+    border-radius: 20px;
+    box-shadow: 0 24px 72px rgba(15, 23, 42, 0.24);
+}
+#kopere-proctoring-runtime-messages .kopere-proctoring-popup__title {
+    margin: 0 0 20px;
+    font-size: clamp(24px, 3vw, 32px);
+    line-height: 1.25;
+    color: #b94b4b;
+}
+#kopere-proctoring-runtime-messages .kopere-proctoring-runtime-content {
+    font-size: 18px;
+    line-height: 1.5;
+}
+#kopere-proctoring-runtime-messages .kopere-proctoring-runtime-content h2 {
+    font-size: 24px;
+}
+#kopere-proctoring-runtime-messages .kopere-proctoring-runtime-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 24px;
+}
+#kopere-proctoring-runtime-messages [data-kopere-proctoring="dismiss-violation"]:focus-visible {
+    outline: 3px solid #173c60;
+    outline-offset: 3px;
+}
+@media (max-width: 600px) {
+    #kopere-proctoring-runtime-messages {
+        padding: 12px;
+    }
+    #kopere-proctoring-runtime-messages .kopere-proctoring-runtime-dialog {
+        padding: 24px 20px;
+        max-height: calc(100dvh - 24px);
+    }
+}
