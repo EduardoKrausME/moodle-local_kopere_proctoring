@@ -231,6 +231,8 @@ class provider implements policy_interface {
             return [];
         }
 
+        $PAGE->requires->strings_for_js(["message_default_text"], "proctoringpolicy_copy");
+
         $limitdefault = get_config("proctoringpolicy_copy", "limit_default");
         return [
             "limit" => cm_config::get("copy", "limit", $PAGE->cm->id, $limitdefault),

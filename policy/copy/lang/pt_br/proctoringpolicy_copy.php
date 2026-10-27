@@ -36,7 +36,7 @@ $string['message_default'] = 'Mensagem padrão de violação';
 $string['message_default_desc'] = 'Mensagem exibida apenas quando o usuário tenta copiar, recortar, colar ou botão direito do mouse.';
 $string['message_default_text'] = '<h2>Tentativa de copiar/colar bloqueada.</h2>
 <p><strong>Durante a prova, não é permitido copiar, recortar, colar, selecionar todo o conteúdo, imprimir ou usar o botão direito do mouse.</strong></p>
-<p>Esta ação foi registrada e poderá ser revisada pela equipe responsável.</p>';
+<p>Esta tentativa pode ser revisada pela equipe responsável.</p>';
 $string['pluginname'] = 'Copiar e colar';
 $string['requirement_label'] = 'Entender a política de copiar e colar';
 $string['start_message_cm'] = 'Mensagem inicial exibida antes do início da prova';
