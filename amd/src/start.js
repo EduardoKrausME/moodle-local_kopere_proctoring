@@ -49,6 +49,9 @@ define(["jquery"], function ($) {
         let $lockedBlock = $container.find("[data-kopere-proctoring=\"locked\"]");
         let $lockedMessage = $container.find("[data-kopere-proctoring=\"locked-message\"]");
         let $runningBlock = $container.find("[data-kopere-proctoring=\"running\"]");
+        let $returnButton = $container.find('[data-kopere-proctoring="return-button"]');
+        let $dismissViolationButton = $('[data-kopere-proctoring="dismiss-violation"]');
+        let previousViolationFocus = null;
         let pendingModules = 0;
         let examStarted = false;
         let examLocked = false;
@@ -289,8 +292,13 @@ define(["jquery"], function ($) {
             $("#kopere-proctoring-reload-popup").remove();
         }
 
-        function getMessagesContainer() {
-            return $("#kopere-proctoring-runtime-messages");
+function getMessagesContainer() {
+            // Keep the overlay outside footer/page stacking contexts.
+            let $overlay = $("#kopere-proctoring-runtime-messages");
+            if ($overlay.length && !$overlay.parent().is("body")) {
+                $overlay.appendTo(document.body);
+            }
+            return $overlay;
         }
 
         function runStartCallbacks() {
@@ -351,32 +359,43 @@ define(["jquery"], function ($) {
             renderRequirementsDescription();
         }
 
+
         function showViolationMessage(policyKey, html) {
-            if (!html) {
-                hideViolationMessage();
+            if (!html || !examStarted || examLocked) {
                 return;
             }
 
             $messages = getMessagesContainer();
+            if (!$messages.length) {
+                return;
+            }
             $messages.find("[data-kopere-proctoring-violation]")
                 .attr("data-kopere-violation-key", policyKey);
             $messages.find("[data-kopere-proctoring-violation-content]").html(html);
-            $messages.show();
+            if (!$messages.is(":visible")) {
+                previousViolationFocus = document.activeElement;
+            }
+            $messages.css("display", "flex");
+            $dismissViolationButton.trigger("focus");
         }
 
         function hideViolationMessage() {
             $messages = getMessagesContainer();
-            if ($messages.length === 0) {
+            if (!$messages.length) {
                 return;
             }
-
+            let visible = $messages.is(":visible");
             $messages.find("[data-kopere-proctoring-violation]")
                 .removeAttr("data-kopere-violation-key");
             $messages.find("[data-kopere-proctoring-violation-content]").empty();
             $messages.hide();
+            if (visible && previousViolationFocus && document.contains(previousViolationFocus)) {
+                $(previousViolationFocus).trigger("focus");
+            }
+            previousViolationFocus = null;
         }
 
-        function startExam() {
+                function startExam() {
             releaseVisibilityGuard();
 
             examStarted = true;
@@ -401,10 +420,10 @@ define(["jquery"], function ($) {
         }
 
         function lockExam(policyKey, html) {
+            hideViolationMessage();
             examLocked = true;
             startInProgress = false;
             syncContainerState();
-            showViolationMessage(policyKey, html || "");
             $startButton.prop("disabled", true);
 
             if ($lockedMessage.length) {
@@ -595,7 +614,29 @@ define(["jquery"], function ($) {
             lockExam(policyKey, html || "");
         };
 
-        $startButton.on("click", function (e) {
+
+        $dismissViolationButton.on("click.local_kopere_proctoring", function (e) {
+            e.preventDefault();
+            hideViolationMessage();
+        });
+
+        $messages = getMessagesContainer();
+        $messages.on("keydown.local_kopere_proctoring", function (e) {
+            if (e.key === "Tab") {
+                e.preventDefault();
+                $dismissViolationButton.trigger("focus");
+            }
+        });
+
+        $returnButton.on("click.local_kopere_proctoring", function (e) {
+            e.preventDefault();
+            // Returning to the quiz landing page does not clear an exceeded limit in this page.
+            if (examLocked && cmid > 0) {
+                window.location.assign(M.cfg.wwwroot + "/mod/quiz/view.php?id=" + encodeURIComponent(cmid));
+            }
+        });
+
+                $startButton.on("click", function (e) {
             e.preventDefault();
             e.stopPropagation();
 

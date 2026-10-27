@@ -86,7 +86,7 @@
             <button type="button"
                     class="btn btn-secondary"
                     data-kopere-proctoring="return-button">
-                {{#str}}return_button, local_kopere_proctoring{{/str}}
+                {{#str}}locked_return_button, local_kopere_proctoring{{/str}}
             </button>
         </div>
     </div>
@@ -98,17 +98,29 @@
 
 </div>
 <div id="kopere-proctoring-runtime-messages"
-     class="kopere-proctoring-runtime-messages mb-3"
+     class="kopere-proctoring-runtime-messages"
      data-kopere-proctoring="messages"
-     aria-live="polite"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="kopere-proctoring-violation-title"
+     aria-describedby="kopere-proctoring-violation-content"
      style="display:none;">
-    <div class="alert alert-danger kopere-proctoring-popup mb-0"
+    <div class="kopere-proctoring-runtime-dialog kopere-proctoring-popup"
          data-kopere-proctoring-violation>
-        <div class="kopere-proctoring-popup__title">
-            {{#str}}locked_title, local_kopere_proctoring{{/str}}
-        </div>
-        <div class="kopere-proctoring-popup__content"
+        <h3 id="kopere-proctoring-violation-title"
+            class="kopere-proctoring-popup__title">
+            {{#str}}violation_title, local_kopere_proctoring{{/str}}
+        </h3>
+        <div id="kopere-proctoring-violation-content"
+             class="kopere-proctoring-runtime-content"
              data-kopere-proctoring-violation-content></div>
+        <div class="kopere-proctoring-runtime-actions">
+            <button type="button"
+                    class="btn btn-primary"
+                    data-kopere-proctoring="dismiss-violation">
+                {{#str}}return_button, local_kopere_proctoring{{/str}}
+            </button>
+        </div>
     </div>
 </div>
 
