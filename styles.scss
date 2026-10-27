@@ -662,3 +662,26 @@ body.proctoring-start {
         max-height: calc(100dvh - 24px);
     }
 }
+
+
+/* Consistent policy cards for extensions using an independent template. */
+#kopere-proctoring-modal .kopere-proctoring-policies > :not(.kopere-password-policy) {
+    background: #fff;
+    border: 2px solid #d9dee8;
+    border-radius: 18px;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+    padding: 28px 30px;
+    margin: 0;
+    color: #212938;
+}
+#kopere-proctoring-modal .kopere-proctoring-locked > .mt-4 {
+    display: flex;
+    justify-content: center;
+}
+#kopere-proctoring-modal [data-kopere-proctoring="return-button"] {
+    min-width: 240px;
+    min-height: 52px;
+    padding: 10px 24px;
+    border-radius: 12px;
+    font-size: 17px;
+}
