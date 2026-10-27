@@ -52,6 +52,9 @@ define(["jquery"], function ($) {
         let $returnButton = $container.find('[data-kopere-proctoring="return-button"]');
         let $dismissViolationButton = $('[data-kopere-proctoring="dismiss-violation"]');
         let previousViolationFocus = null;
+        // All runtime policy warnings use one overlay and one FIFO dispatcher.
+        let activePolicyAlert = null;
+        let policyAlertQueue = [];
         let pendingModules = 0;
         let examStarted = false;
         let examLocked = false;
@@ -360,28 +363,50 @@ function getMessagesContainer() {
         }
 
 
-        function showViolationMessage(policyKey, html) {
-            if (!html || !examStarted || examLocked) {
+        /**
+         * Global runtime alert dispatcher for every proctoring policy.
+         * Policy modules must supply content; they must not render their own popup.
+         *
+         * @param {String} policyKey Policy component key.
+         * @param {String} html Sanitised policy HTML prepared by the existing provider.
+         */
+        function showPolicyAlert(policyKey, html) {
+            if (!examStarted || examLocked || !html) {
                 return;
             }
+            policyAlertQueue.push({policyKey: String(policyKey || ""), html: html});
+            renderNextPolicyAlert();
+        }
 
+        function renderNextPolicyAlert() {
+            if (activePolicyAlert || !policyAlertQueue.length || examLocked) {
+                return;
+            }
             $messages = getMessagesContainer();
             if (!$messages.length) {
                 return;
             }
+            activePolicyAlert = policyAlertQueue.shift();
+            previousViolationFocus = previousViolationFocus || document.activeElement;
             $messages.find("[data-kopere-proctoring-violation]")
-                .attr("data-kopere-violation-key", policyKey);
-            $messages.find("[data-kopere-proctoring-violation-content]").html(html);
-            if (!$messages.is(":visible")) {
-                previousViolationFocus = document.activeElement;
-            }
+                .attr("data-kopere-violation-key", activePolicyAlert.policyKey);
+            $messages.find("[data-kopere-proctoring-violation-content]")
+                .html(activePolicyAlert.html);
             $messages.css("display", "flex");
             $dismissViolationButton.trigger("focus");
         }
 
-        function hideViolationMessage() {
+        /**
+         * Dismiss the current alert, showing the next policy warning if queued.
+         * Legacy subplugins can continue to call hideViolationMessage.
+         */
+        function hidePolicyAlert(discardQueue) {
+            if (discardQueue) {
+                policyAlertQueue = [];
+            }
             $messages = getMessagesContainer();
             if (!$messages.length) {
+                activePolicyAlert = null;
                 return;
             }
             let visible = $messages.is(":visible");
@@ -389,6 +414,11 @@ function getMessagesContainer() {
                 .removeAttr("data-kopere-violation-key");
             $messages.find("[data-kopere-proctoring-violation-content]").empty();
             $messages.hide();
+            activePolicyAlert = null;
+            if (policyAlertQueue.length && !discardQueue) {
+                renderNextPolicyAlert();
+                return;
+            }
             if (visible && previousViolationFocus && document.contains(previousViolationFocus)) {
                 $(previousViolationFocus).trigger("focus");
             }
@@ -402,7 +432,7 @@ function getMessagesContainer() {
             examLocked = false;
             startInProgress = false;
             syncContainerState();
-            hideViolationMessage();
+            hidePolicyAlert(true);
             runStartCallbacks();
 
             if ($startBlock.length) {
@@ -420,7 +450,7 @@ function getMessagesContainer() {
         }
 
         function lockExam(policyKey, html) {
-            hideViolationMessage();
+            hidePolicyAlert(true);
             examLocked = true;
             startInProgress = false;
             syncContainerState();
@@ -547,8 +577,11 @@ function getMessagesContainer() {
                 return examStarted && !examLocked;
             },
             startExam: startExam,
-            showViolationMessage: showViolationMessage,
-            hideViolationMessage: hideViolationMessage,
+            // Global API. Legacy names remain aliases for third-party policies.
+            showPolicyAlert: showPolicyAlert,
+            hidePolicyAlert: hidePolicyAlert,
+            showViolationMessage: showPolicyAlert,
+            hideViolationMessage: hidePolicyAlert,
             lockExam: lockExam
         };
 
@@ -617,7 +650,7 @@ function getMessagesContainer() {
 
         $dismissViolationButton.on("click.local_kopere_proctoring", function (e) {
             e.preventDefault();
-            hideViolationMessage();
+            hidePolicyAlert(false);
         });
 
         $messages = getMessagesContainer();
