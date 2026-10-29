@@ -86,6 +86,10 @@ jobs:
       if: ${{ !cancelled() }}
       run: node plugin/tests/amd_policy_integrity_test.js
 
+    - name: Proctoring attempt and admin settings regressions
+      if: ${{ !cancelled() }}
+      run: node plugin/tests/attempt_and_admin_regression_test.js
+
     - name: PHP Lint
       if: ${{ !cancelled() }}
       run: moodle-plugin-ci phplint
