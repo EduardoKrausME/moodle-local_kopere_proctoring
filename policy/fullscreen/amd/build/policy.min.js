@@ -64,20 +64,14 @@ define(["jquery"], function ($) {
             return;
         }
 
-        if (ctx.api && typeof ctx.api.showViolationMessage === "function") {
-            ctx.api.showViolationMessage("fullscreen", html);
+        if (ctx.api && typeof ctx.api.showPolicyAlert === "function") {
+            ctx.api.showPolicyAlert("fullscreen", html);
         }
     }
 
     function hideViolationMessage(ctx) {
-        if (ctx.api && typeof ctx.api.hideViolationMessage === "function") {
-            ctx.api.hideViolationMessage();
-        }
-    }
-
-    function warnStatus(ctx, text) {
-        if (ctx.api && typeof ctx.api.showViolationMessage === "function") {
-            ctx.api.showViolationMessage("fullscreen", "<p><strong>" + String(text || "") + "</strong></p>" + getViolationHtml());
+        if (ctx.api && typeof ctx.api.hidePolicyAlert === "function") {
+            ctx.api.hidePolicyAlert();
         }
     }
 

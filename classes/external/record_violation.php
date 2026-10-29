@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * AJAX endpoint for recording monitored quiz policy violations.
+ *
+ * @package   local_kopere_proctoring
+ * @copyright 2026 Eduardo Kraus {@link https://eduardokraus.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace local_kopere_proctoring\external;
 
 defined('MOODLE_INTERNAL') || die();
@@ -33,7 +41,11 @@ use local_kopere_proctoring\policy\manager;
  * Records policy violations with an idempotency key, per-attempt counters and persisted blocking.
  */
 class record_violation extends external_api {
-    /** @return external_function_parameters */
+    /**
+     * Define the parameters for recording a violation.
+     *
+     * @return external_function_parameters
+     */
     public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters([
             'cmid' => new external_value(PARAM_INT, 'Course module ID'),
@@ -123,7 +135,11 @@ class record_violation extends external_api {
         return $result;
     }
 
-    /** @return external_single_structure */
+    /**
+     * Describe the violation recording result.
+     *
+     * @return external_single_structure
+     */
     public static function execute_returns(): external_single_structure {
         return new external_single_structure([
             'blocked' => new external_value(PARAM_BOOL, 'Whether the attempt was blocked'),

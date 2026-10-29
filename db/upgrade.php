@@ -33,7 +33,7 @@
 function xmldb_local_kopere_proctoring_upgrade($oldversion) {
     global $DB;
 
-    if ($oldversion < 2026102700) {
+    if ($oldversion < 2026102900) {
         $dbman = $DB->get_manager();
         $attempttable = new xmldb_table('local_kopere_proctoring_att');
         $fields = [
@@ -58,7 +58,7 @@ function xmldb_local_kopere_proctoring_upgrade($oldversion) {
             $dbman->add_index($logtable, $index);
         }
 
-        upgrade_plugin_savepoint(true, 2026102700, 'local', 'kopere_proctoring');
+        upgrade_plugin_savepoint(true, 2026102900, 'local', 'kopere_proctoring');
     }
     return true;
 }

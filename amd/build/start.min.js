@@ -48,6 +48,9 @@ define(["jquery", "core/ajax"], function ($, Ajax) {
         let $returnButton = $container.find('[data-kopere-proctoring="return-button"]');
         let $dismissViolationButton = $('[data-kopere-proctoring="dismiss-violation"]');
         let previousViolationFocus = null;
+        // Runtime policy alerts use a queued shared dispatcher.
+        let activePolicyAlert = null;
+        let policyAlertQueue = [];
         let pendingModules = 0;
         let moduleFailed = false;
         let examStarted = false;
@@ -358,28 +361,43 @@ function getMessagesContainer() {
         }
 
 
-        function showViolationMessage(policyKey, html) {
-            if (!html || !examStarted || examLocked) {
+        function showPolicyAlert(policyKey, html) {
+            if (!examStarted || examLocked || !html) {
                 return;
             }
+            policyAlertQueue.push({policyKey: String(policyKey || ""), html: html});
+            renderNextPolicyAlert();
+        }
 
+        function renderNextPolicyAlert() {
+            if (activePolicyAlert || !policyAlertQueue.length || examLocked) {
+                return;
+            }
             $messages = getMessagesContainer();
             if (!$messages.length) {
                 return;
             }
+            activePolicyAlert = policyAlertQueue.shift();
+            previousViolationFocus = previousViolationFocus || document.activeElement;
             $messages.find("[data-kopere-proctoring-violation]")
-                .attr("data-kopere-violation-key", policyKey);
-            $messages.find("[data-kopere-proctoring-violation-content]").html(html);
-            if (!$messages.is(":visible")) {
-                previousViolationFocus = document.activeElement;
-            }
+                .attr("data-kopere-violation-key", activePolicyAlert.policyKey);
+            $messages.find("[data-kopere-proctoring-violation-content]")
+                .html(activePolicyAlert.html);
             $messages.css("display", "flex");
             $dismissViolationButton.trigger("focus");
         }
 
-        function hideViolationMessage() {
+        /**
+         * Dismiss the current alert, showing the next policy warning if queued.
+         * Legacy subplugins can continue to call hideViolationMessage.
+         */
+        function hidePolicyAlert(discardQueue) {
+            if (discardQueue) {
+                policyAlertQueue = [];
+            }
             $messages = getMessagesContainer();
             if (!$messages.length) {
+                activePolicyAlert = null;
                 return;
             }
             let visible = $messages.is(":visible");
@@ -387,6 +405,11 @@ function getMessagesContainer() {
                 .removeAttr("data-kopere-violation-key");
             $messages.find("[data-kopere-proctoring-violation-content]").empty();
             $messages.hide();
+            activePolicyAlert = null;
+            if (policyAlertQueue.length && !discardQueue) {
+                renderNextPolicyAlert();
+                return;
+            }
             if (visible && previousViolationFocus && document.contains(previousViolationFocus)) {
                 $(previousViolationFocus).trigger("focus");
             }
@@ -400,7 +423,7 @@ function getMessagesContainer() {
             examLocked = false;
             startInProgress = false;
             syncContainerState();
-            hideViolationMessage();
+            hidePolicyAlert(true);
             if (!runStartCallbacks()) {
                 lockExam("policy", M.util.get_string("policy_load_failed", "local_kopere_proctoring"));
                 return;
@@ -421,7 +444,7 @@ function getMessagesContainer() {
         }
 
         function lockExam(policyKey, html) {
-            hideViolationMessage();
+            hidePolicyAlert(true);
             examLocked = true;
             startInProgress = false;
             syncContainerState();
@@ -548,8 +571,10 @@ function getMessagesContainer() {
                 return examStarted && !examLocked;
             },
             startExam: startExam,
-            showViolationMessage: showViolationMessage,
-            hideViolationMessage: hideViolationMessage,
+            showPolicyAlert: showPolicyAlert,
+            hidePolicyAlert: hidePolicyAlert,
+            showViolationMessage: showPolicyAlert,
+            hideViolationMessage: hidePolicyAlert,
             lockExam: lockExam,
             recordViolation: function (policy, kind) {
                 // Each logical incident gets one ID, allowing safe retries at the server.
@@ -626,7 +651,7 @@ function getMessagesContainer() {
 
         $dismissViolationButton.on("click.local_kopere_proctoring", function (e) {
             e.preventDefault();
-            hideViolationMessage();
+            hidePolicyAlert(false);
         });
 
         $messages = getMessagesContainer();

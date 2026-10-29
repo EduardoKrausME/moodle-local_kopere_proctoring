@@ -66,6 +66,7 @@ define(["jquery", "core/ajax"], function ($, Ajax) {
         let clientToken = hashString([String(Date.now()), baseline.userAgent,
             String(screen.width) + "x" + String(screen.height)].join("|"));
         let lastSentAt = 0;
+        let integrityWarningDisplayed = false;
 
         function shouldSendNow() {
             let now = Date.now();
@@ -87,8 +88,23 @@ define(["jquery", "core/ajax"], function ($, Ajax) {
         }
 
         function pulse() {
+            if (ctx.api && typeof ctx.api.isExamActive === "function" &&
+                    !ctx.api.isExamActive()) {
+                return;
+            }
             let integrity = checkIntegrity();
-            if (integrity.integrityok === 1 || !shouldSendNow()) {
+            if (integrity.integrityok === 1) {
+                integrityWarningDisplayed = false;
+                return;
+            }
+            if (!integrityWarningDisplayed && ctx.api &&
+                    typeof ctx.api.showPolicyAlert === "function") {
+                integrityWarningDisplayed = true;
+                // Only one popup per continuous anomaly, not on every telemetry pulse.
+                let warning = M.util.get_string("js_warn_integrity", "proctoringpolicy_securitysignals");
+                ctx.api.showPolicyAlert("securitysignals", $("<p>").text(warning).prop("outerHTML"));
+            }
+            if (!shouldSendNow()) {
                 return;
             }
             postLog({
@@ -102,9 +118,6 @@ define(["jquery", "core/ajax"], function ($, Ajax) {
                 }),
                 image: ""
             });
-            if (integrity.integrityok === 0) {
-                console.warn(M.util.get_string("js_warn_integrity", "proctoringpolicy_securitysignals"));
-            }
         }
 
         setInterval(pulse, pulseMs);
