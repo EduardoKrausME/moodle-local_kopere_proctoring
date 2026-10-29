@@ -26,6 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+$string['attemptblocked'] = 'A tentativa está bloqueada pelo monitoramento. Entre em contato com o professor para revisão.';
 $string['description_pending'] = 'Conclua ou aguarde os seguintes itens obrigatórios antes que a prova possa ser iniciada:';
 $string['description_ready'] = 'Todos os itens obrigatórios foram aprovados. Você já pode iniciar a prova.';
 $string['enabled'] = 'Ativar Proctoring';
@@ -48,6 +49,12 @@ $string['pluginstatus_activate'] = 'Ativar';
 $string['pluginstatus_active'] = 'Ativo';
 $string['pluginstatus_deactivate'] = 'Desativar';
 $string['pluginstatus_inactive'] = 'Inativo';
+$string['policy_load_failed'] = 'Não foi possível carregar uma das políticas de fiscalização. Recarregue a página e avise o responsável se o problema persistir.';
+$string['privacy:metadata:local_kopere_proctoring_att:blocked'] = 'Indica se a tentativa está bloqueada por uma política.';
+$string['privacy:metadata:local_kopere_proctoring_att:blockedreason'] = 'Política que causou o bloqueio.';
+$string['privacy:metadata:local_kopere_proctoring_att:focuscount'] = 'Quantidade de ocorrências de perda de foco registradas na tentativa.';
+$string['privacy:metadata:local_kopere_proctoring_att:fullscreencount'] = 'Quantidade de saídas de tela cheia registradas na tentativa.';
+$string['privacy:metadata:local_kopere_proctoring_log:eventid'] = 'Identificador de deduplicação de uma ocorrência enviada pelo navegador.';
 $string['privacy:metadata:local_kopere_proctoring:files_snapshot'] = 'Armazena imagens de evidência capturadas durante a fiscalização.';
 $string['privacy:metadata:local_kopere_proctoring_att'] = 'Armazena dados de fiscalização e de aceite do contrato para cada tentativa do questionário.';
 $string['privacy:metadata:local_kopere_proctoring_att:attemptid'] = 'O identificador da tentativa do questionário.';
@@ -67,8 +74,8 @@ $string['privacy:metadata:local_kopere_proctoring_log:screenresolution'] = 'A re
 $string['privacy:metadata:local_kopere_proctoring_log:time'] = 'A data e hora em que o evento foi registrado.';
 $string['privacy:metadata:local_kopere_proctoring_log:useragent'] = 'O user agent do navegador registrado para o evento.';
 $string['privacy:metadata:local_kopere_proctoring_log:userid'] = 'O identificador do usuário.';
-$string['proctoring_warning'] = '<p>Ao ativar o <strong>Proctoring</strong>, o layout da prova será ajustado automaticamente para que <strong>todas as questões sejam exibidas em uma única página</strong> e essa alteração evita que o aluno precise navegar entre páginas durante a tentativa, reduzindo o risco de interrupções, recarregamentos ou encerramento indevido da sessão do Proctoring.</p>
-<p>Para isso, o valor da configuração <code>Layout</code> do Quiz será alterado automaticamente, garantindo que a prova seja apresentada em página única enquanto o Proctoring estiver ativo.</p>';
+$string['proctoring_warning'] = '<p>O Kopere Proctoring não altera automaticamente a paginação do questionário. Para avaliações com exigência de página única, configure o layout do Moodle antes de liberar a prova e confira a distribuição dos saltos de página das questões.</p>';
+$string['record_failed'] = 'Não foi possível confirmar o registro da ocorrência. A prova foi interrompida por segurança; entre em contato com o professor.';
 $string['reload_required_button'] = 'Recarregar página';
 $string['reload_required_message'] = 'O monitoramento da prova foi ocultado ou removido. Para continuar com segurança, recarregue a página.';
 $string['reload_required_title'] = 'Recarregue a página';
@@ -84,6 +91,10 @@ $string['subplugintype_proctoringpolicy_plural'] = 'Políticas de proctoring';
 $string['understand_error'] = 'Marque que você entendeu esta regra antes de iniciar a prova.';
 $string['understand_label'] = 'Entendo';
 $string['unknown'] = 'Desconhecido';
+$string['userdata_blocked'] = 'Bloqueada pelo Proctoring';
+$string['userdata_blockedreason'] = 'Motivo do bloqueio';
+$string['userdata_focuscount'] = 'Perdas de foco registradas';
+$string['userdata_fullscreencount'] = 'Saídas da tela cheia registradas';
 $string['userdata_activity'] = 'ID da atividade';
 $string['userdata_attempt_details'] = 'Detalhes da tentativa';
 $string['userdata_attempt_label'] = 'Tentativa';

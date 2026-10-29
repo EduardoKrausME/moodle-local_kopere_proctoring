@@ -53,6 +53,10 @@ class provider implements
                 'attemptid' => 'privacy:metadata:local_kopere_proctoring_att:attemptid',
                 'userid' => 'privacy:metadata:local_kopere_proctoring_att:userid',
                 'contract' => 'privacy:metadata:local_kopere_proctoring_att:contract',
+                'focuscount' => 'privacy:metadata:local_kopere_proctoring_att:focuscount',
+                'fullscreencount' => 'privacy:metadata:local_kopere_proctoring_att:fullscreencount',
+                'blocked' => 'privacy:metadata:local_kopere_proctoring_att:blocked',
+                'blockedreason' => 'privacy:metadata:local_kopere_proctoring_att:blockedreason',
                 'contract_ip' => 'privacy:metadata:local_kopere_proctoring_att:contract_ip',
                 'contract_useragent' => 'privacy:metadata:local_kopere_proctoring_att:contract_useragent',
                 'contract_screenresolution' => 'privacy:metadata:local_kopere_proctoring_att:contract_screenresolution',
@@ -72,6 +76,7 @@ class provider implements
                 'useragent' => 'privacy:metadata:local_kopere_proctoring_log:useragent',
                 'screenresolution' => 'privacy:metadata:local_kopere_proctoring_log:screenresolution',
                 'actionvalue' => 'privacy:metadata:local_kopere_proctoring_log:actionvalue',
+                'eventid' => 'privacy:metadata:local_kopere_proctoring_log:eventid',
                 'time' => 'privacy:metadata:local_kopere_proctoring_log:time',
             ],
             'privacy:metadata:local_kopere_proctoring_log'

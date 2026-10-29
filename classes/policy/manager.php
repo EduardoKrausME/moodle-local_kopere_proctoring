@@ -332,16 +332,11 @@ class manager {
      * @throws dml_exception
      */
     public static function save_module_form(stdClass $data): void {
-        global $DB;
 
         $cmid = $data->coursemodule;
 
         if (isset($data->kopere_proctoring_enabled)) {
             set_config("kopere_proctoring_enabled_{$cmid}", $data->kopere_proctoring_enabled, "local_kopere_proctoring");
-
-            if ($data->kopere_proctoring_enabled) {
-                $DB->set_field("quiz", "questionsperpage", 50, ["id" => $data->instance]);
-            }
 
             /** @var policy_interface $classname */
             foreach (self::get_policy_classes(true) as $classname) {

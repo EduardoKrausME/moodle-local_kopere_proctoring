@@ -108,6 +108,8 @@ class hook_callbacks {
             'description_ready',
             'locked_title',
             'locked_default_message',
+            'policy_load_failed',
+            'record_failed',
         ], 'local_kopere_proctoring');
 
         // Require assets in the normal render flow.
@@ -148,7 +150,7 @@ class hook_callbacks {
         $path = $PAGE->url ? $PAGE->url->get_path() : '';
         $isattemptpage = strpos($path, '/mod/quiz/attempt.php') !== false;
 
-        // Only attempt/review pages need the proctoring overlay.
+        // Only attempt pages need the proctoring start UI.
         if (!$isattemptpage) {
             return;
         }

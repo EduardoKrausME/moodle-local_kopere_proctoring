@@ -82,6 +82,10 @@ jobs:
       if: ${{ !cancelled() }}
       run: node plugin/tests/global_alerts_test.js
 
+    - name: Proctoring AMD regression tests
+      if: ${{ !cancelled() }}
+      run: node plugin/tests/amd_policy_integrity_test.js
+
     - name: PHP Lint
       if: ${{ !cancelled() }}
       run: moodle-plugin-ci phplint

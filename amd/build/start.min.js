@@ -21,17 +21,13 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(["jquery"], function ($) {
+define(["jquery", "core/ajax"], function ($, Ajax) {
     "use strict";
 
     function init(payload) {
         payload = payload || {};
 
         $("body").removeClass("proctoring-start");
-
-        setInterval(function () {
-            //Function("\"use strict\";(() => { debugger; })()")();
-        }, 500);
 
         let cmid = Number(payload.cmid || 0);
         let attemptid = Number(payload.attemptid || 0);
@@ -52,10 +48,11 @@ define(["jquery"], function ($) {
         let $returnButton = $container.find('[data-kopere-proctoring="return-button"]');
         let $dismissViolationButton = $('[data-kopere-proctoring="dismiss-violation"]');
         let previousViolationFocus = null;
-        // All runtime policy warnings use one overlay and one FIFO dispatcher.
+        // Runtime policy alerts use a queued shared dispatcher.
         let activePolicyAlert = null;
         let policyAlertQueue = [];
         let pendingModules = 0;
+        let moduleFailed = false;
         let examStarted = false;
         let examLocked = false;
         let startInProgress = false;
@@ -152,7 +149,6 @@ define(["jquery"], function ($) {
             $("[role=\"main\"], #region-main, #region-main-box").first().each(function () {
                 protectChildrenExceptModal(this, modalElement);
             });
-            $("body *").css({"user-select": "none"});
         }
 
         function getHiddenReason(element) {
@@ -306,17 +302,19 @@ function getMessagesContainer() {
 
         function runStartCallbacks() {
             if (startCallbacksExecuted) {
-                return;
+                return true;
             }
 
-            startCallbacksExecuted = true;
-            startCallbacks.forEach(function (fn) {
+            // Do not silently release an exam if one mandatory policy fails to start.
+            for (let i = 0; i < startCallbacks.length; i++) {
                 try {
-                    fn(context);
+                    startCallbacks[i](context);
                 } catch (e) {
-                    // Keep the quiz start flow alive even if one policy fails to start.
+                    return false;
                 }
-            });
+            }
+            startCallbacksExecuted = true;
+            return true;
         }
 
         function syncContainerState() {
@@ -357,19 +355,12 @@ function getMessagesContainer() {
         }
 
         function refreshStartState() {
-            let ready = pendingModules <= 0 && !examStarted && !examLocked && getMissingRequirements().length === 0;
+            let ready = pendingModules <= 0 && !moduleFailed && !examStarted && !examLocked && getMissingRequirements().length === 0;
             $startButton.prop("disabled", !ready || startInProgress);
             renderRequirementsDescription();
         }
 
 
-        /**
-         * Global runtime alert dispatcher for every proctoring policy.
-         * Policy modules must supply content; they must not render their own popup.
-         *
-         * @param {String} policyKey Policy component key.
-         * @param {String} html Sanitised policy HTML prepared by the existing provider.
-         */
         function showPolicyAlert(policyKey, html) {
             if (!examStarted || examLocked || !html) {
                 return;
@@ -433,7 +424,10 @@ function getMessagesContainer() {
             startInProgress = false;
             syncContainerState();
             hidePolicyAlert(true);
-            runStartCallbacks();
+            if (!runStartCallbacks()) {
+                lockExam("policy", M.util.get_string("policy_load_failed", "local_kopere_proctoring"));
+                return;
+            }
 
             if ($startBlock.length) {
                 $startBlock.hide();
@@ -568,7 +562,7 @@ function getMessagesContainer() {
             },
             refreshStartState: refreshStartState,
             isReady: function () {
-                return pendingModules <= 0 && !examStarted && !examLocked && getMissingRequirements().length === 0;
+                return pendingModules <= 0 && !moduleFailed && !examStarted && !examLocked && getMissingRequirements().length === 0;
             },
             isExamStarted: function () {
                 return examStarted;
@@ -577,12 +571,19 @@ function getMessagesContainer() {
                 return examStarted && !examLocked;
             },
             startExam: startExam,
-            // Global API. Legacy names remain aliases for third-party policies.
             showPolicyAlert: showPolicyAlert,
             hidePolicyAlert: hidePolicyAlert,
             showViolationMessage: showPolicyAlert,
             hideViolationMessage: hidePolicyAlert,
-            lockExam: lockExam
+            lockExam: lockExam,
+            recordViolation: function (policy, kind) {
+                // Each logical incident gets one ID, allowing safe retries at the server.
+                let eventid = "k" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 12);
+                return Ajax.call([{
+                    methodname: "local_kopere_proctoring_record_violation",
+                    args: {cmid: cmid, attemptid: attemptid, policy: policy, kind: kind, eventid: eventid}
+                }])[0];
+            }
         };
 
         function initPolicyAcknowledgements() {
@@ -699,11 +700,16 @@ function getMessagesContainer() {
             });
         });
 
-        function markModuleLoaded() {
-            pendingModules = pendingModules - 1;
-            if (pendingModules <= 0) {
-                refreshStartState();
+        function markModuleLoaded(ok, key) {
+            if (!ok) {
+                moduleFailed = true;
+                requirements["policy_load_" + key] = {
+                    label: M.util.get_string("policy_load_failed", "local_kopere_proctoring"),
+                    satisfied: false
+                };
             }
+            pendingModules = pendingModules - 1;
+            refreshStartState();
         }
 
         syncContainerState();
@@ -724,19 +730,23 @@ function getMessagesContainer() {
                 });
             }
 
-            if (!p.amd) {
-                markModuleLoaded();
+            if (!p || !p.amd) {
+                markModuleLoaded(false, p && p.key || "unknown");
                 return;
             }
 
             requirejs([p.amd], function (mod) {
-                if (mod && typeof mod.init === "function") {
+                try {
+                    if (!mod || typeof mod.init !== "function") {
+                        throw new Error("Policy module has no init method");
+                    }
                     mod.init(context, p.config || {});
+                    markModuleLoaded(true, p.key);
+                } catch (e) {
+                    markModuleLoaded(false, p.key);
                 }
-
-                markModuleLoaded();
             }, function () {
-                markModuleLoaded();
+                markModuleLoaded(false, p.key);
             });
         });
 

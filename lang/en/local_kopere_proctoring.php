@@ -26,6 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+$string['attemptblocked'] = 'This attempt has been blocked by proctoring. Contact your teacher for review.';
 $string['description_pending'] = 'Complete or wait for the following required items before the exam can start:';
 $string['description_ready'] = 'All required items have been approved. You can now start the exam.';
 $string['enabled'] = 'Enable Proctoring';
@@ -48,6 +49,12 @@ $string['pluginstatus_activate'] = 'Activate';
 $string['pluginstatus_active'] = 'Active';
 $string['pluginstatus_deactivate'] = 'Desactivate';
 $string['pluginstatus_inactive'] = 'Inactive';
+$string['policy_load_failed'] = 'A required proctoring policy could not be loaded. Reload the page and contact support if this continues.';
+$string['privacy:metadata:local_kopere_proctoring_att:blocked'] = 'Whether the attempt is blocked by a proctoring policy.';
+$string['privacy:metadata:local_kopere_proctoring_att:blockedreason'] = 'Policy that caused the attempt lock.';
+$string['privacy:metadata:local_kopere_proctoring_att:focuscount'] = 'Number of focus-loss incidents for the attempt.';
+$string['privacy:metadata:local_kopere_proctoring_att:fullscreencount'] = 'Number of fullscreen-exit incidents for the attempt.';
+$string['privacy:metadata:local_kopere_proctoring_log:eventid'] = 'Deduplication identifier of an incident reported by the browser.';
 $string['privacy:metadata:local_kopere_proctoring:files_snapshot'] = 'Stores evidence snapshots captured during proctoring.';
 $string['privacy:metadata:local_kopere_proctoring_att'] = 'Stores proctoring and contract acceptance data for each quiz attempt.';
 $string['privacy:metadata:local_kopere_proctoring_att:attemptid'] = 'The quiz attempt identifier.';
@@ -67,9 +74,8 @@ $string['privacy:metadata:local_kopere_proctoring_log:screenresolution'] = 'The 
 $string['privacy:metadata:local_kopere_proctoring_log:time'] = 'The time when the event was recorded.';
 $string['privacy:metadata:local_kopere_proctoring_log:useragent'] = 'The browser user agent recorded for the event.';
 $string['privacy:metadata:local_kopere_proctoring_log:userid'] = 'The user identifier.';
-$string['proctoring_warning'] = '<p>When <strong>Proctoring</strong> is enabled, the quiz layout will be automatically adjusted so that <strong>all questions are displayed on a single page</strong>.</p>
-<p>This change prevents the student from having to navigate between pages during the attempt, reducing the risk of interruptions, page reloads, or improper termination of the Proctoring session.</p>
-<p>To achieve this, the Quiz <code>Layout</code> setting will be automatically changed, ensuring that the quiz is presented on a single page while Proctoring is active.</p>';
+$string['proctoring_warning'] = '<p>Kopere Proctoring does not modify quiz pagination automatically. When a single-page assessment is required, configure the Moodle quiz layout before opening the exam and verify existing question page breaks.</p>';
+$string['record_failed'] = 'The incident could not be recorded. The exam was paused for safety; contact your teacher.';
 $string['reload_required_button'] = 'Reload page';
 $string['reload_required_message'] = 'The exam monitoring interface was hidden or removed. Reload the page to continue securely.';
 $string['reload_required_title'] = 'Reload the page';
@@ -85,6 +91,10 @@ $string['subplugintype_proctoringpolicy_plural'] = 'Proctoring policies';
 $string['understand_error'] = 'Confirm that you understand this rule before starting the exam.';
 $string['understand_label'] = 'I understand';
 $string['unknown'] = 'Unknown';
+$string['userdata_blocked'] = 'Blocked by Proctoring';
+$string['userdata_blockedreason'] = 'Blocking reason';
+$string['userdata_focuscount'] = 'Recorded focus losses';
+$string['userdata_fullscreencount'] = 'Recorded fullscreen exits';
 $string['userdata_activity'] = 'Activity ID';
 $string['userdata_attempt_details'] = 'Attempt details';
 $string['userdata_attempt_label'] = 'Attempt';

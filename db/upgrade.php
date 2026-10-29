@@ -31,5 +31,34 @@
  * @throws Exception
  */
 function xmldb_local_kopere_proctoring_upgrade($oldversion) {
+    global $DB;
+
+    if ($oldversion < 2026102900) {
+        $dbman = $DB->get_manager();
+        $attempttable = new xmldb_table('local_kopere_proctoring_att');
+        $fields = [
+            new xmldb_field('focuscount', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0),
+            new xmldb_field('fullscreencount', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0),
+            new xmldb_field('blocked', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, 0),
+            new xmldb_field('blockedreason', XMLDB_TYPE_CHAR, '20', null, null, null, null),
+        ];
+        foreach ($fields as $field) {
+            if (!$dbman->field_exists($attempttable, $field)) {
+                $dbman->add_field($attempttable, $field);
+            }
+        }
+
+        $logtable = new xmldb_table('local_kopere_proctoring_log');
+        $eventid = new xmldb_field('eventid', XMLDB_TYPE_CHAR, '36', null, null, null, null);
+        if (!$dbman->field_exists($logtable, $eventid)) {
+            $dbman->add_field($logtable, $eventid);
+        }
+        $index = new xmldb_index('attempt_eventid_uix', XMLDB_INDEX_UNIQUE, ['attemptid', 'eventid']);
+        if (!$dbman->index_exists($logtable, $index)) {
+            $dbman->add_index($logtable, $index);
+        }
+
+        upgrade_plugin_savepoint(true, 2026102900, 'local', 'kopere_proctoring');
+    }
     return true;
 }

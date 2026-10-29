@@ -25,6 +25,13 @@
 defined('MOODLE_INTERNAL') || die();
 
 $functions = [
+    'local_kopere_proctoring_record_violation' => [
+        'classname' => 'local_kopere_proctoring\\external\\record_violation',
+        'methodname' => 'execute',
+        'description' => 'Record an idempotent attempt-policy violation and persist a lock when the configured limit is exceeded.',
+        'type' => 'write',
+        'ajax' => true,
+    ],
     'local_kopere_proctoring_save_log' => [
         'classname' => 'local_kopere_proctoring\\external\\save_log',
         'methodname' => 'execute',

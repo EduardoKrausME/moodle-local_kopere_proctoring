@@ -121,3 +121,67 @@ function local_kopere_proctoring_extend_settings_navigation(navigation_node $nav
         }
     }
 }
+
+/**
+ * Deny standard attempt, summary and submission routes when a monitored attempt was blocked.
+ *
+ * Running after require_login ensures this check happens before the quiz processes answers.
+ * Browser signals are fallible and should always be reviewed by a teacher.
+ *
+ * @param mixed $courseorid
+ * @param mixed $autologinguest
+ * @param stdClass|null $cm
+ * @param mixed $setwantsurltome
+ * @param mixed $preventredirect
+ * @return void
+ */
+function local_kopere_proctoring_after_require_login(
+    $courseorid = null,
+    $autologinguest = null,
+    $cm = null,
+    $setwantsurltome = null,
+    $preventredirect = null
+): void {
+    global $DB, $USER, $PAGE;
+
+    if (empty($cm) || empty($cm->id) || empty($cm->instance) || !isloggedin() || isguestuser()) {
+        return;
+    }
+
+    $path = $PAGE->url ? $PAGE->url->get_path() : ($_SERVER['SCRIPT_NAME'] ?? '');
+    if (!preg_match('~/mod/quiz/(attempt|summary|processattempt)\\.php$~', $path)) {
+        return;
+    }
+
+    if (!get_config('local_kopere_proctoring', "kopere_proctoring_enabled_{$cm->id}")) {
+        return;
+    }
+
+    // Both GET attempt URLs and POST processattempt requests carry this ID.
+    $attemptid = optional_param('attempt', 0, PARAM_INT);
+    if (!$attemptid) {
+        return;
+    }
+
+    $sql = "SELECT a.id
+              FROM {local_kopere_proctoring_att} a
+              JOIN {quiz_attempts} qa ON qa.id = a.attemptid
+             WHERE a.attemptid = :attemptid
+               AND a.userid = :userid
+               AND a.blocked = :blocked
+               AND qa.quiz = :quizid
+               AND qa.userid = :quizuserid";
+    if ($DB->record_exists_sql($sql, [
+        'attemptid' => $attemptid,
+        'userid' => $USER->id,
+        'blocked' => 1,
+        'quizid' => $cm->instance,
+        'quizuserid' => $USER->id,
+    ])) {
+        throw new \moodle_exception(
+            'attemptblocked',
+            'local_kopere_proctoring',
+            new moodle_url('/mod/quiz/view.php', ['id' => $cm->id])
+        );
+    }
+}
