@@ -61,7 +61,7 @@ foreach ($attempts as $attempt) {
     foreach ($attemptlogs as $log) {
         $totallogs++;
         $logrows[] = [
-            'actionvalue' => format_string($log->actionvalue, true, ['context' => \context_system::instance()]),
+            'actionvalue' => format_string($log->actionvalue, true, ['context' => context_system::instance()]),
             'ip' => $log->ip,
             'time' => $log->time ? userdate($log->time, get_string('strftimedatetimeshort', 'langconfig')) : '-',
             'useragent' => $log->useragent,

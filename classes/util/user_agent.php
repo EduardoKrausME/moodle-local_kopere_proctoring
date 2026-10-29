@@ -24,6 +24,8 @@
 
 namespace local_kopere_proctoring\util;
 
+use coding_exception;
+
 /**
  * Class user_agent
  */
@@ -34,7 +36,7 @@ class user_agent {
      *
      * @param string $useragent
      * @return array
-     * @throws \coding_exception
+     * @throws coding_exception
      */
     public static function parse(string $useragent): array {
         $result = [
@@ -70,7 +72,7 @@ class user_agent {
      *
      * @param string $useragent
      * @return string
-     * @throws \coding_exception
+     * @throws coding_exception
      */
     public static function to_text(string $useragent): string {
         $data = self::parse($useragent);

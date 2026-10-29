@@ -25,6 +25,7 @@ namespace local_kopere_proctoring\mcp;
 
 use local_mcp\extension\read_provider_interface;
 use local_mcp\extension\write_provider_interface;
+use local_mcp\write\tool_interface;
 
 /**
  * Detected by local_mcp via classes/mcp/provider.php; no hooks or callbacks needed.
@@ -49,7 +50,7 @@ final class provider implements read_provider_interface, write_provider_interfac
     /**
      * Return the auto-discovered write tools.
      *
-     * @return \local_mcp\write\tool_interface[]
+     * @return tool_interface[]
      */
     public function get_write_tools(): array {
         return [

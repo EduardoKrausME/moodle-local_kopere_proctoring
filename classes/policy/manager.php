@@ -255,11 +255,11 @@ class manager {
         );
 
         if (mcp_banner::should_show()) {
-            $page->add(new \admin_setting_heading(
+            $page->add(new admin_setting_heading(
                 "local_kopere_proctoring/mcp_banner",
                 "",
                 $OUTPUT->render_from_template("local_kopere_proctoring/mcp_banner", [
-                    "mcp_banner_dismiss_url" => (new \moodle_url("/local/kopere_proctoring/dismiss-mcp-banner.php"))->out(false),
+                    "mcp_banner_dismiss_url" => (new moodle_url("/local/kopere_proctoring/dismiss-mcp-banner.php"))->out(false),
                 ])
             ));
         }

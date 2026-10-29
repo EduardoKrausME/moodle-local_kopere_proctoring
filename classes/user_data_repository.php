@@ -24,6 +24,7 @@
 
 namespace local_kopere_proctoring;
 
+use core\exception\moodle_exception;
 use dml_exception;
 use moodle_url;
 
@@ -122,7 +123,7 @@ class user_data_repository {
      *
      * @param object $attempt
      * @return moodle_url
-     * @throws \core\exception\moodle_exception
+     * @throws moodle_exception
      */
     public static function get_quiz_url(object $attempt): moodle_url {
         return new moodle_url('/mod/quiz/view.php', ['id' => (int)$attempt->cmid]);

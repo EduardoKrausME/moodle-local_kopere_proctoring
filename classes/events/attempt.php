@@ -91,7 +91,7 @@ class attempt {
     /**
      * Function module_viewed
      *
-     * @param \core\event\base $event
+     * @param base $event
      * @return void
      */
     public static function module_viewed(base $event): void {

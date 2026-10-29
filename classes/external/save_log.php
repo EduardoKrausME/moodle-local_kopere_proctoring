@@ -29,11 +29,18 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->libdir . '/externallib.php');
 
+use coding_exception;
 use context_module;
+use core_external\restricted_context_exception;
+use dml_exception;
 use external_api;
 use external_function_parameters;
 use external_single_structure;
 use external_value;
+use file_exception;
+use invalid_parameter_exception;
+use required_capability_exception;
+use stored_file_creation_exception;
 
 /**
  * class save_log
@@ -64,11 +71,11 @@ class save_log extends external_api {
      * @param string $actionvalue
      * @param string $image
      * @return array
-     * @throws \coding_exception
-     * @throws \core_external\restricted_context_exception
-     * @throws \dml_exception
-     * @throws \invalid_parameter_exception
-     * @throws \required_capability_exception
+     * @throws coding_exception
+     * @throws restricted_context_exception
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws required_capability_exception
      */
     public static function execute(
         int $cmid,
@@ -123,9 +130,9 @@ class save_log extends external_api {
      * @param int $logid
      * @param string $image
      * @return void
-     * @throws \file_exception
-     * @throws \invalid_parameter_exception
-     * @throws \stored_file_creation_exception
+     * @throws file_exception
+     * @throws invalid_parameter_exception
+     * @throws stored_file_creation_exception
      */
     private static function save_image(context_module $context, int $logid, string $image): void {
         $prefix = 'data:image/jpeg;base64,';
@@ -135,13 +142,13 @@ class save_log extends external_api {
 
         $binary = base64_decode($image, true);
         if ($binary === false || $binary === '') {
-            throw new \invalid_parameter_exception('Invalid evidence image.');
+            throw new invalid_parameter_exception('Invalid evidence image.');
         }
 
         if (function_exists('getimagesizefromstring')) {
             $info = @getimagesizefromstring($binary);
             if (!$info || ($info['mime'] ?? '') !== 'image/jpeg') {
-                throw new \invalid_parameter_exception('Evidence image must be JPEG.');
+                throw new invalid_parameter_exception('Evidence image must be JPEG.');
             }
         }
 

@@ -26,6 +26,7 @@ namespace local_kopere_proctoring\plugininfo;
 
 use admin_setting_configcheckbox;
 use admin_settingpage;
+use core\exception\moodle_exception;
 use core\plugininfo\base;
 use core_component;
 use Exception;
@@ -122,7 +123,7 @@ class proctoringpolicy extends base {
      * Return URL used for management of plugins of this type.
      *
      * @return moodle_url
-     * @throws \core\exception\moodle_exception
+     * @throws moodle_exception
      */
     public static function get_manage_url() {
         return new moodle_url("/admin/settings.php", ["section" => "local_kopere_proctoring"]);

@@ -34,6 +34,7 @@ use external_api;
 use external_function_parameters;
 use external_single_structure;
 use external_value;
+use invalid_parameter_exception;
 use local_kopere_proctoring\policy\cm_config;
 use local_kopere_proctoring\policy\manager;
 
@@ -69,7 +70,7 @@ class record_violation extends external_api {
         if (!isset($allowed[$params['policy']]) ||
                 !in_array($params['kind'], $allowed[$params['policy']], true) ||
                 !preg_match('/^[a-zA-Z0-9-]{8,36}$/D', $params['eventid'])) {
-            throw new \invalid_parameter_exception('Invalid violation policy, kind or event ID.');
+            throw new invalid_parameter_exception('Invalid violation policy, kind or event ID.');
         }
 
         $cm = get_coursemodule_from_id('quiz', $params['cmid'], 0, false, MUST_EXIST);
@@ -81,13 +82,13 @@ class record_violation extends external_api {
         ], 'id, state', MUST_EXIST);
         if ($quizattempt->state !== 'inprogress' ||
                 !get_config('local_kopere_proctoring', "kopere_proctoring_enabled_{$cm->id}")) {
-            throw new \invalid_parameter_exception('The monitored attempt is not active.');
+            throw new invalid_parameter_exception('The monitored attempt is not active.');
         }
 
         $policy = $params['policy'];
         if (!cm_config::get($policy, 'enabled', $cm->id, 0) ||
                 !manager::get_policy_active($policy)) {
-            throw new \invalid_parameter_exception('This proctoring policy is disabled.');
+            throw new invalid_parameter_exception('This proctoring policy is disabled.');
         }
 
         $transaction = $DB->start_delegated_transaction();

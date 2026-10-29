@@ -178,7 +178,7 @@ function local_kopere_proctoring_after_require_login(
         'quizid' => $cm->instance,
         'quizuserid' => $USER->id,
     ])) {
-        throw new \moodle_exception(
+        throw new moodle_exception(
             'attemptblocked',
             'local_kopere_proctoring',
             new moodle_url('/mod/quiz/view.php', ['id' => $cm->id])

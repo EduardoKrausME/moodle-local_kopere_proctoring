@@ -29,12 +29,17 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->libdir . '/externallib.php');
 
+use coding_exception;
 use context_module;
+use core_external\restricted_context_exception;
+use dml_exception;
 use external_api;
 use external_function_parameters;
 use external_single_structure;
 use external_value;
+use invalid_parameter_exception;
 use proctoringpolicy_contract\contract_service;
+use required_capability_exception;
 
 /**
  * Class accept_contract
@@ -63,11 +68,11 @@ class accept_contract extends external_api {
      * @param string $screenresolution
      * @param string $geo
      * @return array
-     * @throws \coding_exception
-     * @throws \core_external\restricted_context_exception
-     * @throws \dml_exception
-     * @throws \invalid_parameter_exception
-     * @throws \required_capability_exception
+     * @throws coding_exception
+     * @throws restricted_context_exception
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws required_capability_exception
      */
     public static function execute(
         int $cmid,
@@ -96,7 +101,7 @@ class accept_contract extends external_api {
 
         $att = contract_service::get_att_by_attemptid($params['attemptid']);
         if ((int)$att->userid !== (int)$USER->id) {
-            throw new \required_capability_exception($context, 'mod/quiz:attempt', 'nopermissions', '');
+            throw new required_capability_exception($context, 'mod/quiz:attempt', 'nopermissions', '');
         }
         $att = contract_service::accept($att, [
             'ip' => getremoteaddr(),

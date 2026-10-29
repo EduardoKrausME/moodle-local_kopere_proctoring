@@ -25,9 +25,11 @@
 
 namespace local_kopere_proctoring;
 
+use core\exception\coding_exception;
 use core\hook\output\before_footer_html_generation;
 use context_module;
 use core\hook\output\before_http_headers;
+use dml_exception;
 use Exception;
 use local_kopere_proctoring\policy\manager;
 use local_kopere_proctoring\policy\policy_interface;
@@ -128,11 +130,11 @@ class hook_callbacks {
     /**
      * Function before_http_headers
      *
-     * @param \core\hook\output\before_http_headers $hook
+     * @param before_http_headers $hook
      * @return void
      * @throws \coding_exception
-     * @throws \core\exception\coding_exception
-     * @throws \dml_exception
+     * @throws coding_exception
+     * @throws dml_exception
      */
     public static function before_http_headers(before_http_headers $hook): void {
         global $DB, $USER, $PAGE;

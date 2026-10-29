@@ -22,11 +22,13 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use local_kopere_proctoring\mcp_banner;
+
 require_once(__DIR__ . "/../../config.php");
 
 require_login();
-require_capability("moodle/site:config", \context_system::instance());
+require_capability("moodle/site:config", context_system::instance());
 
-$returnurl = new \moodle_url("/admin/settings.php", ["section" => "local_kopere_proctoring"]);
-\local_kopere_proctoring\mcp_banner::dismiss_if_requested($returnurl);
+$returnurl = new moodle_url("/admin/settings.php", ["section" => "local_kopere_proctoring"]);
+mcp_banner::dismiss_if_requested($returnurl);
 redirect($returnurl);
