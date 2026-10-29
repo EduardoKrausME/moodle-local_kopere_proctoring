@@ -35,6 +35,7 @@ use core_plugin_manager;
 use dml_exception;
 use Exception;
 use html_writer;
+use local_kopere_proctoring\mcp_banner;
 use moodle_url;
 use moodleform_mod;
 use MoodleQuickForm;
@@ -253,9 +254,7 @@ class manager {
             "Plugins"
         );
 
-        if (\local_kopere_proctoring\mcp_banner::should_show()) {
-            global $PAGE;
-            $PAGE->requires->css(new \moodle_url("/local/kopere_proctoring/styles.css"));
+        if (mcp_banner::should_show()) {
             $page->add(new \admin_setting_heading(
                 "local_kopere_proctoring/mcp_banner",
                 "",
