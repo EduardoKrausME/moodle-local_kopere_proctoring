@@ -40,14 +40,14 @@ use local_kopere_proctoring\policy\policy_interface;
 class hook_callbacks {
 
     /**
-     * Inject proctoring overlay on quiz attempt/review pages and password admin alerts on quiz pages.
+     * Inject proctoring only for active quiz attempts and run policy page hooks.
      *
      * @param before_footer_html_generation $hook
      * @return void
      * @throws Exception
      */
     public static function before_footer_html_generation(before_footer_html_generation $hook): void {
-        global $DB, $USER, $PAGE, $OUTPUT;
+        global $USER, $PAGE, $OUTPUT;
 
         static $rendered = false;
         if ($rendered) {
@@ -91,12 +91,8 @@ class hook_callbacks {
             return;
         }
 
-        // Ensure attempt belongs to current user and exists in our table.
-        $attempt = $DB->get_record('local_kopere_proctoring_att', [
-            'attemptid' => $attemptid,
-            'userid' => $USER->id,
-        ]);
-        if (!$attempt) {
+        // Only the owner of an in-progress attempt in this quiz needs the start gate.
+        if (!attempt_guard::is_active((int)$attemptid, (int)$PAGE->cm->instance, (int)$USER->id)) {
             return;
         }
 
@@ -137,7 +133,7 @@ class hook_callbacks {
      * @throws dml_exception
      */
     public static function before_http_headers(before_http_headers $hook): void {
-        global $DB, $USER, $PAGE;
+        global $USER, $PAGE;
 
         if (!isloggedin() || isguestuser()) {
             return;
@@ -175,12 +171,8 @@ class hook_callbacks {
             return;
         }
 
-        // Ensure attempt belongs to current user and exists in our table.
-        $attempt = $DB->get_record('local_kopere_proctoring_att', [
-            'attemptid' => $attemptid,
-            'userid' => $USER->id,
-        ]);
-        if (!$attempt) {
+        // Only the owner of an in-progress attempt in this quiz needs the start gate.
+        if (!attempt_guard::is_active((int)$attemptid, (int)$PAGE->cm->instance, (int)$USER->id)) {
             return;
         }
 
