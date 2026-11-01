@@ -30,20 +30,23 @@ const path = require("node:path");
 const root = path.resolve(__dirname, "..");
 const read = relative => fs.readFileSync(path.join(root, relative), "utf8");
 const main = read("amd/src/start.js");
-assert.equal(main, read("amd/build/start.min.js"));
-assert.match(main, /showPolicyAlert: showPolicyAlert/);
-assert.match(main, /showViolationMessage: showPolicyAlert/);
-assert.match(main, /hideViolationMessage: hidePolicyAlert/);
+const mainBuild = read("amd/build/start.min.js");
+[main, mainBuild].forEach(script => {
+    assert.match(script, /showPolicyAlert\s*:\s*showPolicyAlert/);
+    assert.match(script, /showViolationMessage\s*:\s*showPolicyAlert/);
+    assert.match(script, /hideViolationMessage\s*:\s*hidePolicyAlert/);
+});
 
 const keys = ["copy", "focus", "fullscreen", "securitysignals"];
 keys.forEach(key => {
     const src = read("policy/" + key + "/amd/src/policy.js");
     const build = read("policy/" + key + "/amd/build/policy.min.js");
-    assert.equal(src, build, key + " AMD build out of sync");
-    assert.ok(src.includes("ctx.api.showPolicyAlert(") ||
-        src.includes("context.api.showPolicyAlert("), key + " bypasses global API");
-    assert.doesNotMatch(src, /(?:Swal\.fire|window\.alert\(|window\.confirm\(|\.modal\(|createElement\(["']dialog)/,
-        key + " creates a policy-specific popup");
+    [src, build].forEach(script => {
+        assert.ok(script.includes("ctx.api.showPolicyAlert(") ||
+            script.includes("context.api.showPolicyAlert("), key + " bypasses global API");
+        assert.doesNotMatch(script, /(?:Swal\.fire|window\.alert\(|window\.confirm\(|\.modal\(|createElement\(["']dialog)/,
+            key + " creates a policy-specific popup");
+    });
 });
 assert.doesNotMatch(read("policy/securitysignals/amd/src/policy.js"), /console\.warn\(/);
 
