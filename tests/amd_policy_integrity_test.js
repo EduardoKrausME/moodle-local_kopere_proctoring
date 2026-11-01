@@ -34,8 +34,11 @@ function read(relative) {
 }
 
 function testPolicy(relative, policy) {
-    const source = read(relative);
-    assert.equal(source, read(relative.replace("/src/", "/build/").replace("/policy.js", "/policy.min.js")));
+    testPolicyScript(read(relative), policy);
+    testPolicyScript(read(relative.replace("/src/", "/build/").replace("/policy.js", "/policy.min.js")), policy);
+}
+
+function testPolicyScript(source, policy) {
     const win = {};
     const doc = {hidden: false, fullscreenElement: {}, hasFocus: () => true};
     const handlers = {};
@@ -119,9 +122,11 @@ function testPolicy(relative, policy) {
     assert.deepEqual(locks, []);
 }
 
-assert.equal(read("amd/src/start.js"), read("amd/build/start.min.js"));
-assert.match(read("amd/src/start.js"), /!moduleFailed/);
-assert.doesNotMatch(read("amd/src/start.js"), /\$\("body \*"\)\.css\(\{"user-select": "none"\}\)/);
+["amd/src/start.js", "amd/build/start.min.js"].forEach(file => {
+    const script = read(file);
+    assert.match(script, /!moduleFailed/);
+    assert.doesNotMatch(script, /\$\("body \*"\)\.css\(\{"user-select": "none"\}\)/);
+});
 testPolicy("policy/focus/amd/src/policy.js", "focus");
 testPolicy("policy/fullscreen/amd/src/policy.js", "fullscreen");
 console.log("Proctoring AMD regression tests passed.");
