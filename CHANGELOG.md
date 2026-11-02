@@ -4,6 +4,31 @@ This changelog records only the two latest **published** releases of `local_kope
 
 **Git history note:** The published tags `4.0.14` and `4.0.15` have diverged histories: GitHub reports 11 commits on the `4.0.15` side and 3 on the `4.0.14` side. GitHub's three-dot compare link describes changes from the merge base, **not** an exact direct tree diff between these divergent tags. The `4.0.15` summary below was checked against the actual file trees of both release tags to reflect their net differences. This changelog does not include commits made after `4.0.15`.
 
+## 4.0.18 - 2026-11-01
+
+- Added contract tests that compare proctoring AMD source modules with their minified builds.
+- Rebuilt policy AMD assets and normalized language-string ordering and PHP headers.
+
+**Full comparison:** [4.0.17...4.0.18](https://github.com/EduardoKrausME/moodle-local_kopere_proctoring/compare/4.0.17...4.0.18)
+
+## 4.0.17 - 2026-11-01
+
+- Persisted focus and fullscreen monitoring incidents and attempt locks across quiz requests.
+- Prevented locked attempts from reopening or submitting after persisted policy violations.
+- Restricted proctoring checks to active quiz attempts and exposed persisted incident counts in audit reporting.
+- Added regression coverage for attempt integrity, policy activation, AMD failures and attempt-state guards.
+
+**Full comparison:** [4.0.16...4.0.17](https://github.com/EduardoKrausME/moodle-local_kopere_proctoring/compare/4.0.16...4.0.17)
+
+## 4.0.16 - 2026-10-27
+
+- Added MCP tools for reading, validating and explicitly confirming global proctoring policy settings and activation.
+- Added quiz-specific policy settings, text inheritance and confirmed MCP editing with permission checks.
+- Preserved MCP-managed quiz policy values when Moodle module forms omit the corresponding fields.
+- Expanded policy administration, security-boundary and integration tests and documentation.
+
+**Full comparison:** [4.0.15...4.0.16](https://github.com/EduardoKrausME/moodle-local_kopere_proctoring/compare/4.0.15...4.0.16)
+
 ## [4.0.15] - 2026-10-23
 
 ### Added
