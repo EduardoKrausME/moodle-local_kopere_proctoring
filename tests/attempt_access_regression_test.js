@@ -50,7 +50,8 @@ assert.match(schema, /NAME="accessgranted" TYPE="int"/);
 assert.match(upgrade, /2026111900/);
 assert.match(privacy, /'accessgranted' => 'privacy:metadata/);
 assert.match(privacy, /'accessgrantedtime' => 'privacy:metadata/);
-assert.match(grant, /\$transaction->rollback\(\$exception\)/);
+assert.match(grant, /if \(\$record->blocked\) \{\s*\$transaction->allow_commit\(\);/);
+assert.doesNotMatch(grant, /\$transaction->rollback\(/);
 assert.match(full, /ctx\.api\.isNavigating\(\)/);
 assert.match(focus, /ctx\.api\.isNavigating\(\)/);
 

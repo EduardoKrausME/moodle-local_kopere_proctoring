@@ -87,31 +87,30 @@ final class grant_access extends external_api {
         }
 
         $transaction = $DB->start_delegated_transaction();
-        try {
-            $record = $DB->get_record_sql(
-                'SELECT * FROM {local_kopere_proctoring_att}
-                  WHERE attemptid = :attemptid AND userid = :userid FOR UPDATE',
-                ['attemptid' => $params['attemptid'], 'userid' => $USER->id],
-                MUST_EXIST
-            );
-            if ($record->blocked) {
-                throw new invalid_parameter_exception('This attempt has been blocked.');
-            }
-            if (manager::get_policy_active('contract') &&
-                    cm_config::get('contract', 'enabled', $cm->id, 0) &&
-                    (empty($record->contract) || empty($record->contract_time))) {
-                throw new invalid_parameter_exception('The mandatory proctoring contract is not accepted.');
-            }
-            if (!$record->accessgranted) {
-                $record->accessgranted = 1;
-                $record->accessgrantedtime = time();
-                $DB->update_record('local_kopere_proctoring_att', $record);
-            }
+        $record = $DB->get_record_sql(
+            'SELECT * FROM {local_kopere_proctoring_att}
+              WHERE attemptid = :attemptid AND userid = :userid FOR UPDATE',
+            ['attemptid' => $params['attemptid'], 'userid' => $USER->id],
+            MUST_EXIST
+        );
+        // Denials are read-only: finish the delegated transaction before throwing.
+        // A rollback here would abort an enclosing Moodle quiz or PHPUnit transaction.
+        if ($record->blocked) {
             $transaction->allow_commit();
-        } catch (\Exception $exception) {
-            // Close the delegated transaction even when approval is denied.
-            $transaction->rollback($exception);
+            throw new invalid_parameter_exception('This attempt has been blocked.');
         }
+        if (manager::get_policy_active('contract') &&
+                cm_config::get('contract', 'enabled', $cm->id, 0) &&
+                (empty($record->contract) || empty($record->contract_time))) {
+            $transaction->allow_commit();
+            throw new invalid_parameter_exception('The mandatory proctoring contract is not accepted.');
+        }
+        if (!$record->accessgranted) {
+            $record->accessgranted = 1;
+            $record->accessgrantedtime = time();
+            $DB->update_record('local_kopere_proctoring_att', $record);
+        }
+        $transaction->allow_commit();
 
         return ['approved' => true];
     }
