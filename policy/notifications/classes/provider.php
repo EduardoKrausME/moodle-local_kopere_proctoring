@@ -136,6 +136,49 @@ class provider implements policy_interface {
      * @throws coding_exception
      */
     public static function add_module_form(moodleform_mod $formwrapper, MoodleQuickForm $mform, int $cmid): void {
+        $config = self::get_effective_cm_config($cmid);
+        $component = 'proctoringpolicy_notifications';
+
+        $mform->addElement('header', 'kopere_policy_notifications_header', get_string('pluginname', $component));
+        $mform->addElement('selectyesno', 'kopere_policy_notifications_enabled', get_string('enabled', $component));
+        $mform->setType('kopere_policy_notifications_enabled', PARAM_INT);
+        $mform->setDefault('kopere_policy_notifications_enabled', (int)$config['enabled']);
+        $mform->hideIf('kopere_policy_notifications_enabled', 'kopere_proctoring_enabled', 'eq', 0);
+
+        $choices = [
+            'none' => get_string('moment_default_none', $component),
+            'suspicious' => get_string('moment_default_suspicious', $component),
+            'examlocked' => get_string('moment_default_examlocked', $component),
+            'attemptfinished' => get_string('moment_default_attemptfinished', $component),
+        ];
+        $mform->addElement('select', 'kopere_policy_notifications_moment',
+            get_string('moment_default', $component), $choices);
+        $mform->setType('kopere_policy_notifications_moment', PARAM_ALPHA);
+        $mform->setDefault('kopere_policy_notifications_moment', $config['moment']);
+
+        $mform->addElement('text', 'kopere_policy_notifications_recipients',
+            get_string('recipients_default', $component), ['size' => 60]);
+        $mform->setType('kopere_policy_notifications_recipients', PARAM_RAW_TRIMMED);
+        $mform->setDefault('kopere_policy_notifications_recipients', (string)$config['recipients']);
+
+        $mform->addElement('text', 'kopere_policy_notifications_subject',
+            get_string('subject_default', $component), ['size' => 60]);
+        $mform->setType('kopere_policy_notifications_subject', PARAM_TEXT);
+        $mform->setDefault('kopere_policy_notifications_subject', (string)$config['subject']);
+
+        $mform->addElement('editor', 'kopere_policy_notifications_body',
+            get_string('body_default', $component), ['rows' => 6]);
+        $mform->setType('kopere_policy_notifications_body', PARAM_CLEANHTML);
+        $mform->setDefault('kopere_policy_notifications_body', [
+            'text' => (string)$config['body'],
+            'format' => FORMAT_HTML,
+        ]);
+
+        foreach (['moment', 'recipients', 'subject', 'body'] as $field) {
+            $name = 'kopere_policy_notifications_' . $field;
+            $mform->hideIf($name, 'kopere_policy_notifications_enabled', 'eq', 0);
+            $mform->hideIf($name, 'kopere_proctoring_enabled', 'eq', 0);
+        }
     }
 
     /**

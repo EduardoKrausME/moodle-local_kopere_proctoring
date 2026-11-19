@@ -25,6 +25,7 @@
 namespace local_kopere_proctoring\events;
 
 use core\event\base;
+use local_kopere_proctoring\notification_dispatcher;
 use Exception;
 
 /**
@@ -86,6 +87,44 @@ class attempt {
             "time" => time(),
         ];
         $DB->insert_record("local_kopere_proctoring_log", $logs);
+    }
+
+    /**
+     * Queue an attempt-completed notification only for monitored, submitted attempts.
+     *
+     * @param base $event Moodle quiz attempt submitted event.
+     * @return void
+     */
+    public static function submitted(base $event): void {
+        global $DB;
+
+        $cmid = (int)$event->contextinstanceid;
+        $attemptid = (int)$event->objectid;
+        if (!$cmid || !$attemptid ||
+                !get_config('local_kopere_proctoring', "kopere_proctoring_enabled_{$cmid}")) {
+            return;
+        }
+
+        $cm = get_coursemodule_from_id('quiz', $cmid);
+        if (!$cm) {
+            return;
+        }
+
+        $attempt = $DB->get_record('quiz_attempts', [
+            'id' => $attemptid,
+            'quiz' => $cm->instance,
+        ], 'id, userid, state, preview');
+        if (!$attempt || $attempt->state !== 'finished' || $attempt->preview ||
+                !$DB->record_exists('local_kopere_proctoring_att', [
+                    'attemptid' => $attemptid,
+                    'userid' => $attempt->userid,
+                ])) {
+            return;
+        }
+
+        notification_dispatcher::queue($cmid, $attemptid, 'attempt_finished', [
+            'userid' => (int)$attempt->userid,
+        ]);
     }
 
     /**

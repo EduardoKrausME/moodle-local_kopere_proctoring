@@ -26,6 +26,7 @@ namespace proctoringpolicy_notifications;
 
 use coding_exception;
 use dml_exception;
+use local_kopere_proctoring\policy\manager;
 use stdClass;
 
 /**
@@ -46,19 +47,12 @@ class notification_manager {
     public static function send_for_event(int $cmid, int $attemptid, string $eventkey, array $payload): void {
         global $DB;
 
-        // Find CM and context information.
-        $cm = get_coursemodule_from_id("quiz", $cmid, 0, false, MUST_EXIST);
-        $course = $DB->get_record("course", ["id" => $cm->course], "*", MUST_EXIST);
-        $quiz = $DB->get_record("quiz", ["id" => $cm->instance], "*", MUST_EXIST);
-
-        $userid = $payload["userid"] ?? 0;
-        if ($userid > 0) {
-            $user = $DB->get_record("user", ["id" => $userid], "*", MUST_EXIST);
-        } else {
-            $user = null;
+        // A global default is not permission to notify for every quiz.
+        if (!get_config('local_kopere_proctoring', "kopere_proctoring_enabled_{$cmid}") ||
+                !manager::get_policy_active('notifications')) {
+            return;
         }
 
-        // Resolve CM-level config using helper in provider.
         $config = provider::get_effective_cm_config($cmid);
 
         // Check if notifications are enabled.
@@ -77,8 +71,22 @@ class notification_manager {
             return;
         }
 
+        // Resolve the student from the actual attempt, never from a browser-provided user ID.
+        $cm = get_coursemodule_from_id('quiz', $cmid, 0, false, MUST_EXIST);
+        $attempt = $DB->get_record('quiz_attempts', [
+            'id' => $attemptid,
+            'quiz' => $cm->instance,
+        ], 'id, userid, preview');
+        if (!$attempt || $attempt->preview) {
+            return;
+        }
+        $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+        $quiz = $DB->get_record('quiz', ['id' => $cm->instance], '*', MUST_EXIST);
+        $user = $DB->get_record('user', ['id' => $attempt->userid], '*', MUST_EXIST);
+
         // Build subject/body with placeholders.
         $subject = self::apply_placeholders($config["subject"], $course, $quiz, $user, $eventkey, $payload);
+        $subject = trim(strip_tags($subject));
         $body = self::apply_placeholders($config["body"], $course, $quiz, $user, $eventkey, $payload);
 
         $from = get_admin();
@@ -92,7 +100,10 @@ class notification_manager {
                 continue;
             }
 
-            email_to_user($recipient, $from, $subject, html_to_text($body), $body);
+            if (!email_to_user($recipient, $from, $subject, html_to_text($body), $body)) {
+                // email_to_user records its own email_failed event. Do not interrupt the quiz.
+                error_log('Kopere Proctoring: notification delivery failed for attempt ' . $attemptid);
+            }
         }
     }
 
@@ -158,12 +169,20 @@ class notification_manager {
             return null;
         }
 
-        $user = new stdClass();
-        $user->id = 0;
+        // Moodle's email_to_user rejects id=0, even when the email is valid.
+        // Clone a real user structure to retain the required Moodle mail fields.
+        $user = clone get_admin();
+        $user->id = -1;
         $user->username = $email;
         $user->email = $email;
-        $user->firstname = "";
-        $user->lastname = "";
+        $user->firstname = 'Proctoring';
+        $user->lastname = 'Notifications';
+        $user->auth = 'manual';
+        $user->confirmed = 1;
+        $user->deleted = 0;
+        $user->suspended = 0;
+        $user->emailstop = 0;
+        $user->mailformat = 1;
         $user->maildisplay = 0;
 
         return $user;

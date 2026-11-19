@@ -90,6 +90,10 @@ jobs:
       if: ${{ !cancelled() }}
       run: node plugin/tests/attempt_and_admin_regression_test.js
 
+    - name: Proctoring notification flow regressions
+      if: ${{ !cancelled() }}
+      run: node plugin/tests/notification_flow_test.js
+
     - name: PHP Lint
       if: ${{ !cancelled() }}
       run: moodle-plugin-ci phplint

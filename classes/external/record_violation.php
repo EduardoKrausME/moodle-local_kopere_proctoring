@@ -37,6 +37,7 @@ use external_value;
 use invalid_parameter_exception;
 use local_kopere_proctoring\policy\cm_config;
 use local_kopere_proctoring\policy\manager;
+use local_kopere_proctoring\notification_dispatcher;
 
 /**
  * Records policy violations with an idempotency key, per-attempt counters and persisted blocking.
@@ -103,7 +104,8 @@ class record_violation extends external_api {
         ], 'id');
         $countfield = $policy === 'focus' ? 'focuscount' : 'fullscreencount';
 
-        $counted = !$existing && !(int)$record->blocked;
+        $wasblocked = (bool)$record->blocked;
+        $counted = !$existing && !$wasblocked;
         if ($counted) {
             $DB->insert_record('local_kopere_proctoring_log', (object)[
                 'attemptid' => $params['attemptid'],
@@ -133,6 +135,16 @@ class record_violation extends external_api {
             'counted' => $counted,
         ];
         $transaction->allow_commit();
+
+        // Notify only for newly recorded incidents; retries must not produce extra emails.
+        // Queue after committing so SMTP and cron failures cannot roll back a quiz violation.
+        if ($counted) {
+            $payload = ['userid' => (int)$USER->id, 'reason' => $policy];
+            notification_dispatcher::queue($cm->id, $params['attemptid'], 'suspicious_activity', $payload);
+            if (!$wasblocked && $result['blocked']) {
+                notification_dispatcher::queue($cm->id, $params['attemptid'], 'exam_locked', $payload);
+            }
+        }
         return $result;
     }
 
