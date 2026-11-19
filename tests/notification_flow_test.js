@@ -21,6 +21,7 @@ assert.match(observer, /function submitted\(base \$event\)/);
 assert.match(observer, /'attempt_finished'/);
 assert.match(events, /\\mod_quiz\\event\\attempt_submitted/);
 assert.match(dispatcher, /queue_adhoc_task\(\$task, true\)/);
+assert.match(dispatcher, /'eventid' => substr\(/);
 assert.match(dispatcher, /get_effective_cm_config\(\$cmid\)/);
 assert.match(task, /manager::handle_server_event\(/);
 assert.match(provider, /addElement\('selectyesno', 'kopere_policy_notifications_enabled'/);

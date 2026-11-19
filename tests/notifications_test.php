@@ -117,8 +117,14 @@ final class notifications_test extends advanced_testcase {
         notification_dispatcher::queue($cmid, $attemptid, 'exam_locked', ['userid' => $userid]);
         $this->assertEquals(0, $DB->count_records('task_adhoc', ['classname' => $class]));
 
-        notification_dispatcher::queue($cmid, $attemptid, 'suspicious_activity', ['userid' => $userid]);
-        notification_dispatcher::queue($cmid, $attemptid, 'suspicious_activity', ['userid' => $userid]);
+        notification_dispatcher::queue($cmid, $attemptid, 'suspicious_activity',
+            ['userid' => $userid, 'eventid' => 'incident-one']);
+        notification_dispatcher::queue($cmid, $attemptid, 'suspicious_activity',
+            ['userid' => $userid, 'eventid' => 'incident-one']);
         $this->assertEquals(1, $DB->count_records('task_adhoc', ['classname' => $class]));
+
+        notification_dispatcher::queue($cmid, $attemptid, 'suspicious_activity',
+            ['userid' => $userid, 'eventid' => 'incident-two']);
+        $this->assertEquals(2, $DB->count_records('task_adhoc', ['classname' => $class]));
     }
 }

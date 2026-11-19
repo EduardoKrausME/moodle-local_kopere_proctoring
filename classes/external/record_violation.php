@@ -139,7 +139,7 @@ class record_violation extends external_api {
         // Notify only for newly recorded incidents; retries must not produce extra emails.
         // Queue after committing so SMTP and cron failures cannot roll back a quiz violation.
         if ($counted) {
-            $payload = ['userid' => (int)$USER->id, 'reason' => $policy];
+            $payload = ['userid' => (int)$USER->id, 'reason' => $policy, 'eventid' => $params['eventid']];
             notification_dispatcher::queue($cm->id, $params['attemptid'], 'suspicious_activity', $payload);
             if (!$wasblocked && $result['blocked']) {
                 notification_dispatcher::queue($cm->id, $params['attemptid'], 'exam_locked', $payload);

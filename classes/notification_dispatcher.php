@@ -65,10 +65,11 @@ final class notification_dispatcher {
             'eventkey' => $eventkey,
             'payload' => [
                 'reason' => substr((string)($payload['reason'] ?? ''), 0, 40),
+                'eventid' => substr((string)($payload['eventid'] ?? ''), 0, 36),
             ],
         ]);
         try {
-            // Moodle cron delivers asynchronously; identical pending events are coalesced.
+            // Cron delivers asynchronously. Event IDs distinguish incidents; retries coalesce.
             \core\task\manager::queue_adhoc_task($task, true);
         } catch (\Throwable $exception) {
             // The violation or quiz submission must never be rolled back by mail failures.
