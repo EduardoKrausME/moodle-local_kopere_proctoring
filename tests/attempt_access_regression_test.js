@@ -16,6 +16,7 @@ const services = read("db/services.php");
 const before = read("lib.php");
 const schema = read("db/install.xml");
 const upgrade = read("db/upgrade.php");
+const privacy = read("classes/privacy/provider.php");
 const full = read("policy/fullscreen/amd/src/policy.js");
 const focus = read("policy/focus/amd/src/policy.js");
 
@@ -47,6 +48,9 @@ assert.match(services, /local_kopere_proctoring_grant_access/);
 assert.match(before, /'attemptaccesspending'/);
 assert.match(schema, /NAME="accessgranted" TYPE="int"/);
 assert.match(upgrade, /2026111900/);
+assert.match(privacy, /'accessgranted' => 'privacy:metadata/);
+assert.match(privacy, /'accessgrantedtime' => 'privacy:metadata/);
+assert.match(grant, /\$transaction->rollback\(\$exception\)/);
 assert.match(full, /ctx\.api\.isNavigating\(\)/);
 assert.match(focus, /ctx\.api\.isNavigating\(\)/);
 

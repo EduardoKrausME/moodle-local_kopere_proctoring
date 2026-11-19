@@ -57,6 +57,8 @@ class provider implements
                 'fullscreencount' => 'privacy:metadata:local_kopere_proctoring_att:fullscreencount',
                 'blocked' => 'privacy:metadata:local_kopere_proctoring_att:blocked',
                 'blockedreason' => 'privacy:metadata:local_kopere_proctoring_att:blockedreason',
+                'accessgranted' => 'privacy:metadata:local_kopere_proctoring_att:accessgranted',
+                'accessgrantedtime' => 'privacy:metadata:local_kopere_proctoring_att:accessgrantedtime',
                 'contract_ip' => 'privacy:metadata:local_kopere_proctoring_att:contract_ip',
                 'contract_useragent' => 'privacy:metadata:local_kopere_proctoring_att:contract_useragent',
                 'contract_screenresolution' => 'privacy:metadata:local_kopere_proctoring_att:contract_screenresolution',
