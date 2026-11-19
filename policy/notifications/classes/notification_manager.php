@@ -101,8 +101,8 @@ class notification_manager {
             }
 
             if (!email_to_user($recipient, $from, $subject, html_to_text($body), $body)) {
-                // email_to_user records its own email_failed event. Do not interrupt the quiz.
-                error_log('Kopere Proctoring: notification delivery failed for attempt ' . $attemptid);
+                // Moodle email_to_user records its own email_failed event. Do not interrupt the quiz.
+                debugging('Kopere Proctoring: notification delivery failed for attempt ' . $attemptid, DEBUG_DEVELOPER);
             }
         }
     }

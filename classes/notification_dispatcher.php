@@ -73,8 +73,8 @@ final class notification_dispatcher {
             \core\task\manager::queue_adhoc_task($task, true);
         } catch (\Throwable $exception) {
             // The violation or quiz submission must never be rolled back by mail failures.
-            error_log('Kopere Proctoring: unable to queue notification for attempt ' . $attemptid .
-                ': ' . $exception->getMessage());
+            debugging('Kopere Proctoring: unable to queue notification for attempt ' . $attemptid .
+                ': ' . $exception->getMessage(), DEBUG_DEVELOPER);
         }
     }
 }
