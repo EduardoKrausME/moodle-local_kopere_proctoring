@@ -26,6 +26,12 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+$string['attemptaccesspending'] = 'Conclua as verificações iniciais antes de enviar respostas.';
+$string['access_resume_title'] = 'Continuar prova monitorada';
+$string['access_resume_message'] = 'Para continuar nesta página, volte ao modo de tela cheia. A autorização inicial da prova continua válida.';
+$string['access_resume_button'] = 'Voltar à tela cheia';
+$string['access_resume_failed'] = 'É necessário usar tela cheia para continuar. Autorize a tela cheia e tente novamente.';
+$string['access_approval_failed'] = 'Não foi possível confirmar o acesso à prova. Tente novamente ou fale com o professor.';
 $string['attemptblocked'] = 'A tentativa está bloqueada pelo monitoramento. Entre em contato com o professor para revisão.';
 $string['description_pending'] = 'Conclua ou aguarde os seguintes itens obrigatórios antes que a prova possa ser iniciada:';
 $string['description_ready'] = 'Todos os itens obrigatórios foram aprovados. Você já pode iniciar a prova.';

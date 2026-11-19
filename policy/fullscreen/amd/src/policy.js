@@ -159,7 +159,8 @@ define(["jquery"], function ($) {
                 let active = refreshFullscreenRequirement(ctx, cfg, state, $status, $footer, $button);
 
                 // Ignore duplicate vendor events: one true -> false transition = one exit.
-                if (!state.inexam || active || !wasactive) {
+                if (!state.inexam || active || !wasactive ||
+                        (ctx.api && typeof ctx.api.isNavigating === "function" && ctx.api.isNavigating())) {
                     return;
                 }
                 if (!ctx.api || typeof ctx.api.recordViolation !== "function") {

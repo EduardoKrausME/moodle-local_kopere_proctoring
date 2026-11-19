@@ -163,25 +163,33 @@ function local_kopere_proctoring_after_require_login(
         return;
     }
 
-    $sql = "SELECT a.id
+    $sql = "SELECT a.id, a.blocked, a.accessgranted, qa.state, qa.preview
               FROM {local_kopere_proctoring_att} a
               JOIN {quiz_attempts} qa ON qa.id = a.attemptid
              WHERE a.attemptid = :attemptid
                AND a.userid = :userid
-               AND a.blocked = :blocked
                AND qa.quiz = :quizid
                AND qa.userid = :quizuserid";
-    if ($DB->record_exists_sql($sql, [
+    $state = $DB->get_record_sql($sql, [
         'attemptid' => $attemptid,
         'userid' => $USER->id,
-        'blocked' => 1,
         'quizid' => $cm->instance,
         'quizuserid' => $USER->id,
-    ])) {
+    ]);
+    if (!$state) {
+        return;
+    }
+    if (!empty($state->blocked)) {
         throw new moodle_exception(
             'attemptblocked',
             'local_kopere_proctoring',
             new moodle_url('/mod/quiz/view.php', ['id' => $cm->id])
         );
+    }
+    // An initial gate cannot be bypassed by posting an answer or visiting the summary directly.
+    if ($state->state === 'inprogress' && empty($state->preview) && empty($state->accessgranted) &&
+            preg_match('~/mod/quiz/(summary|processattempt)\.php$~', $path)) {
+        throw new moodle_exception('attemptaccesspending', 'local_kopere_proctoring',
+            new moodle_url('/mod/quiz/attempt.php', ['attempt' => $attemptid]));
     }
 }

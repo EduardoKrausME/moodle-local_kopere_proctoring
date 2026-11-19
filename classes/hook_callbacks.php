@@ -110,13 +110,17 @@ class hook_callbacks {
             'record_failed',
         ], 'local_kopere_proctoring');
 
+        // The approval is stored per attempt on the server, never in browser storage.
+        $resume = attempt_guard::has_approved_access((int)$attemptid, (int)$PAGE->cm->instance, (int)$USER->id);
+
         // Require assets in the normal render flow.
-        $payload = manager::get_js_payload($attemptid);
+        $payload = manager::get_js_payload((int)$attemptid, $resume);
         $PAGE->requires->js_call_amd('local_kopere_proctoring/start', 'init', [$payload]);
 
         // Inject HTML via hook.
         $mustachedata = [
             'policies' => manager::get_start_policy_html($PAGE->cm->id, $attemptid),
+            'resume' => $resume,
         ];
         $hook->add_html($OUTPUT->render_from_template('local_kopere_proctoring/start', $mustachedata));
 

@@ -26,6 +26,12 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+$string['attemptaccesspending'] = 'Complete the exam access checks before submitting answers.';
+$string['access_resume_title'] = 'Continue monitored exam';
+$string['access_resume_message'] = 'To continue on this page, return to fullscreen mode. Your original exam access approval is still valid.';
+$string['access_resume_button'] = 'Return to fullscreen';
+$string['access_resume_failed'] = 'Fullscreen is required to continue. Please allow fullscreen and try again.';
+$string['access_approval_failed'] = 'Unable to confirm exam access. Please try again or contact your teacher.';
 $string['attemptblocked'] = 'This attempt has been blocked by proctoring. Contact your teacher for review.';
 $string['description_pending'] = 'Complete or wait for the following required items before the exam can start:';
 $string['description_ready'] = 'All required items have been approved. You can now start the exam.';

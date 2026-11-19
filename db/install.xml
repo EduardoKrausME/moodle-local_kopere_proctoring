@@ -11,6 +11,8 @@
                 <FIELD NAME="focuscount" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
                 <FIELD NAME="fullscreencount" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
                 <FIELD NAME="blocked" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="accessgranted" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="accessgrantedtime" TYPE="int" LENGTH="20" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
                 <FIELD NAME="blockedreason" TYPE="char" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="contract" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="contract_ip" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false"/>

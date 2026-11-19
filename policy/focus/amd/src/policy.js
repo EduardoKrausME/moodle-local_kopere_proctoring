@@ -82,7 +82,8 @@ define(["jquery"], function ($) {
 
         // A single tab switch may emit both blur and visibilitychange.
         function registerEvent(kind, detail) {
-            if (departed || !isExamActive(ctx)) {
+            if (departed || !isExamActive(ctx) ||
+                    (ctx.api && typeof ctx.api.isNavigating === "function" && ctx.api.isNavigating())) {
                 return;
             }
             departed = true;

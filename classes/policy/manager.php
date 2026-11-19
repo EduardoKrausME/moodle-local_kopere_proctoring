@@ -351,11 +351,12 @@ class manager {
      * @return array
      * @throws dml_exception
      */
-    public static function get_js_payload(int $attemptid): array {
+    public static function get_js_payload(int $attemptid, bool $accessgranted = false): array {
         global $PAGE;
         $payload = [
             "cmid" => $PAGE->cm->id,
             "attemptid" => $attemptid,
+            "accessgranted" => $accessgranted,
             "policies" => [],
         ];
 

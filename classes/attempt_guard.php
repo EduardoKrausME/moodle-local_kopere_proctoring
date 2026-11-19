@@ -66,4 +66,39 @@ final class attempt_guard {
             'state' => 'inprogress',
         ]);
     }
+    /**
+     * Resume monitoring only after the same user completed this attempt's start gate.
+     *
+     * @param int $attemptid Moodle quiz attempt ID.
+     * @param int $quizid Quiz instance ID.
+     * @param int $userid Current user.
+     * @return bool
+     */
+    public static function has_approved_access(int $attemptid, int $quizid, int $userid): bool {
+        global $DB;
+
+        if ($attemptid <= 0 || $quizid <= 0 || $userid <= 0) {
+            return false;
+        }
+        $sql = "SELECT qa.id
+                  FROM {quiz_attempts} qa
+                  JOIN {local_kopere_proctoring_att} pa
+                    ON pa.attemptid = qa.id AND pa.userid = qa.userid
+                 WHERE qa.id = :attemptid
+                   AND qa.quiz = :quizid
+                   AND qa.userid = :userid
+                   AND qa.state = :state
+                   AND qa.preview = :preview
+                   AND pa.blocked = :blocked
+                   AND pa.accessgranted = :accessgranted";
+        return $DB->record_exists_sql($sql, [
+            'attemptid' => $attemptid,
+            'quizid' => $quizid,
+            'userid' => $userid,
+            'state' => 'inprogress',
+            'preview' => 0,
+            'blocked' => 0,
+            'accessgranted' => 1,
+        ]);
+    }
 }

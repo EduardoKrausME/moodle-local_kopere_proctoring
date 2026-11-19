@@ -29,6 +29,7 @@
      class="kopere-proctoring"
      data-kopere-proctoring="container">
 
+    {{^resume}}
     <div class="kopere-proctoring-start"
          data-kopere-proctoring="start">
 
@@ -58,6 +59,8 @@
             {{/policies}}
         </div>
 
+        <div class="alert alert-danger" data-kopere-proctoring="start-error" role="alert"
+             style="display:none;">{{#str}}access_approval_failed, local_kopere_proctoring{{/str}}</div>
         <div class="kopere-proctoring-actions">
             <button type="button"
                     id="kopere-proctoring-start-button"
@@ -69,6 +72,25 @@
         </div>
     </div>
 
+    {{/resume}}
+    {{#resume}}
+    <div class="kopere-proctoring-locked kopere-proctoring-resume"
+         data-kopere-proctoring="resume" role="dialog" aria-modal="true"
+         aria-labelledby="kopere-proctoring-resume-title" style="display:none;">
+        <h3 id="kopere-proctoring-resume-title" class="mb-3">
+            {{#str}}access_resume_title, local_kopere_proctoring{{/str}}
+        </h3>
+        <p>{{#str}}access_resume_message, local_kopere_proctoring{{/str}}</p>
+        <p class="alert alert-danger" data-kopere-proctoring="resume-error" role="alert"
+           style="display:none;">{{#str}}access_resume_failed, local_kopere_proctoring{{/str}}</p>
+        <button type="button" class="btn btn-primary" data-kopere-proctoring="resume-button">
+            {{#str}}access_resume_button, local_kopere_proctoring{{/str}}
+        </button>
+    </div>
+    <div class="kopere-proctoring-policies" data-kopere-proctoring="policies" hidden>
+        {{#policies}}{{{text}}}{{/policies}}
+    </div>
+    {{/resume}}
     <div class="kopere-proctoring-locked"
          data-kopere-proctoring="locked"
          style="display:none;">

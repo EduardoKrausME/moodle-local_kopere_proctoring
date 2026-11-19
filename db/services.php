@@ -25,6 +25,13 @@
 defined('MOODLE_INTERNAL') || die();
 
 $functions = [
+    'local_kopere_proctoring_grant_access' => [
+        'classname' => 'local_kopere_proctoring\\external\\grant_access',
+        'methodname' => 'execute',
+        'description' => 'Record the first authorized exam access for the current quiz attempt.',
+        'type' => 'write',
+        'ajax' => true,
+    ],
     'local_kopere_proctoring_record_violation' => [
         'classname' => 'local_kopere_proctoring\\external\\record_violation',
         'methodname' => 'execute',
