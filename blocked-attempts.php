@@ -40,6 +40,8 @@ $PAGE->set_cm($cm, $course);
 $PAGE->set_pagelayout('report');
 $PAGE->set_title(get_string('unlock_page_title', 'local_kopere_proctoring'));
 $PAGE->set_heading(format_string($cm->name));
+$PAGE->navbar->add(get_string('report_title', 'local_kopere_proctoring'),
+    new moodle_url('/local/kopere_proctoring/report.php', ['cmid' => $cmid]));
 $PAGE->navbar->add(get_string('unlock_page_title', 'local_kopere_proctoring'));
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

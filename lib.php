@@ -97,19 +97,22 @@ function local_kopere_proctoring_extend_settings_navigation(navigation_node $nav
         $beforekey = $keys[$i + 1];
     }
 
-    if (has_capability('moodle/course:manageactivities', $context)) {
-        $node = navigation_node::create(
-            'Relatório Proctoring',
-            new moodle_url('/local/kopere_proctoring/report.php', ['id' => $context->id]),
-            navigation_node::TYPE_SETTING,
-            null,
-            'kopere_proctoring_report',
-            new pix_icon('i/report', '')
-        );
-        $navigationnode->add_node($node, $beforekey);
+    // Show only an enabled quiz report to teachers who can view this quiz's reports.
+    if ($context instanceof \context_module &&
+            has_capability('mod/quiz:viewreports', $context)) {
+        $cm = get_coursemodule_from_id('quiz', $context->instanceid, 0, false, IGNORE_MISSING);
+        if ($cm && get_config('local_kopere_proctoring', "kopere_proctoring_enabled_{$cm->id}")) {
+            $reportnode = navigation_node::create(
+                get_string('report_title', 'local_kopere_proctoring'),
+                new moodle_url('/local/kopere_proctoring/report.php', ['cmid' => $cm->id]),
+                navigation_node::TYPE_SETTING, null, 'kopere_proctoring_report',
+                new pix_icon('i/report', '')
+            );
+            $navigationnode->add_node($reportnode, $beforekey);
+        }
     }
 
-    // A focused teacher action, not the future all-attempts reporting dashboard.
+    // Keep the independent unlock interface and its stricter write permission.
     if ($context instanceof \context_module &&
             has_capability('mod/quiz:viewreports', $context) &&
             has_capability('local/kopere_proctoring:unlockattempts', $context)) {

@@ -1,0 +1,106 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_kopere_proctoring/report
+    Example context (json):
+    {
+        "filterurl": "/local/kopere_proctoring/report.php",
+        "cmid": 12, "userid": "", "states": [], "blocks": [], "policies": [],
+        "summarytotal": 5, "summaryblocked": 1, "summaryfinished": 2,
+        "total": 5, "rows": [], "hasrows": false, "paging": ""
+    }
+}}
+<section class="local-kopere-proctoring-report" aria-label="{{#str}}report_title, local_kopere_proctoring{{/str}}">
+    <p>{{#str}}report_notice, local_kopere_proctoring{{/str}}</p>
+    <div class="row mb-3">
+        <div class="col-md-4 mb-2"><div class="card h-100"><div class="card-body">
+            <div class="small text-muted">{{#str}}report_total, local_kopere_proctoring{{/str}}</div>
+            <strong class="h3">{{summarytotal}}</strong>
+        </div></div></div>
+        <div class="col-md-4 mb-2"><div class="card h-100"><div class="card-body">
+            <div class="small text-muted">{{#str}}report_blocked_total, local_kopere_proctoring{{/str}}</div>
+            <strong class="h3">{{summaryblocked}}</strong>
+        </div></div></div>
+        <div class="col-md-4 mb-2"><div class="card h-100"><div class="card-body">
+            <div class="small text-muted">{{#str}}report_finished_total, local_kopere_proctoring{{/str}}</div>
+            <strong class="h3">{{summaryfinished}}</strong>
+        </div></div></div>
+    </div>
+    <form class="card card-body mb-3" action="{{filterurl}}" method="get">
+        <input type="hidden" name="cmid" value="{{cmid}}">
+        <div class="row">
+            <div class="form-group col-md-3">
+                <label for="proctoring-report-state">{{#str}}report_filter_state, local_kopere_proctoring{{/str}}</label>
+                <select class="form-control" id="proctoring-report-state" name="state">
+                    {{#states}}<option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>{{/states}}
+                </select>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="proctoring-report-blocked">{{#str}}report_filter_blocked, local_kopere_proctoring{{/str}}</label>
+                <select class="form-control" id="proctoring-report-blocked" name="blocked">
+                    {{#blocks}}<option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>{{/blocks}}
+                </select>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="proctoring-report-policy">{{#str}}report_filter_policy, local_kopere_proctoring{{/str}}</label>
+                <select class="form-control" id="proctoring-report-policy" name="policy">
+                    {{#policies}}<option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>{{/policies}}
+                </select>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="proctoring-report-userid">{{#str}}report_filter_userid, local_kopere_proctoring{{/str}}</label>
+                <input class="form-control" id="proctoring-report-userid" name="userid"
+                       type="number" min="1" step="1" value="{{userid}}">
+            </div>
+        </div>
+        <div><button type="submit" class="btn btn-primary">{{#str}}report_apply, local_kopere_proctoring{{/str}}</button></div>
+    </form>
+
+    <h3>{{#str}}report_attempts, local_kopere_proctoring{{/str}} ({{total}})</h3>
+    {{#hasrows}}
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <caption>{{#str}}report_caption, local_kopere_proctoring{{/str}}</caption>
+            <thead><tr>
+                <th scope="col">{{#str}}report_student, local_kopere_proctoring{{/str}}</th>
+                <th scope="col">{{#str}}report_attempt, local_kopere_proctoring{{/str}}</th>
+                <th scope="col">{{#str}}report_state, local_kopere_proctoring{{/str}}</th>
+                <th scope="col">{{#str}}report_blocked, local_kopere_proctoring{{/str}}</th>
+                <th scope="col">{{#str}}report_policies, local_kopere_proctoring{{/str}}</th>
+                <th scope="col">{{#str}}report_focus, local_kopere_proctoring{{/str}}</th>
+                <th scope="col">{{#str}}report_fullscreen, local_kopere_proctoring{{/str}}</th>
+                <th scope="col">{{#str}}report_events, local_kopere_proctoring{{/str}}</th>
+                <th scope="col">{{#str}}report_details, local_kopere_proctoring{{/str}}</th>
+            </tr></thead>
+            <tbody>
+                {{#rows}}
+                    <tr>
+                        <td>{{student}}</td>
+                        <td>{{attemptnumber}} ({{attemptid}})<div class="small text-muted">{{started}}</div></td>
+                        <td>{{state}}</td>
+                        <td>{{blocked}}{{#blockedactive}} ({{blockedreason}}){{/blockedactive}}</td>
+                        <td>{{policies}}</td>
+                        <td>{{focuscount}}</td>
+                        <td>{{fullscreencount}}</td>
+                        <td>{{eventcount}}</td>
+                        <td><a href="{{detailsurl}}">{{#str}}report_details, local_kopere_proctoring{{/str}}</a></td>
+                    </tr>
+                {{/rows}}
+            </tbody>
+        </table>
+    </div>
+    {{/hasrows}}
+    {{^hasrows}}<div class="alert alert-info">{{#str}}report_empty, local_kopere_proctoring{{/str}}</div>{{/hasrows}}
+    {{{paging}}}
+</section>

@@ -116,6 +116,10 @@ jobs:
       if: ${{ !cancelled() }}
       run: node plugin/tests/unlock_security_regression_test.js
 
+    - name: Quiz-wide proctoring report security and UI regressions
+      if: ${{ !cancelled() }}
+      run: node plugin/tests/quiz_report_regression_test.js
+
     - name: PHP Lint
       if: ${{ !cancelled() }}
       run: moodle-plugin-ci phplint
