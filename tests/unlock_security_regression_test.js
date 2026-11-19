@@ -22,6 +22,7 @@ assert.match(access, /CONTEXT_MODULE/);
 assert.match(service, /require_capability\('mod\/quiz:viewreports', \$context\)/);
 assert.match(service, /require_capability\('local\/kopere_proctoring:unlockattempts', \$context\)/);
 assert.match(service, /groups_get_activity_shared_group_members/);
+assert.match(service, /\(int\)groups_get_activity_groupmode\(\$cm\) !== SEPARATEGROUPS/);
 assert.match(service, /qa\.userid/);
 assert.match(service, /FOR UPDATE/);
 assert.match(service, /'state' => 'inprogress'/);

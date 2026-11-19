@@ -61,7 +61,7 @@ final class unlock_service {
 
         require_once($CFG->libdir . '/grouplib.php');
         $context = context_module::instance($cm->id);
-        if (groups_get_activity_groupmode($cm) !== SEPARATEGROUPS ||
+        if ((int)groups_get_activity_groupmode($cm) !== SEPARATEGROUPS ||
                 has_capability('moodle/site:accessallgroups', $context)) {
             return null;
         }

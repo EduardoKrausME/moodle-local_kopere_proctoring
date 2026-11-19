@@ -246,7 +246,7 @@ final class unlock_service_test extends advanced_testcase {
         $this->setUser($teacher);
         $this->assertFalse(has_capability('moodle/site:accessallgroups',
             context_module::instance($quiz->cmid)));
-        $this->assertEquals(SEPARATEGROUPS, groups_get_activity_groupmode(
+        $this->assertSame(SEPARATEGROUPS, (int)groups_get_activity_groupmode(
             get_coursemodule_from_id('quiz', $quiz->cmid)));
         $blocked = unlock_service::blocked_attempts($quiz->cmid);
         $this->assertEquals(0, $blocked['total']);
