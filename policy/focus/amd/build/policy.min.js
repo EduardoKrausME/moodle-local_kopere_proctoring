@@ -78,15 +78,11 @@ define(["jquery"], function ($) {
 
 
         let departed = false;
+        let pendingBlur = null;
+        let refocusedWhilePending = false;
         let namespace = ".kopere_proctoring_focus";
 
-        // A single tab switch may emit both blur and visibilitychange.
-        function registerEvent(kind, detail) {
-            if (departed || !isExamActive(ctx) ||
-                    (ctx.api && typeof ctx.api.isNavigating === "function" && ctx.api.isNavigating())) {
-                return;
-            }
-            departed = true;
+        function reportViolation(kind) {
             if (!ctx.api || typeof ctx.api.recordViolation !== "function") {
                 ctx.lock("service", M.util.get_string("record_failed", "local_kopere_proctoring"));
                 return;
@@ -103,9 +99,70 @@ define(["jquery"], function ($) {
             });
         }
 
+        function flushPendingBlur() {
+            if (pendingBlur === null) {
+                return;
+            }
+            let pending = pendingBlur;
+            pendingBlur = null;
+            window.clearTimeout(pending.timer);
+            // A fullscreen exit can explain one nearby visible-window blur.
+            // Hidden-tab departures are never consumed by this correlation.
+            if (!ctx.api.consumeRelatedFocusBlur(pending.occurredAt, document.hidden)) {
+                reportViolation("blur");
+            }
+            if (refocusedWhilePending && !document.hidden) {
+                departed = false;
+            }
+            refocusedWhilePending = false;
+        }
+
+        // A tab switch can emit both blur and visibilitychange. Esc may emit
+        // blur before fullscreenchange; defer only that candidate for 400 ms.
+        function registerEvent(kind) {
+            if (!isExamActive(ctx) ||
+                    (ctx.api && typeof ctx.api.isNavigating === "function" && ctx.api.isNavigating())) {
+                return;
+            }
+            if (kind === "visibilitychange" && pendingBlur !== null) {
+                window.clearTimeout(pendingBlur.timer);
+                pendingBlur = null;
+                refocusedWhilePending = false;
+                reportViolation(kind);
+                return;
+            }
+            if (departed) {
+                if (kind === "blur" && refocusedWhilePending && pendingBlur !== null) {
+                    // Two distinct blur events separated by focus must not merge.
+                    flushPendingBlur();
+                    departed = false;
+                } else {
+                    return;
+                }
+            }
+            departed = true;
+            refocusedWhilePending = false;
+            if (kind === "blur" && !document.hidden && ctx.api &&
+                    typeof ctx.api.isFullscreenMonitored === "function" &&
+                    ctx.api.isFullscreenMonitored() &&
+                    typeof ctx.api.consumeRelatedFocusBlur === "function") {
+                let occurredAt = Date.now();
+                pendingBlur = {
+                    occurredAt: occurredAt,
+                    timer: window.setTimeout(flushPendingBlur, 400)
+                };
+                return;
+            }
+            reportViolation(kind);
+        }
+
         function restoreFocus() {
             if (!document.hidden && document.hasFocus()) {
-                departed = false;
+                if (pendingBlur !== null) {
+                    refocusedWhilePending = true;
+                } else {
+                    departed = false;
+                }
             }
         }
 

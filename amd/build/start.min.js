@@ -24,6 +24,41 @@
 define(["jquery", "core/ajax"], function ($, Ajax) {
     "use strict";
 
+
+    /**
+     * Correlate one visible-window blur with a real fullscreen exit.
+     *
+     * Browser events may arrive in either order. One matched blur is consumed
+     * per exit; hidden-tab events and subsequent focus losses remain separate.
+     *
+     * @returns {Object} Local correlation state for one quiz page.
+     */
+    function createViolationCorrelation() {
+        const windowMs = 350;
+        let fullscreenExitAt = null;
+        let focusBlurMatched = false;
+
+        return {
+            noteFullscreenExit: function () {
+                fullscreenExitAt = Date.now();
+                focusBlurMatched = false;
+            },
+            clearFullscreenExit: function () {
+                fullscreenExitAt = null;
+                focusBlurMatched = false;
+            },
+            consumeFocusBlur: function (occurredAt, hidden) {
+                if (hidden || fullscreenExitAt === null || focusBlurMatched ||
+                        typeof occurredAt !== "number" ||
+                        Math.abs(fullscreenExitAt - occurredAt) > windowMs) {
+                    return false;
+                }
+                focusBlurMatched = true;
+                return true;
+            }
+        };
+    }
+
     function init(payload) {
         payload = payload || {};
 
@@ -72,6 +107,7 @@ define(["jquery", "core/ajax"], function ($, Ajax) {
         let protectedElements = [];
         let navigating = false;
         let navigationResetTimer = null;
+        let violationCorrelation = createViolationCorrelation();
 
         function fullscreenActive() {
             return !!(document.fullscreenElement || document.webkitFullscreenElement ||
@@ -591,6 +627,10 @@ function getMessagesContainer() {
             isNavigating: function () {
                 return navigating;
             },
+            isFullscreenMonitored: fullscreenRequired,
+            noteFullscreenExit: violationCorrelation.noteFullscreenExit,
+            clearFullscreenExit: violationCorrelation.clearFullscreenExit,
+            consumeRelatedFocusBlur: violationCorrelation.consumeFocusBlur,
             registerGatekeeper: function (fn) {
                 if (typeof fn === "function") {
                     gatekeepers.push(fn);

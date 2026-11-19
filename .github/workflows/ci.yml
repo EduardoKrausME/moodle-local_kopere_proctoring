@@ -98,6 +98,10 @@ jobs:
       if: ${{ !cancelled() }}
       run: node plugin/tests/attempt_access_regression_test.js
 
+    - name: Fullscreen and focus incident correlation regressions
+      if: ${{ !cancelled() }}
+      run: node plugin/tests/fullscreen_focus_correlation_test.js
+
     - name: Check rebuilt proctoring AMD JavaScript
       if: ${{ !cancelled() }}
       run: |
@@ -105,6 +109,8 @@ jobs:
         node --check plugin/amd/build/start.min.js
         node --check plugin/policy/focus/amd/src/policy.js
         node --check plugin/policy/fullscreen/amd/src/policy.js
+        node --check plugin/policy/focus/amd/build/policy.min.js
+        node --check plugin/policy/fullscreen/amd/build/policy.min.js
 
     - name: Teacher unlock authorization and audit regressions
       if: ${{ !cancelled() }}

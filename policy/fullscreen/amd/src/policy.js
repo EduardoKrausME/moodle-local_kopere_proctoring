@@ -159,9 +159,16 @@ define(["jquery"], function ($) {
                 let active = refreshFullscreenRequirement(ctx, cfg, state, $status, $footer, $button);
 
                 // Ignore duplicate vendor events: one true -> false transition = one exit.
+                if (active && ctx.api && typeof ctx.api.clearFullscreenExit === "function") {
+                    ctx.api.clearFullscreenExit();
+                }
                 if (!state.inexam || active || !wasactive ||
                         (ctx.api && typeof ctx.api.isNavigating === "function" && ctx.api.isNavigating())) {
                     return;
+                }
+                // Register only a real true-to-false transition, not vendor duplicates.
+                if (ctx.api && typeof ctx.api.noteFullscreenExit === "function") {
+                    ctx.api.noteFullscreenExit();
                 }
                 if (!ctx.api || typeof ctx.api.recordViolation !== "function") {
                     ctx.lock("service", M.util.get_string("record_failed", "local_kopere_proctoring"));
