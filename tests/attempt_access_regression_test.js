@@ -54,6 +54,7 @@ assert.match(grant, /if \(\$record->blocked\) \{\s*\$transaction->allow_commit\(
 assert.doesNotMatch(grant, /\$transaction->rollback\(/);
 assert.match(full, /ctx\.api\.isNavigating\(\)/);
 assert.match(focus, /ctx\.api\.isNavigating\(\)/);
+assert.doesNotMatch(start, /pagehide\.kopere_proctoring_navigation beforeunload/);
 
 // Execute the actual resume decision function with stubbed policy modules.
 const startAt = start.indexOf("        function resumeMonitoring() {");
