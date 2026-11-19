@@ -32,6 +32,11 @@ use local_kopere_proctoring\policy\cm_config;
 
 /**
  * Verify ownership, attempt state, blocking and the contract before first access.
+ *
+ * Legacy Moodle external APIs require test-process isolation when loaded.
+ *
+ * @runTestsInSeparateProcesses
+ * @preserveGlobalState disabled
  */
 final class attempt_access_test extends advanced_testcase {
     /**
