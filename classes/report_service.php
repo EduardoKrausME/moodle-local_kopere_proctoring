@@ -14,7 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 //
-///**
+
+/**
  * Quiz-scoped, permission-checked proctoring reporting repository.
  *
  * @package   local_kopere_proctoring
