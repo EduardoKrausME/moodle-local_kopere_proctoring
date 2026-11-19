@@ -109,6 +109,22 @@ function local_kopere_proctoring_extend_settings_navigation(navigation_node $nav
         $navigationnode->add_node($node, $beforekey);
     }
 
+
+    // A focused teacher action, not the future all-attempts reporting dashboard.
+    if ($context instanceof \context_module &&
+            has_capability('mod/quiz:viewreports', $context) &&
+            has_capability('local/kopere_proctoring:unlockattempts', $context)) {
+        $cm = get_coursemodule_from_id('quiz', $context->instanceid, 0, false, IGNORE_MISSING);
+        if ($cm && get_config('local_kopere_proctoring', "kopere_proctoring_enabled_{$cm->id}")) {
+            $unlocknode = navigation_node::create(
+                get_string('unlock_page_title', 'local_kopere_proctoring'),
+                new moodle_url('/local/kopere_proctoring/blocked-attempts.php', ['cmid' => $cm->id]),
+                navigation_node::TYPE_SETTING, null, 'kopere_proctoring_unlock'
+            );
+            $navigationnode->add_node($unlocknode, $beforekey);
+        }
+    }
+
     $libs = glob(__DIR__ . "/policy/*/lib.php");
     foreach ($libs as $lib) {
         require_once($lib);

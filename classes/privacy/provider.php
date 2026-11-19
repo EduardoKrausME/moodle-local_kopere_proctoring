@@ -84,6 +84,22 @@ class provider implements
             'privacy:metadata:local_kopere_proctoring_log'
         );
 
+        $collection->add_database_table(
+            'local_kopere_proctoring_unlock',
+            [
+                'attemptid' => 'privacy:metadata:local_kopere_proctoring_unlock:attemptid',
+                'studentid' => 'privacy:metadata:local_kopere_proctoring_unlock:studentid',
+                'actorid' => 'privacy:metadata:local_kopere_proctoring_unlock:actorid',
+                'reason' => 'privacy:metadata:local_kopere_proctoring_unlock:reason',
+                'previouspolicy' => 'privacy:metadata:local_kopere_proctoring_unlock:previouspolicy',
+                'previousfocuscount' => 'privacy:metadata:local_kopere_proctoring_unlock:previousfocuscount',
+                'previousfullscreencount' =>
+                    'privacy:metadata:local_kopere_proctoring_unlock:previousfullscreencount',
+                'timecreated' => 'privacy:metadata:local_kopere_proctoring_unlock:timecreated',
+            ],
+            'privacy:metadata:local_kopere_proctoring_unlock'
+        );
+
         // Snapshot evidence is stored in the Moodle file subsystem.
         $collection->add_subsystem_link(
             'core_files',
@@ -121,13 +137,18 @@ class provider implements
                 ON a.attemptid = qa.id
               LEFT JOIN {local_kopere_proctoring_log} l
                 ON l.attemptid = qa.id
-             WHERE (a.userid = :userid1 OR l.userid = :userid2)
+              LEFT JOIN {local_kopere_proctoring_unlock} ul
+                ON ul.attemptid = qa.id
+             WHERE (a.userid = :userid1 OR l.userid = :userid2
+                 OR ul.studentid = :userid3 OR ul.actorid = :userid4)
         ";
 
         $params = [
             'contextmodule' => CONTEXT_MODULE,
             'userid1' => $userid,
             'userid2' => $userid,
+            'userid3' => $userid,
+            'userid4' => $userid,
         ];
 
         $contextlist->add_from_sql($sql, $params);
@@ -180,6 +201,18 @@ class provider implements
             ";
             $logrecords = $DB->get_records_sql($logsql, ['quizid' => $quizid, 'userid' => $userid]);
 
+            // Both the authorising teacher and the affected student can export the decision.
+            $unlocksql = "
+                SELECT ul.*
+                  FROM {local_kopere_proctoring_unlock} ul
+                  JOIN {quiz_attempts} qa ON qa.id = ul.attemptid
+                 WHERE qa.quiz = :quizid
+                   AND (ul.studentid = :studentid OR ul.actorid = :actorid)
+              ORDER BY ul.timecreated ASC, ul.id ASC";
+            $unlockrecords = $DB->get_records_sql($unlocksql, [
+                'quizid' => $quizid, 'studentid' => $userid, 'actorid' => $userid,
+            ]);
+
             // Write structured data.
             $subcontext = [
                 get_string('pluginname', 'local_kopere_proctoring'),
@@ -188,6 +221,7 @@ class provider implements
             $data = (object)[
                 'att' => array_values($attrecords),
                 'log' => array_values($logrecords),
+                'unlock' => array_values($unlockrecords),
             ];
 
             writer::with_context($context)->export_data($subcontext, $data);
@@ -235,6 +269,7 @@ class provider implements
 
         // Delete DB records for all attempts of this quiz.
         $select = "attemptid IN (SELECT id FROM {quiz_attempts} WHERE quiz = :quizid)";
+        $DB->delete_records_select('local_kopere_proctoring_unlock', $select, ['quizid' => $quizid]);
         $DB->delete_records_select('local_kopere_proctoring_att', $select, ['quizid' => $quizid]);
         $DB->delete_records_select('local_kopere_proctoring_log', $select, ['quizid' => $quizid]);
 
@@ -269,6 +304,12 @@ class provider implements
             $select = "userid = :userid AND attemptid IN (SELECT id FROM {quiz_attempts} WHERE quiz = :quizid)";
             $params = ['userid' => $userid, 'quizid' => $quizid];
 
+            // Remove decisions that contain this user as the student or the teacher.
+            $unlockselect = "(studentid = :studentid OR actorid = :actorid)
+                         AND attemptid IN (SELECT id FROM {quiz_attempts} WHERE quiz = :quizid)";
+            $DB->delete_records_select('local_kopere_proctoring_unlock', $unlockselect, [
+                'studentid' => $userid, 'actorid' => $userid, 'quizid' => $quizid,
+            ]);
             $DB->delete_records_select('local_kopere_proctoring_att', $select, $params);
             $DB->delete_records_select('local_kopere_proctoring_log', $select, $params);
 

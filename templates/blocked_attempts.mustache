@@ -1,0 +1,115 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_kopere_proctoring/blocked_attempts
+
+    Example context (json):
+    {
+        "actionurl": "/local/kopere_proctoring/blocked-attempts.php?cmid=45",
+        "sesskey": "1234",
+        "total": 1,
+        "hasblocked": true,
+        "attempts": [],
+        "hasaudits": false,
+        "audits": [],
+        "paging": ""
+    }
+}}
+<div class="local-kopere-proctoring-unlock">
+    <h2>{{#str}}unlock_page_title, local_kopere_proctoring{{/str}}</h2>
+    <p>{{#str}}unlock_page_help, local_kopere_proctoring{{/str}}</p>
+    <p>{{#str}}unlock_total, local_kopere_proctoring{{/str}}: {{total}}</p>
+    {{#hasblocked}}
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <caption>{{#str}}unlock_table_caption, local_kopere_proctoring{{/str}}</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">{{#str}}unlock_student, local_kopere_proctoring{{/str}}</th>
+                        <th scope="col">{{#str}}unlock_attempt, local_kopere_proctoring{{/str}}</th>
+                        <th scope="col">{{#str}}unlock_previous_policy, local_kopere_proctoring{{/str}}</th>
+                        <th scope="col">{{#str}}unlock_counters, local_kopere_proctoring{{/str}}</th>
+                        <th scope="col">{{#str}}unlock_action, local_kopere_proctoring{{/str}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#attempts}}
+                    <tr>
+                        <td>{{student}}</td>
+                        <td>{{attemptnumber}} ({{attemptid}})<div class="small">{{started}}</div></td>
+                        <td>{{policy}}</td>
+                        <td>{{#str}}userdata_focuscount, local_kopere_proctoring{{/str}}:
+                            {{focuscount}},
+                            {{#str}}userdata_fullscreencount, local_kopere_proctoring{{/str}}:
+                            {{fullscreencount}}</td>
+                        <td>
+                            <form method="post" action="{{actionurl}}">
+                                <input type="hidden" name="sesskey" value="{{sesskey}}">
+                                <input type="hidden" name="attemptid" value="{{attemptid}}">
+                                <label for="unlock-reason-{{attemptid}}">
+                                    {{#str}}unlock_reason, local_kopere_proctoring{{/str}}
+                                </label>
+                                <input id="unlock-reason-{{attemptid}}" class="form-control mb-2"
+                                       type="text" name="reason" minlength="10" maxlength="255"
+                                       required autocomplete="off">
+                                <button class="btn btn-primary" type="submit">
+                                    {{#str}}unlock_action, local_kopere_proctoring{{/str}}
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {{/attempts}}
+                </tbody>
+            </table>
+        </div>
+    {{/hasblocked}}
+    {{^hasblocked}}
+        <div class="alert alert-info">{{#str}}unlock_none, local_kopere_proctoring{{/str}}</div>
+    {{/hasblocked}}
+    {{{paging}}}
+
+    <h3>{{#str}}unlock_history_title, local_kopere_proctoring{{/str}}</h3>
+    {{#hasaudits}}
+        <div class="table-responsive">
+            <table class="table table-sm table-striped">
+                <caption>{{#str}}unlock_history_caption, local_kopere_proctoring{{/str}}</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">{{#str}}unlock_attempt, local_kopere_proctoring{{/str}}</th>
+                        <th scope="col">{{#str}}unlock_student, local_kopere_proctoring{{/str}}</th>
+                        <th scope="col">{{#str}}unlock_teacher, local_kopere_proctoring{{/str}}</th>
+                        <th scope="col">{{#str}}unlock_reason, local_kopere_proctoring{{/str}}</th>
+                        <th scope="col">{{#str}}unlock_previous_policy, local_kopere_proctoring{{/str}}</th>
+                        <th scope="col">{{#str}}unlock_when, local_kopere_proctoring{{/str}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#audits}}
+                    <tr>
+                        <td>{{attemptid}}</td>
+                        <td>{{student}}</td>
+                        <td>{{teacher}}</td>
+                        <td>{{reason}}</td>
+                        <td>{{policy}} ({{focuscount}} / {{fullscreencount}})</td>
+                        <td>{{time}}</td>
+                    </tr>
+                    {{/audits}}
+                </tbody>
+            </table>
+        </div>
+    {{/hasaudits}}
+    {{^hasaudits}}
+        <p class="text-muted">{{#str}}unlock_no_history, local_kopere_proctoring{{/str}}</p>
+    {{/hasaudits}}
+</div>

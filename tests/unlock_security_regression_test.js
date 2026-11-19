@@ -1,0 +1,56 @@
+// Static security and routing checks complement Moodle's integration tests.
+"use strict";
+const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
+const root = path.resolve(__dirname, "..");
+const read = p => fs.readFileSync(path.join(root, p), "utf8");
+const service = read("classes/unlock_service.php");
+const page = read("blocked-attempts.php");
+const form = read("templates/blocked_attempts.mustache");
+const xml = read("db/install.xml");
+const upgrade = read("db/upgrade.php");
+const privacy = read("classes/privacy/provider.php");
+const navigation = read("lib.php");
+const access = read("db/access.php");
+const version = read("version.php");
+const violations = read("classes/external/record_violation.php");
+const approvals = read("classes/attempt_guard.php");
+
+assert.match(access, /local\/kopere_proctoring:unlockattempts/);
+assert.match(access, /CONTEXT_MODULE/);
+assert.match(service, /require_capability\('mod\/quiz:viewreports', \$context\)/);
+assert.match(service, /require_capability\('local\/kopere_proctoring:unlockattempts', \$context\)/);
+assert.match(service, /groups_get_activity_shared_group_members/);
+assert.match(service, /qa\.userid/);
+assert.match(service, /FOR UPDATE/);
+assert.match(service, /'state' => 'inprogress'/);
+assert.match(service, /\$attempt->state !== 'inprogress'/);
+assert.match(service, /\(int\)\$attempt->preview !== 0/);
+assert.match(service, /if \(!\(int\)\$record->blocked\)/);
+assert.match(service, /\$transaction->allow_commit\(\)/);
+assert.match(service, /local_kopere_proctoring_unlock/);
+assert.match(service, /\$record->blocked = 0/);
+assert.match(service, /\$record->focuscount = 0/);
+assert.match(service, /\$record->fullscreencount = 0/);
+assert.doesNotMatch(service, /\$record->accessgranted\s*=/);
+assert.match(page, /require_login\(\$course, false, \$cm\)/);
+assert.match(page, /require_sesskey\(\)/);
+assert.match(page, /\$_SERVER\['REQUEST_METHOD'\] === 'POST'/);
+assert.match(page, /unlock_service::release/);
+assert.match(form, /method="post"/);
+assert.match(form, /name="sesskey"/);
+assert.match(form, /name="attemptid"/);
+assert.match(form, /name="reason".*minlength="10".*maxlength="255"/);
+assert.match(navigation, /blocked-attempts\.php/);
+assert.match(xml, /TABLE NAME="local_kopere_proctoring_unlock"/);
+assert.match(upgrade, /2026111901/);
+assert.match(version, /2026111901/);
+assert.match(privacy, /studentid = :studentid OR actorid = :actorid/);
+assert.match(privacy, /local_kopere_proctoring_unlock/);
+
+// Protect previously delivered features from collateral deletion or API changes.
+assert.match(violations, /notification_dispatcher::queue/);
+assert.match(approvals, /has_approved_access/);
+assert.match(read("classes/external/grant_access.php"), /accessgrantedtime/);
+console.log("Teacher unblock security, audit and regressions passed.");

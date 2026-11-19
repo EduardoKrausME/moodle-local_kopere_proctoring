@@ -75,5 +75,29 @@ function xmldb_local_kopere_proctoring_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2026111900, 'local', 'kopere_proctoring');
     }
 
+    if ($oldversion < 2026111901) {
+        $dbman = $DB->get_manager();
+        $table = new xmldb_table('local_kopere_proctoring_unlock');
+        if (!$dbman->table_exists($table)) {
+            $table->add_field('id', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, XMLDB_SEQUENCE);
+            $table->add_field('attemptid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL);
+            $table->add_field('studentid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL);
+            $table->add_field('actorid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL);
+            $table->add_field('reason', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL);
+            $table->add_field('previouspolicy', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, '');
+            $table->add_field('previousfocuscount', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0);
+            $table->add_field('previousfullscreencount', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0);
+            $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL);
+            $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+            $table->add_key('fk_quizattempt', XMLDB_KEY_FOREIGN, ['attemptid'], 'quiz_attempts', ['id']);
+            $table->add_key('fk_student', XMLDB_KEY_FOREIGN, ['studentid'], 'user', ['id']);
+            $table->add_key('fk_actor', XMLDB_KEY_FOREIGN, ['actorid'], 'user', ['id']);
+            $table->add_index('attempt_time_ix', XMLDB_INDEX_NOTUNIQUE, ['attemptid', 'timecreated']);
+            $table->add_index('actor_time_ix', XMLDB_INDEX_NOTUNIQUE, ['actorid', 'timecreated']);
+            $dbman->create_table($table);
+        }
+        upgrade_plugin_savepoint(true, 2026111901, 'local', 'kopere_proctoring');
+    }
+
     return true;
 }

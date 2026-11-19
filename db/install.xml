@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/kopere_proctoring/db" VERSION="20261029" COMMENT="XMLDB file for local_kopere_proctoring"
+<XMLDB PATH="local/kopere_proctoring/db" VERSION="20261119" COMMENT="XMLDB file for local_kopere_proctoring"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
     <TABLES>
@@ -55,6 +55,31 @@
                 <INDEX NAME="attemptidtime_ix" UNIQUE="false" FIELDS="attemptid, time"/>
                 <INDEX NAME="actionvalue_ix" UNIQUE="false" FIELDS="actionvalue"/>
                 <INDEX NAME="attempt_eventid_uix" UNIQUE="true" FIELDS="attemptid, eventid"/>
+            </INDEXES>
+        </TABLE>
+
+
+        <TABLE NAME="local_kopere_proctoring_unlock" COMMENT="Teacher decisions to release blocked quiz attempts">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="attemptid" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="studentid" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="actorid" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="reason" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="previouspolicy" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="" SEQUENCE="false"/>
+                <FIELD NAME="previousfocuscount" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="previousfullscreencount" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+                <KEY NAME="fk_quizattempt" TYPE="foreign" FIELDS="attemptid" REFTABLE="quiz_attempts" REFFIELDS="id"/>
+                <KEY NAME="fk_student" TYPE="foreign" FIELDS="studentid" REFTABLE="user" REFFIELDS="id"/>
+                <KEY NAME="fk_actor" TYPE="foreign" FIELDS="actorid" REFTABLE="user" REFFIELDS="id"/>
+            </KEYS>
+            <INDEXES>
+                <INDEX NAME="attempt_time_ix" UNIQUE="false" FIELDS="attemptid, timecreated"/>
+                <INDEX NAME="actor_time_ix" UNIQUE="false" FIELDS="actorid, timecreated"/>
             </INDEXES>
         </TABLE>
 
