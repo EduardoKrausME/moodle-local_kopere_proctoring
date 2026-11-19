@@ -46,7 +46,10 @@ assert.match(form, /name="reason".*minlength="10".*maxlength="255"/);
 assert.match(navigation, /blocked-attempts\.php/);
 assert.match(xml, /TABLE NAME="local_kopere_proctoring_unlock"/);
 assert.match(upgrade, /2026111901/);
-assert.match(version, /2026111901/);
+// Upgrades after the unlock release must not fail this historical security test.
+const pluginVersion = version.match(/\$plugin->version\s*=\s*(\d+);/);
+assert.ok(pluginVersion && Number(pluginVersion[1]) >= 2026111901,
+    "The attempt-unlock release and its schema migration must still be present");
 assert.match(privacy, /studentid = :studentid OR actorid = :actorid/);
 assert.match(privacy, /local_kopere_proctoring_unlock/);
 
