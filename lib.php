@@ -148,7 +148,7 @@ function local_kopere_proctoring_after_require_login(
         return;
     }
 
-    $path = $PAGE->url ? $PAGE->url->get_path() : ($_SERVER['SCRIPT_NAME'] ?? '');
+    $path = $PAGE->has_set_url() ? $PAGE->url->get_path() : ($_SERVER['SCRIPT_NAME'] ?? '');
     if (!preg_match('~/mod/quiz/(attempt|summary|processattempt)\\.php$~', $path)) {
         return;
     }
