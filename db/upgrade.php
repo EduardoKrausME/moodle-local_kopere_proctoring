@@ -84,7 +84,7 @@ function xmldb_local_kopere_proctoring_upgrade($oldversion) {
             $table->add_field('studentid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL);
             $table->add_field('actorid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL);
             $table->add_field('reason', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL);
-            $table->add_field('previouspolicy', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, '');
+            $table->add_field('previouspolicy', XMLDB_TYPE_CHAR, '20');
             $table->add_field('previousfocuscount', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0);
             $table->add_field('previousfullscreencount', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0);
             $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL);

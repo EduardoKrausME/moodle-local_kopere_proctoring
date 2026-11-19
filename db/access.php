@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 //
-// /**
+/**
  * Capability to release a student from a proctoring lock.
  *
  * @package   local_kopere_proctoring
