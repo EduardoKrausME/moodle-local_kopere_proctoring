@@ -155,3 +155,5 @@ $string['privacy:metadata:local_kopere_proctoring_unlock:previouspolicy'] = 'The
 $string['privacy:metadata:local_kopere_proctoring_unlock:previousfocuscount'] = 'Focus-loss incident count before release.';
 $string['privacy:metadata:local_kopere_proctoring_unlock:previousfullscreencount'] = 'Fullscreen-exit incident count before release.';
 $string['privacy:metadata:local_kopere_proctoring_unlock:timecreated'] = 'When the release was authorised.';
+
+$string['kopere_proctoring:unlockattempts'] = 'Release blocked proctoring attempts';

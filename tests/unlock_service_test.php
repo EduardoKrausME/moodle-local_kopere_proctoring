@@ -228,7 +228,7 @@ final class unlock_service_test extends advanced_testcase {
         require_once($CFG->libdir . '/grouplib.php');
         $DB->set_field('course_modules', 'groupmode', SEPARATEGROUPS, ['id' => $quiz->cmid]);
         $roleid = $DB->get_field('role', 'id', ['shortname' => 'editingteacher'], MUST_EXIST);
-        assign_capability('moodle/site:accessallgroups', CAP_PREVENT, $roleid,
+        assign_capability('moodle/site:accessallgroups', CAP_PROHIBIT, $roleid,
             context_module::instance($quiz->cmid)->id, true);
         $teachergrp = groups_create_group((object)[
             'name' => 'Teacher group', 'courseid' => $course->id,
@@ -240,6 +240,8 @@ final class unlock_service_test extends advanced_testcase {
         groups_add_member($studentgrp, $student->id);
 
         $this->setUser($teacher);
+        $this->assertFalse(has_capability('moodle/site:accessallgroups',
+            context_module::instance($quiz->cmid)));
         $blocked = unlock_service::blocked_attempts($quiz->cmid);
         $this->assertEquals(0, $blocked['total']);
         try {

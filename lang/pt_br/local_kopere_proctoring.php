@@ -155,3 +155,5 @@ $string['privacy:metadata:local_kopere_proctoring_unlock:previouspolicy'] = 'Pol
 $string['privacy:metadata:local_kopere_proctoring_unlock:previousfocuscount'] = 'Ocorrências de perda de foco antes da liberação.';
 $string['privacy:metadata:local_kopere_proctoring_unlock:previousfullscreencount'] = 'Ocorrências de saída de tela cheia antes da liberação.';
 $string['privacy:metadata:local_kopere_proctoring_unlock:timecreated'] = 'Quando a liberação foi autorizada.';
+
+$string['kopere_proctoring:unlockattempts'] = 'Desbloquear tentativas bloqueadas pelo monitoramento';

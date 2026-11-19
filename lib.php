@@ -109,7 +109,6 @@ function local_kopere_proctoring_extend_settings_navigation(navigation_node $nav
         $navigationnode->add_node($node, $beforekey);
     }
 
-
     // A focused teacher action, not the future all-attempts reporting dashboard.
     if ($context instanceof \context_module &&
             has_capability('mod/quiz:viewreports', $context) &&

@@ -167,7 +167,7 @@ final class unlock_service {
         $cm = get_coursemodule_from_id('quiz', $cmid, 0, false, MUST_EXIST);
         self::require_permission($cm);
         $reason = trim(clean_param($reason, PARAM_TEXT));
-        if (\core_text::strlen($reason) < 10 || core_text::strlen($reason) > 255) {
+        if (\core_text::strlen($reason) < 10 || \core_text::strlen($reason) > 255) {
             throw new invalid_parameter_exception('A justification between 10 and 255 characters is required.');
         }
 
