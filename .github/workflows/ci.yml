@@ -120,6 +120,10 @@ jobs:
       if: ${{ !cancelled() }}
       run: node plugin/tests/quiz_report_regression_test.js
 
+    - name: Profile navigation translations and link regressions
+      if: ${{ !cancelled() }}
+      run: node plugin/tests/profile_navigation_translation_test.js
+
     - name: PHP Lint
       if: ${{ !cancelled() }}
       run: moodle-plugin-ci phplint

@@ -72,7 +72,7 @@ function local_kopere_proctoring_myprofile_navigation(tree $tree, $user, $iscurr
         'contact', 'local_proctoring_3',
         get_string('pluginname', 'local_kopere_proctoring'),
         null, new moodle_url("/local/kopere_proctoring/user-data.php?id={$user->id}"),
-        'Dados do aluno'
+        get_string('userdata_nav', 'local_kopere_proctoring')
     );
     $tree->add_node($node);
 
