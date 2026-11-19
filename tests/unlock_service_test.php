@@ -38,11 +38,16 @@ final class unlock_service_test extends advanced_testcase {
      *
      * @return array Course, quiz, teacher, student, attemptid.
      */
-    private function fixture(): array {
+    private function fixture(bool $separategroups = false): array {
         global $DB;
 
-        $course = $this->getDataGenerator()->create_course();
-        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
+        $course = $this->getDataGenerator()->create_course($separategroups ? [
+            'groupmode' => SEPARATEGROUPS, 'groupmodeforce' => 1,
+        ] : []);
+        $quiz = $this->getDataGenerator()->create_module('quiz', [
+            'course' => $course->id,
+            'groupmode' => $separategroups ? SEPARATEGROUPS : NOGROUPS,
+        ]);
         $teacher = $this->getDataGenerator()->create_user();
         $student = $this->getDataGenerator()->create_user();
         $this->getDataGenerator()->enrol_user($teacher->id, $course->id, 'editingteacher');
@@ -224,9 +229,8 @@ final class unlock_service_test extends advanced_testcase {
         global $DB, $CFG;
 
         $this->resetAfterTest();
-        [$course, $quiz, $teacher, $student, $attemptid] = $this->fixture();
+        [$course, $quiz, $teacher, $student, $attemptid] = $this->fixture(true);
         require_once($CFG->libdir . '/grouplib.php');
-        $DB->set_field('course_modules', 'groupmode', SEPARATEGROUPS, ['id' => $quiz->cmid]);
         $roleid = $DB->get_field('role', 'id', ['shortname' => 'editingteacher'], MUST_EXIST);
         assign_capability('moodle/site:accessallgroups', CAP_PROHIBIT, $roleid,
             context_module::instance($quiz->cmid)->id, true);
@@ -242,6 +246,8 @@ final class unlock_service_test extends advanced_testcase {
         $this->setUser($teacher);
         $this->assertFalse(has_capability('moodle/site:accessallgroups',
             context_module::instance($quiz->cmid)));
+        $this->assertEquals(SEPARATEGROUPS, groups_get_activity_groupmode(
+            get_coursemodule_from_id('quiz', $quiz->cmid)));
         $blocked = unlock_service::blocked_attempts($quiz->cmid);
         $this->assertEquals(0, $blocked['total']);
         try {
@@ -274,6 +280,7 @@ final class unlock_service_test extends advanced_testcase {
         unlock_service::release($quiz->cmid, $attemptid,
             'Teacher authorises a supervised retry to finish.');
         $contexts = \local_kopere_proctoring\privacy\provider::get_contexts_for_userid($teacher->id);
-        $this->assertContains(context_module::instance($quiz->cmid)->id, $contexts->get_contextids());
+        $this->assertContains((int)context_module::instance($quiz->cmid)->id,
+            array_map('intval', $contexts->get_contextids()));
     }
 }
