@@ -28,10 +28,14 @@ use advanced_testcase;
 use core_user\output\myprofile\tree;
 use moodle_url;
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once(__DIR__ . '/../lib.php');
 
 /**
  * The profile content and its destination follow Moodle's own strings.
+ *
+ * @covers \local_kopere_proctoring_myprofile_navigation
  */
 final class profile_navigation_test extends advanced_testcase {
     /**
