@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.1.0 - 2026-11-21
+
+- Added proctoring reports, blocked-attempt views and access-unlock services.
+- Added violation notifications, scheduled notification delivery and supporting permissions.
+- Expanded attempt access, focus/fullscreen monitoring and regression test coverage.
+
+**Comparison:** [4.0.18...4.1.0](https://github.com/EduardoKrausME/moodle-local_kopere_proctoring/compare/4.0.18...4.1.0)
+
 This changelog records only the two latest **published** releases of `local_kopere_proctoring`, verified on October 24, 2026.
 
 **Git history note:** The published tags `4.0.14` and `4.0.15` have diverged histories: GitHub reports 11 commits on the `4.0.15` side and 3 on the `4.0.14` side. GitHub's three-dot compare link describes changes from the merge base, **not** an exact direct tree diff between these divergent tags. The `4.0.15` summary below was checked against the actual file trees of both release tags to reflect their net differences. This changelog does not include commits made after `4.0.15`.
